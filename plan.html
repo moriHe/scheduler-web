@@ -11,9 +11,16 @@
     <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/locale/de/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
     <script defer type="module" src="./calendar.js"></script>
     <style>
         /* Calendar styling */
+
+        .lighter-red-background {
+        background-color: rgba(255, 0, 0, 0.5); /* Light red with 50% opacity */
+        color: white; /* Optional for better visibility */
+        }
+
         .calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -74,7 +81,8 @@
 </head>
 
 <body class="bg-gray-100 h-screen flex flex-col items-center justify-start p-6">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center">
+    <!-- Plan Creation Container -->
+    <div id="plan-creation-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Plan erstellen</h1>
 
         <!-- Month and Year Selection -->
@@ -112,7 +120,6 @@
                 <label><input type="checkbox" class="weekday-checkbox" value="Fr" checked> Freitag</label>
             </div>
         </div>
-        
 
         <!-- Users and Calendar Table -->
         <h2 class="text-xl font-bold text-gray-800 mb-4">Verfügbarkeiten Eltern</h2>
@@ -134,27 +141,57 @@
             <div id="holidays-calendar" class="calendar"></div>
         </div>
 
-        <!-- Holidays Section -->
+        <!-- Team Calendar Section -->
         <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Team übernimmt</h2>
         <div class="mb-4">
             <div id="team-calendar" class="calendar"></div>
         </div>
 
+        <!-- Button to Show Preview -->
+        <button id="show-preview-button" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+            Show Preview
+        </button>
+        <button id="back-button" class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
+            Zurück
+        </button>
+    </div>
 
+    <!-- Calendar Preview Container -->
+    <div id="calendar-preview-container"  class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center hidden">
+        <div class="flex justify-center gap-10 mb-6 my-20">
+            <h1 class="text-3xl font-bold text-gray-800">Preview</h1>
+            <button id="preview-button" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <ion-icon name="Refresh" class="mr-2"></ion-icon>
+            </button>
+        </div>
+        <table id="calendar-preview-table" class="w-full">
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Datum</th>
+                    <th>Elternpaar 1</th>
+                    <th>Elternpaar 2</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-preview-body">
+                <!-- Dynamic rows will be inserted here -->
+            </tbody>
+        </table>
+        <div class="mt-10">
             <div id="error-message" class="bg-red-500 text-white p-4 rounded hidden"></div>
 
             <button id="generate-pdf-button" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
                 Generate Calendar PDF
             </button>
-
-            <button id="back-button" class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
+            <button id="back-creation-button" class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
                 Zurück
             </button>
         </div>
+    </div>
 
 
         <script defer type="module">
-            import { assignUsersToCalendar, generatePDF } from "./calendar.js";
+            import { assignUsersToCalendar, generatePDF, formatDate, formatDayOfWeek, displayError } from "./calendar.js";
         
             let usersData = []; // To store user data temporarily
             let formattedUsers = []; // To store the formatted users data
@@ -187,14 +224,29 @@
                     window.location.href = 'index.html'; // Navigate back to index.html
                 });
         
-                // Add event listeners for month and year change
-                document.getElementById('month').addEventListener('change', () => updateCalendar());
-                document.getElementById('year').addEventListener('change', () => updateCalendar());
-            };
-        
-            function fetchUsers() {
-                // Mock users, in a real app this could be an API call
-                return Promise.resolve(['User 1', 'User 2', 'User 3']);
+                    // Add event listeners for month and year change
+                    document.getElementById('month').addEventListener('change', () => updateCalendar());
+                    document.getElementById('year').addEventListener('change', () => updateCalendar());
+
+                    document.getElementById('show-preview-button').addEventListener('click', function() {
+                    // Hide the plan creation container
+                    document.getElementById('plan-creation-container').classList.add('hidden');
+                    
+                    // Show the calendar preview container
+                    document.getElementById('calendar-preview-container').classList.remove('hidden');
+                    
+                    // Call the render function to populate the preview table
+                    renderCalendarPreview();
+                });
+
+                // Function to go back to the plan creation container
+                document.getElementById('back-creation-button').addEventListener('click', function() {
+                    // Show the plan creation container
+                    document.getElementById('plan-creation-container').classList.remove('hidden');
+                    
+                    // Hide the calendar preview container
+                    document.getElementById('calendar-preview-container').classList.add('hidden');
+                });
             }
         
             function formatUsersData(users) {
@@ -217,6 +269,101 @@
                 }
                 yearSelect.value = currentYear; // Default to the current year
             }
+
+            let calendar = null;
+
+function renderCalendarPreview() {
+
+    const month = parseInt(document.getElementById('month').value) + 1; // Add 1 because months are 0-indexed in JS
+    const year = parseInt(document.getElementById('year').value);
+
+    const previewBody = document.getElementById('calendar-preview-body');
+    previewBody.innerHTML = ''; // Clear previous rows
+    const selectedWeekdays = Array.from(document.querySelectorAll('.weekday-checkbox:checked'))
+        .map(checkbox => WEEKDAY_MAPPING[checkbox.value]);
+    const options = {
+        weekdays: selectedWeekdays, // only week days
+        holidays,  // List of holidays
+        teamdays   // List of days the team takes a slot
+    };
+
+    calendar = assignUsersToCalendar(month, year, formattedUsers, options);
+
+    // Store the calendar entries for later updates
+    const calendarEntries = Object.entries(calendar).map(([day, [parent1, parent2]]) => {
+        return { day, parent1, parent2 }; // Create an array of objects for easy access
+    });
+
+    for (const entry of calendarEntries) {
+        const { day, parent1, parent2 } = entry;
+
+        const dateParent1 = formatDate(day, month, year);
+        const dayParent1 = formatDayOfWeek(day, month, year);
+
+        // Create a new row
+        const row = document.createElement('tr');
+
+        // Create table cells with conditional styling
+        const parent1Cell = document.createElement('td');
+        const parent2Cell = document.createElement('td');
+
+        // Check if parent1 is empty and apply styles
+        if (parent1 === "") {
+            parent1Cell.textContent = parent1;
+            parent1Cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Set background color to light red with opacity
+            parent1Cell.style.color = 'white'; // Optional: Change text color for better visibility
+        } else {
+            parent1Cell.textContent = parent1;
+        }
+        
+        // Check if parent2 is empty and apply styles
+        if (parent2 === "") {
+            parent2Cell.textContent = parent2;
+            parent2Cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Set background color to light red with opacity
+            parent2Cell.style.color = 'white'; // Optional: Change text color for better visibility
+        } else {
+            parent2Cell.textContent = parent2;
+        }
+
+        // Set cells as editable
+        parent1Cell.contentEditable = true;
+        parent2Cell.contentEditable = true;
+
+        // Add event listeners to update the calendar when the cell is edited
+        parent1Cell.addEventListener('blur', () => {
+            const newValue = parent1Cell.textContent.trim();
+            entry.parent1 = newValue; // Update the parent1 in the entry
+            calendar[day][0] = newValue; // Overwrite the calendar entry
+        });
+
+        parent2Cell.addEventListener('blur', () => {
+            const newValue = parent2Cell.textContent.trim();
+            entry.parent2 = newValue; // Update the parent2 in the entry
+            calendar[day][1] = newValue; // Overwrite the calendar entry
+        });
+
+        // Create the first two columns
+        row.innerHTML = `
+            <td>${dayParent1}</td>
+            <td>${dateParent1}</td>
+        `;
+        
+        // Append cells to the row
+        row.appendChild(parent1Cell);
+        row.appendChild(parent2Cell);
+
+        previewBody.appendChild(row);
+    }
+}
+
+
+
+
+            document.getElementById('preview-button').addEventListener('click', () => {
+            // Reload the calendar preview
+            renderCalendarPreview();
+            console.log('Preview updated');
+        });
         
             function updateCalendar() {
                 // Clear not_available array for each user when switching months or years
@@ -415,9 +562,11 @@
                 };
         
                 try {
-                    const calendar = assignUsersToCalendar(month, year, formattedUsers, options); // Pass the formatted users array
+                        if (!calendar || calendar.length === 0) {
+                            displayError("Please Update the preview")
+                            return
+                        }
            
-                
                     // Simulate a PDF download by creating a Blob and using it as a downloadable file
                     const fileBlob = generatePDF(calendar, month, year); // Assuming this returns a blob or binary data
                     

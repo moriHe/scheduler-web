@@ -2,7 +2,7 @@
     const errorMessageElement = document.getElementById('error-message');
 
     // Function to display error messages
-    function displayError(message) {
+    export function displayError(message) {
         errorMessageElement.textContent = message;
         errorMessageElement.classList.remove('hidden'); // Show the error message
         setTimeout(() => {
@@ -55,6 +55,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
     function isValidWeekday(day) {
         const date = new Date(year, month - 1, day);
         const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+
         return weekdays.includes(weekday);
     }
 
@@ -116,13 +117,13 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
 }
 
             // Helper function to format the date in the "1. Okt. Dienstag" format
-            function formatDate(day, month, year) {
+            export function formatDate(day, month, year) {
                 const date = new Date(year, month - 1, day);
                 return window.dateFns.format(date, 'dd.MM', { locale: window.dateFns.locale.de });
             }
 
             // Helper function to get day of the week as "Mo, Di, Mi" etc.
-            function formatDayOfWeek(day, month, year) {
+            export function formatDayOfWeek(day, month, year) {
                 const date = new Date(year, month - 1, day);
                 const formattedDay = window.dateFns.format(date, 'EE', { locale: window.dateFns.locale.de });
                 return formattedDay.endsWith(".") ? formattedDay.slice(0, -1) : formattedDay; // Format as short day, e.g., "Mo" for Monday
@@ -149,6 +150,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 const rows = [];
                 for (const day in calendar) {
                     const [parent1, parent2] = calendar[day];
+
                     const dateParent1 = formatDate(day, month, year);
                     const dayParent1 = formatDayOfWeek(day, month, year);
                     
@@ -183,7 +185,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                     didDrawCell: function (data) {
                         const row = rows[data.row.index];
                         // Check if both Elternpaar fields are empty
-                        if (row[2] === "" && row[3] === "") { 
+                        if (row[2] === "" || row[3] === "") { 
                             // Highlight the row for holidays or empty slots
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
