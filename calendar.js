@@ -156,7 +156,13 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                             // Highlight the row for holidays or empty slots
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-                            doc.setTextColor(128); // Set text to light gray
+                            doc.setTextColor(128, 128, 128); 
+                            doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
+                        } else if (data.row.index % 2 === 0) {
+                            doc.setFillColor(245, 245, 245)
+                            doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                            doc.setTextColor(0, 0, 0); 
+                            doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
                         }
                     }
                 });
