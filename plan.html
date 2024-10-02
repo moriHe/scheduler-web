@@ -171,7 +171,11 @@
             // Load users and populate year select box
             window.onload = () => {
                 // Simulate loading users from an API or local storage for browser
-                    usersData = ["someone", "someone else", "a third someone"]; // Store the user data temporarily
+                    const jsonUsers = localStorage.getItem("users")
+                    if (!!jsonUsers) {
+                        usersData = JSON.parse(jsonUsers)
+                    }
+                    
                     populateYearSelect();
                     formatUsersData(usersData); // Convert to required format only once
                     updateCalendar(); // Populate the calendar for the default month/year
