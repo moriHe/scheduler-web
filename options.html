@@ -41,25 +41,6 @@
             window.location.href = 'index.html'; // Navigate back to index.html
         });
     </script>
-
-    <!--
-    <script>
-        const { ipcRenderer } = require('electron');
-
-        // Reset users JSON file
-        document.getElementById('reset-users-button').addEventListener('click', () => {
-            const confirmReset = confirm("Möchten Sie die Benutzer wirklich zurücksetzen?");
-            if (confirmReset) {
-                ipcRenderer.send('reset-users'); // Send request to reset users
-            }
-        });
-
-        // Go back to the front page
-        document.getElementById('back-button').addEventListener('click', () => {
-            ipcRenderer.send('navigate', 'index.html'); // Navigate back to index.html
-        });
-    </script>
-    -->
 </body>
 
 </html>
