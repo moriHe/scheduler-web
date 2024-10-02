@@ -554,19 +554,30 @@ function renderCalendarPreview() {
         
                 const selectedWeekdays = Array.from(document.querySelectorAll('.weekday-checkbox:checked'))
                     .map(checkbox => WEEKDAY_MAPPING[checkbox.value]);
-        
-                const options = {
-                    weekdays: selectedWeekdays, // only week days
-                    holidays,  // List of holidays
-                    teamdays // List of days the team takes a slot
-                };
-        
+    
                 try {
-                        if (!calendar || calendar.length === 0) {
+                        if (!calendar || Object.entries(calendar).length === 0) {
                             displayError("Please Update the preview")
                             return
                         }
-           
+
+                    for (const day in calendar) {
+                        const formattedDate = `${year}-${month}-${day}`;
+                        if (holidays.includes(formattedDate)) {
+                            continue;
+                        }
+
+                        const [parent1, parent2] = calendar[day];
+                        if (parent1 === "" || parent2 === "") {
+                            const date = new Date(year, month - 1, day);
+                            const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+                            if (selectedWeekdays.includes(weekday)) {
+                                return displayError(`${formattedDate}: Is missing at least one entry`)
+                            }
+                        }
+                        
+                    }
+                    
                     // Simulate a PDF download by creating a Blob and using it as a downloadable file
                     const fileBlob = generatePDF(calendar, month, year); // Assuming this returns a blob or binary data
                     
