@@ -87,50 +87,45 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             // Helper function to format the date in the "1. Okt. Dienstag" format
             function formatDate(day, month, year) {
                 const date = new Date(year, month - 1, day);
-                // { locale: window.dateFns.locale.de }
-                return window.dateFns.format(date, 'dd.MM');
+                return window.dateFns.format(date, 'dd.MM', { locale: window.dateFns.locale.de });
             }
 
             // Helper function to get day of the week as "Mo, Di, Mi" etc.
             function formatDayOfWeek(day, month, year) {
                 const date = new Date(year, month - 1, day);
-                // { locale: window.dateFns.locale.de }
-                const formattedDay = window.dateFns.format(date, 'EE');
+                const formattedDay = window.dateFns.format(date, 'EE', { locale: window.dateFns.locale.de });
                 return formattedDay.endsWith(".") ? formattedDay.slice(0, -1) : formattedDay; // Format as short day, e.g., "Mo" for Monday
             }
 
             export function generatePDF(calendar, month, year, filePath, excludedDays, holidays) {
-                console.log(window);
                 const { jsPDF } = window.jspdf; // Access jsPDF from window
-
+            
                 // Create a new jsPDF document
                 const doc = new jsPDF();
-
+            
                 // Add a title
                 doc.setFontSize(18);
                 doc.text('Elterndienstplan', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-
+            
                 doc.setFontSize(14);
-                doc.text(`${window.dateFns.format(new Date(year, month - 1), 'MMMM yyyy')}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
-
+                doc.text(`${window.dateFns.format(new Date(year, month - 1), 'MMMM yyyy', { locale: window.dateFns.locale.de })}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+            
                 // Add some space
                 let startY = 40;
-
+            
                 // Prepare the rows for the table
                 const rows = [];
                 for (const day in calendar) {
                     const [parent1, parent2] = calendar[day];
-                    const dateParent1 = `${formatDate(day, month, year)}`;
-                    const dayParent1 = `${formatDayOfWeek(day, month, year)}`;
-                    const dateParent2 = parent2 === "" ? "" : `${formatDate(day, month, year)}`;
-                    const dayParent2 = parent2 === "" ? "" : `${formatDayOfWeek(day, month, year)}`;
-
-                    rows.push([dayParent1, dateParent1, parent1, dayParent2, dateParent2, parent2]);
+                    const dateParent1 = formatDate(day, month, year);
+                    const dayParent1 = formatDayOfWeek(day, month, year);
+                    
+                    rows.push([dayParent1, dateParent1, parent1, parent2]); // Only 4 columns now
                 }
-
+            
                 // Prepare the headers
-                const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Tag', 'Datum', 'Elternpaar 2']];
-
+                const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Elternpaar 2']];
+            
                 // Use jsPDF AutoTable to generate the table
                 doc.autoTable({
                     head: headers,
@@ -142,16 +137,14 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                         halign: 'center', // Horizontally center text in the cells
                     },
                     columnStyles: {
-                        0: { cellWidth: 20 },
-                        1: { cellWidth: 30 },
-                        2: { cellWidth: 70 },
-                        3: { cellWidth: 20 },
-                        4: { cellWidth: 30 },
-                        5: { cellWidth: 70 }
+                        0: { cellWidth: 10 }, // Tag (Day)
+                        1: { cellWidth: 20 }, // Datum (Date)
+                        2: { cellWidth: 90 }, // Elternpaar 1
+                        3: { cellWidth: 90 }  // Elternpaar 2
                     },
                     didDrawCell: function (data) {
                         const row = rows[data.row.index];
-                        if (row[2] === "" && row[5] === "") {
+                        if (row[2] === "" && row[3] === "") { // Check if both Elternpaar fields are empty
                             // Highlight the row for holidays or empty slots
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
@@ -159,7 +152,8 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                         }
                     }
                 });
-
+            
                 // Save the generated PDF to a file
                 doc.save(filePath);
             }
+            

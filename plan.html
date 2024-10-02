@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.3/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/locale/de/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
     <script defer type="module" src="./calendar.js"></script>
     <style>
@@ -410,7 +411,8 @@
         
                 try {
                     const calendar = assignUsersToCalendar(month, year, formattedUsers, options); // Pass the formatted users array
-                    
+           
+                
                     // Simulate a PDF download by creating a Blob and using it as a downloadable file
                     const fileBlob = generatePDF(calendar, month, year); // Assuming this returns a blob or binary data
                     
