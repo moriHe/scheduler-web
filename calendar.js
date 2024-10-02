@@ -63,7 +63,21 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
     function getAvailableUsersForDay(day) {
         return users
             .filter(user => isUserAvailable(user, day)) // Filter users who are available for the day
-            .sort((a, b) => userPinnedCount[a.name] - userPinnedCount[b.name]); // Sort by how many times they've been pinned
+            .sort((a, b) => {
+                // Get the pinned counts for both users
+                const countA = userPinnedCount[a.name];
+                const countB = userPinnedCount[b.name];
+            
+                // Compare pinned counts
+                if (countA > countB) {
+                    return 1; // a should come after b
+                } else if (countA < countB) {
+                    return -1; // a should come before b
+                } else {
+                    return Math.random() < 0.5 ? 1 : -1; 
+                }
+            });
+            
     }
 
     // Iterate over each day of the month
