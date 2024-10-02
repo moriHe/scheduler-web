@@ -97,7 +97,8 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 return formattedDay.endsWith(".") ? formattedDay.slice(0, -1) : formattedDay; // Format as short day, e.g., "Mo" for Monday
             }
 
-            export function generatePDF(calendar, month, year, filePath, excludedDays, holidays) {
+
+            export function generatePDF(calendar, month, year) {
                 const { jsPDF } = window.jspdf; // Access jsPDF from window
             
                 // Create a new jsPDF document
@@ -126,6 +127,11 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 // Prepare the headers
                 const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Elternpaar 2']];
             
+                // Set the desired width of the table
+                const wantedTableWidth = 160; // Adjust this width based on your needs
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const margin = (pageWidth - wantedTableWidth) / 2; // Calculate the left margin
+            
                 // Use jsPDF AutoTable to generate the table
                 doc.autoTable({
                     head: headers,
@@ -139,12 +145,14 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                     columnStyles: {
                         0: { cellWidth: 10 }, // Tag (Day)
                         1: { cellWidth: 20 }, // Datum (Date)
-                        2: { cellWidth: 90 }, // Elternpaar 1
-                        3: { cellWidth: 90 }  // Elternpaar 2
+                        2: { cellWidth: 70 }, // Elternpaar 1
+                        3: { cellWidth: 60 }  // Elternpaar 2
                     },
+                    margin: { left: margin, right: margin }, // Apply margins to center the table
                     didDrawCell: function (data) {
                         const row = rows[data.row.index];
-                        if (row[2] === "" && row[3] === "") { // Check if both Elternpaar fields are empty
+                        // Check if both Elternpaar fields are empty
+                        if (row[2] === "" && row[3] === "") { 
                             // Highlight the row for holidays or empty slots
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
@@ -154,6 +162,66 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 });
             
                 // Save the generated PDF to a file
-                doc.save(filePath);
+                return doc.output('blob'); // Return the generated PDF as a Blob
             }
             
+            
+            // export function generatePDF(calendar, month, year) {
+            //     const { jsPDF } = window.jspdf; // Access jsPDF from window
+            
+            //     // Create a new jsPDF document
+            //     const doc = new jsPDF();
+            
+            //     // Add a title
+            //     doc.setFontSize(18);
+            //     doc.text('Elterndienstplan', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+            
+            //     doc.setFontSize(14);
+            //     doc.text(`${window.dateFns.format(new Date(year, month - 1), 'MMMM yyyy', { locale: window.dateFns.locale.de })}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+            
+            //     // Add some space
+            //     let startY = 40;
+            
+            //     // Prepare the rows for the table
+            //     const rows = [];
+            //     for (const day in calendar) {
+            //         const [parent1, parent2] = calendar[day];
+            //         const dateParent1 = formatDate(day, month, year);
+            //         const dayParent1 = formatDayOfWeek(day, month, year);
+                    
+            //         rows.push([dayParent1, dateParent1, parent1, parent2]); // Only 4 columns now
+            //     }
+            
+            //     // Prepare the headers
+            //     const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Elternpaar 2']];
+            
+            //     // Use jsPDF AutoTable to generate the table
+            //     doc.autoTable({
+            //         head: headers,
+            //         body: rows,
+            //         startY: startY,
+            //         theme: 'grid',
+            //         headStyles: { fillColor: [100, 100, 255] },
+            //         bodyStyles: {
+            //             halign: 'center', // Horizontally center text in the cells
+            //         },
+            //         columnStyles: {
+            //             0: { cellWidth: 10 },  // Tag (Day)
+            //             1: { cellWidth: 20 },  // Datum (Date)
+            //             2: { cellWidth: 90 },  // Elternpaar 1
+            //             3: { cellWidth: 90 }    // Elternpaar 2
+            //         },
+            //         didDrawCell: function (data) {
+            //             const row = rows[data.row.index];
+            //             if (row[2] === "" && row[3] === "") { // Check if both Elternpaar fields are empty
+            //                 // Highlight the row for holidays or empty slots
+            //                 doc.setFillColor(255, 204, 204); // Light red color
+            //                 doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+            //                 doc.setTextColor(128); // Set text to light gray
+            //             }
+            //         }
+            //     });
+            
+            //     // Return the generated PDF as a Blob
+            //     return doc.output('blob'); // This returns a blob of the PDF
+            // }
