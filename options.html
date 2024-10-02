@@ -12,13 +12,29 @@
     <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-lg text-center">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Optionen</h1>
         
+        <!-- Group for file upload -->
+        <div class="border border-gray-300 rounded-lg p-4 mb-6">
+            <input 
+                type="file" 
+                id="file-input" 
+                accept=".json"
+                class="w-full border border-gray-300 rounded-lg p-2 mb-4" <!-- Margin bottom to separate from button -->
+            
+            <button 
+                id="upload-users-button" 
+                class="w-full bg-blue-400 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+            >
+                Benutzer hochladen
+            </button>
+        </div>
+
         <button 
             id="reset-users-button" 
             class="w-full bg-red-400 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 transition duration-200"
         >
             Benutzer zurücksetzen
         </button>
-        
+
         <button 
             id="back-button" 
             class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200"
@@ -39,6 +55,30 @@
         // Go back to the front page
         document.getElementById('back-button').addEventListener('click', () => {
             window.location.href = 'index.html'; // Navigate back to index.html
+        });
+
+        // Upload users from a JSON file
+        document.getElementById('upload-users-button').addEventListener('click', () => {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Bitte wählen Sie eine JSON-Datei aus.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const users = JSON.parse(event.target.result);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    alert("Benutzer wurden erfolgreich hochgeladen.");
+                } catch (error) {
+                    alert("Fehler beim Verarbeiten der Datei. Stellen Sie sicher, dass es sich um eine gültige JSON-Datei handelt.");
+                }
+            };
+
+            reader.readAsText(file);
         });
     </script>
 </body>
