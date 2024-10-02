@@ -74,7 +74,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 } else if (countA < countB) {
                     return -1; // a should come before b
                 } else {
-                    return Math.random() < 0.5 ? 1 : -1; 
+                    return 0;
                 }
             });
             
