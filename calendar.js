@@ -17,14 +17,14 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]]; // Swap
     }
 }
+
 // Function to assign users to calendar
 export function assignUsersToCalendar(month, year, users, options = {}) {
     const daysInMonth = new Date(year, month, 0).getDate(); // Get the number of days in the month
     const calendar = {}; // To store the user assignments per day
     const userPinnedCount = {}; // To track how many days each user is pinned
-    
-    shuffleArray(users);
 
+    shuffleArray(users); // Randomize users
 
     // Set default options for weekdays and holidays
     const { weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], holidays = [], teamdays = [] } = options;
@@ -48,7 +48,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
 
     function isTeamDay(date) {
         const formattedDate = `${year}-${month}-${date}`;
-        return teamdays.includes(formattedDate) 
+        return teamdays.includes(formattedDate);
     }
 
     // Helper function to check if a day is within the valid weekdays
@@ -78,7 +78,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
         if (isTeamDay(day)) {
             // If it's a team day, assign one user and mark the second slot as "Team"
             if (availableUsers.length < 1) {
-                displayError(`No available users for team day ${day}`)
+                displayError(`No available users for team day ${day}`);
                 throw new Error(`No available users for team day ${day}`);
             }
 
@@ -89,12 +89,18 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
         } else {
             // If fewer than 2 users are available for the day, we cannot assign it properly
             if (availableUsers.length < 2) {
-                displayError(`Not enough users available for day ${day}`)
+                displayError(`Not enough users available for day ${day}`);
                 throw new Error(`Not enough users available for day ${day}`);
             }
 
             // Pick the top two least pinned users for the day
             const selectedUsers = availableUsers.slice(0, 2);
+
+            // Ensure that the two selected users are not the same
+            if (selectedUsers[0].name === selectedUsers[1].name) {
+                displayError(`Duplicate users in data set`);
+                throw new Error(`Duplicate users in data set`);
+            }
 
             // Assign these users to the calendar for the current day
             calendar[day] = selectedUsers.map(user => user.name);
@@ -108,6 +114,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
 
     return calendar;
 }
+
             // Helper function to format the date in the "1. Okt. Dienstag" format
             function formatDate(day, month, year) {
                 const date = new Date(year, month - 1, day);
