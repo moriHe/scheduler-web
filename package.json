@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,8 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "date-fns": "^4.1.0",
+    "express": "^4.21.1",
     "jspdf": "^2.5.2",
     "pdfkit": "^0.15.0",
     "pdfkit-table": "^0.1.99"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
