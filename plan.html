@@ -312,6 +312,9 @@ function renderCalendarPreview() {
             parent1Cell.textContent = parent1;
             parent1Cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Set background color to light red with opacity
             parent1Cell.style.color = 'white'; // Optional: Change text color for better visibility
+        } else if (parent1 === "NOT_ASSIGNED") {
+            parent1Cell.textContent = parent1;
+            parent1Cell.style.backgroundColor = 'rgba(255, 255, 0, 0.5)'; // Set background color to light red with opacity
         } else {
             parent1Cell.textContent = parent1;
         }
@@ -321,6 +324,9 @@ function renderCalendarPreview() {
             parent2Cell.textContent = parent2;
             parent2Cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Set background color to light red with opacity
             parent2Cell.style.color = 'white'; // Optional: Change text color for better visibility
+        }  else if (parent2 === "NOT_ASSIGNED") {
+            parent2Cell.textContent = parent1;
+            parent2Cell.style.backgroundColor = 'rgba(255, 255, 0, 0.5)'; // Set background color to light red with opacity
         } else {
             parent2Cell.textContent = parent2;
         }
@@ -572,10 +578,10 @@ function renderCalendarPreview() {
                             const date = new Date(year, month - 1, day);
                             const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
                             if (selectedWeekdays.includes(weekday)) {
+                                // TODO: CHECK DISPLAYERROR
                                 return displayError(`${formattedDate}: Is missing at least one entry`)
                             }
-                        }
-                        
+                        }        
                     }
                     
                     // Simulate a PDF download by creating a Blob and using it as a downloadable file

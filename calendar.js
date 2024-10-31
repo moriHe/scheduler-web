@@ -91,28 +91,21 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
         const availableUsers = getAvailableUsersForDay(day);
 
         if (isTeamDay(day)) {
-            // If it's a team day, assign one user and mark the second slot as "Team"
-            if (availableUsers.length < 1) {
-                displayError(`No available users for team day ${day}`);
-                throw new Error(`No available users for team day ${day}`);
-            }
-
-            const selectedUser = availableUsers[0]; // Get the first available user
+            const hasEnoughUsers = availableUsers.length >= 1
+           
+            const selectedUser = hasEnoughUsers ? availableUsers[0] :  {name: "NOT_ASSIGNED"}// Get the first available user
             calendar[day] = [selectedUser.name, 'Team']; // Assign user and "Team" for the second slot
-            userPinnedCount[selectedUser.name]++; // Increment the pinned count for the selected user
+            hasEnoughUsers && userPinnedCount[selectedUser.name]++; // Increment the pinned count for the selected user
 
         } else {
-            // If fewer than 2 users are available for the day, we cannot assign it properly
-            if (availableUsers.length < 2) {
-                displayError(`Not enough users available for day ${day}`);
-                throw new Error(`Not enough users available for day ${day}`);
-            }
+            const hasEnoughUsers = availableUsers.length >= 2
 
             // Pick the top two least pinned users for the day
-            const selectedUsers = availableUsers.slice(0, 2);
+            const selectedUsers = hasEnoughUsers ? availableUsers.slice(0, 2) : [{name: "NOT_ASSIGNED"}, {name: "NOT_ASSIGNED"}]
 
             // Ensure that the two selected users are not the same
-            if (selectedUsers[0].name === selectedUsers[1].name) {
+            if (hasEnoughUsers && selectedUsers[0].name === selectedUsers[1].name) {
+                // TODO: CHECK DISPLAYERROR
                 displayError(`Duplicate users in data set`);
                 throw new Error(`Duplicate users in data set`);
             }
@@ -121,7 +114,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             calendar[day] = selectedUsers.map(user => user.name);
 
             // Increment the pinned count for each selected user
-            selectedUsers.forEach(user => {
+            hasEnoughUsers && selectedUsers.forEach(user => {
                 userPinnedCount[user.name]++;
             });
         }
