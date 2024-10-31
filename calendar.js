@@ -84,7 +84,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
     for (let day = 1; day <= daysInMonth; day++) {
         // Skip the day if it's a holiday or not a valid weekday
         if (!isValidWeekday(day) || isHoliday(day)) {
-            calendar[day] = ["", ""]
+            calendar[day] = ["", "", {isValidDay: false, isAssigned: false}]
             continue;
         }
 
@@ -93,15 +93,15 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
         if (isTeamDay(day)) {
             const hasEnoughUsers = availableUsers.length >= 1
            
-            const selectedUser = hasEnoughUsers ? availableUsers[0] :  {name: "NOT_ASSIGNED"}// Get the first available user
-            calendar[day] = [selectedUser.name, 'Team']; // Assign user and "Team" for the second slot
+            const selectedUser = hasEnoughUsers ? availableUsers[0] :  {name: ""}// Get the first available user
+            calendar[day] = [selectedUser.name, 'Team', {isValidDay: true, isAssigned: hasEnoughUsers}]; // Assign user and "Team" for the second slot
             hasEnoughUsers && userPinnedCount[selectedUser.name]++; // Increment the pinned count for the selected user
 
         } else {
             const hasEnoughUsers = availableUsers.length >= 2
 
             // Pick the top two least pinned users for the day
-            const selectedUsers = hasEnoughUsers ? availableUsers.slice(0, 2) : [{name: "NOT_ASSIGNED"}, {name: "NOT_ASSIGNED"}]
+            const selectedUsers = hasEnoughUsers ? availableUsers.slice(0, 2) : [{name: ""}, {name: ""}]
 
             // Ensure that the two selected users are not the same
             if (hasEnoughUsers && selectedUsers[0].name === selectedUsers[1].name) {
@@ -111,7 +111,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             }
 
             // Assign these users to the calendar for the current day
-            calendar[day] = selectedUsers.map(user => user.name);
+            calendar[day] = [...selectedUsers.map(user => user.name), {isValidDay: true, isAssigned: hasEnoughUsers}];
 
             // Increment the pinned count for each selected user
             hasEnoughUsers && selectedUsers.forEach(user => {
