@@ -142,7 +142,7 @@ document.getElementById('back-button').addEventListener('click', () => {
 
 // Save the user
 document.getElementById('save-user-button').addEventListener('click', () => {
-    const userName = document.getElementById('user-name').value;
+    const userName = document.getElementById('user-name').value.trim(); // Trim whitespace
     if (userName) {
         // Load current users from localStorage
         const usersJson = localStorage.getItem('users');
@@ -156,16 +156,22 @@ document.getElementById('save-user-button').addEventListener('click', () => {
             }
         }
 
-        // Add the new user to the list
-        users.push(userName);
-        
-        // Save the updated users back to localStorage
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        document.getElementById('user-name').value = ''; // Clear the input
-        loadUsers(); // Reload the users after saving
+        // Check if the user already exists
+        if (users.includes(userName)) {
+            alert('This user already exists. Please enter a different name.');
+        } else {
+            // Add the new user to the list
+            users.push(userName);
+            
+            // Save the updated users back to localStorage
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            document.getElementById('user-name').value = ''; // Clear the input
+            loadUsers(); // Reload the users after saving
+        }
     }
 });
+
 
 </script>
 </body>
