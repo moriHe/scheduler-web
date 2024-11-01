@@ -312,7 +312,7 @@ function renderCalendarPreview() {
     const summaryDiv = document.getElementById('parent-summary');
         summaryDiv.innerHTML = ''; // Clear previous list
 
-        Object.entries(parentCount).forEach(([parent, count]) => {
+        Object.entries(parentCount).sort(([a], [b]) => a.localeCompare(b)).forEach(([parent, count]) => {
             const summaryItem = document.createElement('div');
             summaryItem.classList.add('flex', 'justify-between', 'py-1', 'cursor-pointer');
             summaryItem.innerHTML = `
