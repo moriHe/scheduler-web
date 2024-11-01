@@ -340,7 +340,7 @@ function renderCalendarPreview() {
         const noSelectionUser1 = document.createElement("option");
         noSelectionUser1.value = "NOT SET"
         noSelectionUser1.textContent = "NOT SET"
-        if (!meta.isAssigned) noSelectionUser1.selected = true
+        if (parent1 === "NOT SET") noSelectionUser1.selected = true
         user1Select.appendChild(noSelectionUser1)
 
         usersData.forEach(user => {
@@ -367,7 +367,7 @@ function renderCalendarPreview() {
         const noSelectionUser2 = document.createElement("option");
         noSelectionUser2.value = "NOT SET"
         noSelectionUser2.textContent = "NOT SET"
-        if (!meta.isAssigned) noSelectionUser2.selected = true
+        if (parent2 === "NOT SET") noSelectionUser2.selected = true
         user2Select.appendChild(noSelectionUser2)
 
         usersData.forEach(user => {
