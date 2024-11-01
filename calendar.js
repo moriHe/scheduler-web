@@ -199,12 +199,12 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                             
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F'); // Extend cell width
-                            doc.setTextColor(128, 128, 128); // Gray text color
+                            doc.setTextColor(50, 50, 50);                            
                             doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
                         } else if (!row.meta.isValidDay) {
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-                            doc.setTextColor(128, 128, 128); 
+                            doc.setTextColor(50, 50, 50);                            
                             doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
                         } else if (row.meta.isValidDay && data.row.index % 2 !== 0) {
                             doc.setFillColor(245, 245, 245)
