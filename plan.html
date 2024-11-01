@@ -644,9 +644,16 @@ function renderCalendarPreview() {
                             // Toggle day subject status
                             const dateKey = `${year}-${parseInt(month) + 1}-${day}`;
                             const isCurrentlySubject = subjectArray.includes(dateKey);
+
                             if (isCurrentlySubject) {
-                                // Remove from subject array
-                                subjectArray = subjectArray.filter(date => date !== dateKey);
+                                 // Find the index of the date in the original array
+                                const index = subjectArray.indexOf(dateKey);
+                                
+                                // Remove the date if it exists in the array
+                                if (index > -1) {
+                                    subjectArray.splice(index, 1); // Remove item directly from the original array
+                                }
+                                
                                 dayButton.classList.remove('not-available'); // Change button color back
                             } else {
                                 // Add to subject array
