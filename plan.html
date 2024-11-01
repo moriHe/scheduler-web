@@ -316,6 +316,7 @@ function renderCalendarPreview() {
         flexContainer.classList.add("bg-red-200")
         const invalidDayInput = document.createElement("input");
         invalidDayInput.type = "text"; // Make it an input field
+        invalidDayInput.value = calendar[day][2].invalidText || ""
         invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
         invalidDayInput.setAttribute("tabindex", "0"); // Make it focusable
 
@@ -389,71 +390,6 @@ function renderCalendarPreview() {
     previewBody.appendChild(flexContainer)
 
     }
-
-
-
-/*
-        // Create a new row
-        const row = document.createElement('tr');
-
-        // Create table cells with conditional styling
-        const parent1Cell = document.createElement('td');
-        const parent2Cell = document.createElement('td');
-
-        // Check if parent1 is empty and apply styles
-        if (parent1 === "") {
-            parent1Cell.textContent = parent1;
-            parent1Cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Set background color to light red with opacity
-            parent1Cell.style.color = 'white'; // Optional: Change text color for better visibility
-        } else if (parent1 === "NOT_ASSIGNED") {
-            parent1Cell.textContent = parent1;
-            parent1Cell.style.backgroundColor = 'rgba(255, 255, 0, 0.5)'; // Set background color to light red with opacity
-        } else {
-            parent1Cell.textContent = parent1;
-        }
-        
-        // Check if parent2 is empty and apply styles
-        if (parent2 === "") {
-            parent2Cell.textContent = parent2;
-            parent2Cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Set background color to light red with opacity
-            parent2Cell.style.color = 'white'; // Optional: Change text color for better visibility
-        }  else if (parent2 === "NOT_ASSIGNED") {
-            parent2Cell.textContent = parent1;
-            parent2Cell.style.backgroundColor = 'rgba(255, 255, 0, 0.5)'; // Set background color to light red with opacity
-        } else {
-            parent2Cell.textContent = parent2;
-        }
-
-        // Set cells as editable
-        parent1Cell.contentEditable = true;
-        parent2Cell.contentEditable = true;
-
-        // Add event listeners to update the calendar when the cell is edited
-        parent1Cell.addEventListener('blur', () => {
-            const newValue = parent1Cell.textContent.trim();
-            entry.parent1 = newValue; // Update the parent1 in the entry
-            calendar[day][0] = newValue; // Overwrite the calendar entry
-        });
-
-        parent2Cell.addEventListener('blur', () => {
-            const newValue = parent2Cell.textContent.trim();
-            entry.parent2 = newValue; // Update the parent2 in the entry
-            calendar[day][1] = newValue; // Overwrite the calendar entry
-        });
-
-        // Create the first two columns
-        row.innerHTML = `
-            <td>${rowDay}</td>
-            <td>${rowDate}</td>
-        `;
-        
-        // Append cells to the row
-        row.appendChild(parent1Cell);
-        row.appendChild(parent2Cell);
-
-        previewBody.appendChild(row);
-    }
-        */
     }
     renderCalendar()
 
@@ -663,24 +599,7 @@ function renderCalendarPreview() {
                             displayError("Please Update the preview")
                             return
                         }
-
-                    for (const day in calendar) {
-                        const formattedDate = `${year}-${month}-${day}`;
-                        if (holidays.includes(formattedDate)) {
-                            continue;
-                        }
-
-                        const [parent1, parent2] = calendar[day];
-                        if (parent1 === "" || parent2 === "") {
-                            const date = new Date(year, month - 1, day);
-                            const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-                            if (selectedWeekdays.includes(weekday)) {
-                                // TODO: CHECK DISPLAYERROR
-                                return displayError(`${formattedDate}: Is missing at least one entry`)
-                            }
-                        }        
-                    }
-                    
+    
                     // Simulate a PDF download by creating a Blob and using it as a downloadable file
                     const fileBlob = generatePDF(calendar, month, year); // Assuming this returns a blob or binary data
                     

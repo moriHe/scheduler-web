@@ -156,12 +156,13 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 // Prepare the rows for the table
                 const rows = [];
                 for (const day in calendar) {
-                    const [parent1, parent2] = calendar[day];
+                    const [parent1, parent2, meta] = calendar[day];
 
                     const dateParent1 = formatDate(day, month, year);
                     const dayParent1 = formatDayOfWeek(day, month, year);
-                    
-                    rows.push([dayParent1, dateParent1, parent1, parent2]); // Only 4 columns now
+                    const parent1Content = meta.isValidDay ? parent1 : meta.invalidText || ""
+
+                    rows.push({data: [dayParent1, dateParent1, parent1Content, parent2], meta}); // Only 4 columns now
                 }
             
                 // Prepare the headers
@@ -175,7 +176,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 // Use jsPDF AutoTable to generate the table
                 doc.autoTable({
                     head: headers,
-                    body: rows,
+                    body: rows.map(row => row.data),
                     startY: startY,
                     theme: 'grid',
                     headStyles: { fillColor: [100, 100, 255] },
@@ -191,19 +192,27 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                     margin: { left: margin, right: margin }, // Apply margins to center the table
                     didDrawCell: function (data) {
                         const row = rows[data.row.index];
-                        // Check if both Elternpaar fields are empty
-                        if (row[2] === "" || row[3] === "") { 
-                            // Highlight the row for holidays or empty slots
+
+                        if (!row.meta.isValidDay && data.column.index === 2) {
+                            // If it's an invalid day, merge cells 3 and 4
+                            const mergedWidth = data.cell.width + data.table.columns[3].width;
+                            
+                            doc.setFillColor(255, 204, 204); // Light red color
+                            doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F'); // Extend cell width
+                            doc.setTextColor(128, 128, 128); // Gray text color
+                            doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
+                        } else if (!row.meta.isValidDay) {
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
                             doc.setTextColor(128, 128, 128); 
                             doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-                        } else if (data.row.index % 2 !== 0) {
+                        } else if (row.meta.isValidDay && data.row.index % 2 !== 0) {
                             doc.setFillColor(245, 245, 245)
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
                             doc.setTextColor(0, 0, 0); 
                             doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
                         }
+                       
                     }
                 });
             
