@@ -601,7 +601,7 @@ function renderCalendarPreview() {
                         }
     
                     // Simulate a PDF download by creating a Blob and using it as a downloadable file
-                    const fileBlob = generatePDF(calendar, month, year); // Assuming this returns a blob or binary data
+                    const fileBlob = generatePDF(calendar, month, year, usersData); // Assuming this returns a blob or binary data
                     
                     const downloadLink = document.createElement('a');
                     downloadLink.href = URL.createObjectURL(fileBlob);

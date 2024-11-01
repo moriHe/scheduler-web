@@ -140,7 +140,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             }
 
 
-            export function generatePDF(calendar, month, year) {
+            export function generatePDF(calendar, month, year, usersData = []) {
                 const { jsPDF } = window.jspdf; // Access jsPDF from window
             
                 // Create a new jsPDF document
@@ -155,19 +155,31 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             
                 // Add some space
                 let startY = 40;
-            
+                let continueProcess = true
+                let actionTaken = false
+
                 // Prepare the rows for the table
                 const rows = [];
                 for (const day in calendar) {
                     const [parent1, parent2, meta] = calendar[day];
 
+                    if (!continueProcess) break
+                    const areUsersInDataSet = usersData.find((user) => user === parent1) && usersData.find((user) => user === parent2)
+                    if (!actionTaken && meta.isValidDay && !areUsersInDataSet) {
+                        const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}. Trotzdem fortfahren?`)
+                        continueProcess = confirmedChoice
+                        actionTaken = true
+                    }
+                    
                     const dateParent1 = formatDate(day, month, year);
                     const dayParent1 = formatDayOfWeek(day, month, year);
                     const parent1Content = meta.isValidDay ? parent1 : meta.invalidText || ""
 
                     rows.push({data: [dayParent1, dateParent1, parent1Content, parent2], meta}); // Only 4 columns now
                 }
-            
+
+                if (!continueProcess) return
+
                 // Prepare the headers
                 const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Elternpaar 2']];
             
