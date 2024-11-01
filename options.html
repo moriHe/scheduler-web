@@ -69,13 +69,32 @@
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                try {
-                    const users = JSON.parse(event.target.result);
-                    localStorage.setItem('users', JSON.stringify(users));
-                    alert("Benutzer wurden erfolgreich hochgeladen.");
-                } catch (error) {
-                    alert("Fehler beim Verarbeiten der Datei. Stellen Sie sicher, dass es sich um eine gültige JSON-Datei handelt.");
+            try {
+                let users = JSON.parse(event.target.result);
+                
+                if (!Array.isArray(users)) {
+                    throw new Error("Uploaded data is not an array.");
                 }
+
+                users = users
+                    .map(user => user.trim())
+                    .filter(user => user.length > 0);
+                
+                // Check for duplicates
+                const uniqueUsers = new Set(users);
+                if (uniqueUsers.size !== users.length) {
+                    alert("Es gibt doppelte Benutzernamen in der Datei. Bitte entfernen Sie die Duplikate und versuchen Sie es erneut.");
+                    return; // Stop execution if duplicates are found
+                }
+
+                // If no duplicates, save the users to localStorage
+                localStorage.setItem('users', JSON.stringify(users));
+                alert("Benutzer wurden erfolgreich hochgeladen.");
+                
+            } catch (error) {
+                alert("Fehler beim Verarbeiten der Datei. Stellen Sie sicher, dass es sich um eine gültige JSON-Datei handelt.");
+            }
+
             };
 
             reader.readAsText(file);
