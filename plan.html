@@ -352,7 +352,19 @@ function renderCalendarPreview() {
         });
 
         user1Select.addEventListener("change", () => {
-            calendar[day][0] = user1Select.value;
+
+            const isSet = user1Select.value !== "NOT SET"
+            const naDateArray = formattedUsers.find((fUser) => {
+                return fUser.name === user1Select.value
+            })?.not_available || []
+            console.log(isSet, naDateArray.includes(`${year}-${month}-${day}`), `${year}-${month}-${day}`)
+            let continueProcess = true
+            if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
+                continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`)
+            }
+            if (continueProcess) {
+                calendar[day][0] = user1Select.value;
+            }
             renderCalendar()
         });
 
