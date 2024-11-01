@@ -84,7 +84,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
     for (let day = 1; day <= daysInMonth; day++) {
         // Skip the day if it's a holiday or not a valid weekday
         if (!isValidWeekday(day) || isHoliday(day)) {
-            calendar[day] = ["", ""]
+            calendar[day] = ["", "", {isValidDay: false, isAssigned: false}]
             continue;
         }
 
@@ -93,25 +93,26 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
         if (isTeamDay(day)) {
             const hasEnoughUsers = availableUsers.length >= 1
            
-            const selectedUser = hasEnoughUsers ? availableUsers[0] :  {name: "NOT_ASSIGNED"}// Get the first available user
-            calendar[day] = [selectedUser.name, 'Team']; // Assign user and "Team" for the second slot
+            const selectedUser = hasEnoughUsers ? availableUsers[0] :  {name: "NOT SET"}// Get the first available user
+            calendar[day] = [selectedUser.name, 'Team', {isValidDay: true, isAssigned: hasEnoughUsers}]; // Assign user and "Team" for the second slot
             hasEnoughUsers && userPinnedCount[selectedUser.name]++; // Increment the pinned count for the selected user
 
         } else {
             const hasEnoughUsers = availableUsers.length >= 2
+            const hasOneUser = availableUsers.length === 1
 
-            // Pick the top two least pinned users for the day
-            const selectedUsers = hasEnoughUsers ? availableUsers.slice(0, 2) : [{name: "NOT_ASSIGNED"}, {name: "NOT_ASSIGNED"}]
+            let selectedUsers
+            if (hasEnoughUsers) selectedUsers = availableUsers.slice(0, 2)
+            else if (hasOneUser) selectedUsers = [availableUsers[0], {name: "NOT SET"}]
+            else selectedUsers = [{name: "NOT SET"}, {name: "NOT SET"}]
 
-            // Ensure that the two selected users are not the same
             if (hasEnoughUsers && selectedUsers[0].name === selectedUsers[1].name) {
-                // TODO: CHECK DISPLAYERROR
-                displayError(`Duplicate users in data set`);
+                displayError(`Some dataset duplication that should not happen. Please reach out to the code maintainer.`);
                 throw new Error(`Duplicate users in data set`);
             }
 
             // Assign these users to the calendar for the current day
-            calendar[day] = selectedUsers.map(user => user.name);
+            calendar[day] = [...selectedUsers.map(user => user.name), {isValidDay: true, isAssigned: hasEnoughUsers}];
 
             // Increment the pinned count for each selected user
             hasEnoughUsers && selectedUsers.forEach(user => {
@@ -137,7 +138,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             }
 
 
-            export function generatePDF(calendar, month, year) {
+            export function generatePDF(calendar, month, year, usersData = []) {
                 const { jsPDF } = window.jspdf; // Access jsPDF from window
             
                 // Create a new jsPDF document
@@ -152,18 +153,33 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             
                 // Add some space
                 let startY = 40;
-            
+                let continueProcess = true
+                let actionTaken = false
+
                 // Prepare the rows for the table
                 const rows = [];
                 for (const day in calendar) {
-                    const [parent1, parent2] = calendar[day];
+                    const [parent1, parent2, meta] = calendar[day];
 
+                    if (!continueProcess) break
+                    const isUser1InDataSet = usersData.find((user) => user === parent1)
+                    const isUser2InDataSet = usersData.find((user) => user === parent2) || parent2 == "Team"
+
+                    if (!actionTaken && meta.isValidDay && !isUser1InDataSet && !isUser2InDataSet) {
+                        const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}. Trotzdem fortfahren?`)
+                        continueProcess = confirmedChoice
+                        actionTaken = true
+                    }
+                    
                     const dateParent1 = formatDate(day, month, year);
                     const dayParent1 = formatDayOfWeek(day, month, year);
-                    
-                    rows.push([dayParent1, dateParent1, parent1, parent2]); // Only 4 columns now
+                    const parent1Content = meta.isValidDay ? parent1 : meta.invalidText || ""
+
+                    rows.push({data: [dayParent1, dateParent1, parent1Content, parent2], meta}); // Only 4 columns now
                 }
-            
+
+                if (!continueProcess) return
+
                 // Prepare the headers
                 const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Elternpaar 2']];
             
@@ -175,7 +191,7 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                 // Use jsPDF AutoTable to generate the table
                 doc.autoTable({
                     head: headers,
-                    body: rows,
+                    body: rows.map(row => row.data),
                     startY: startY,
                     theme: 'grid',
                     headStyles: { fillColor: [100, 100, 255] },
@@ -191,19 +207,27 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                     margin: { left: margin, right: margin }, // Apply margins to center the table
                     didDrawCell: function (data) {
                         const row = rows[data.row.index];
-                        // Check if both Elternpaar fields are empty
-                        if (row[2] === "" || row[3] === "") { 
-                            // Highlight the row for holidays or empty slots
+
+                        if (!row.meta.isValidDay && data.column.index === 2) {
+                            // If it's an invalid day, merge cells 3 and 4
+                            const mergedWidth = data.cell.width + data.table.columns[3].width;
+                            
+                            doc.setFillColor(255, 204, 204); // Light red color
+                            doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F'); // Extend cell width
+                            doc.setTextColor(50, 50, 50);                            
+                            doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
+                        } else if (!row.meta.isValidDay) {
                             doc.setFillColor(255, 204, 204); // Light red color
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-                            doc.setTextColor(128, 128, 128); 
+                            doc.setTextColor(50, 50, 50);                            
                             doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-                        } else if (data.row.index % 2 !== 0) {
+                        } else if (row.meta.isValidDay && data.row.index % 2 !== 0) {
                             doc.setFillColor(245, 245, 245)
                             doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
                             doc.setTextColor(0, 0, 0); 
                             doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
                         }
+                       
                     }
                 });
             
