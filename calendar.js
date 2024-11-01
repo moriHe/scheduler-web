@@ -164,8 +164,10 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
                     const [parent1, parent2, meta] = calendar[day];
 
                     if (!continueProcess) break
-                    const areUsersInDataSet = usersData.find((user) => user === parent1) && usersData.find((user) => user === parent2)
-                    if (!actionTaken && meta.isValidDay && !areUsersInDataSet) {
+                    const isUser1InDataSet = usersData.find((user) => user === parent1)
+                    const isUser2InDataSet = usersData.find((user) => user === parent2) || parent2 == "Team"
+                    console.log(parent1, parent2, usersData.find((user) => user === parent1), usersData.find((user) => user === parent2))
+                    if (!actionTaken && meta.isValidDay && !isUser1InDataSet && !isUser2InDataSet) {
                         const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}. Trotzdem fortfahren?`)
                         continueProcess = confirmedChoice
                         actionTaken = true

@@ -377,7 +377,7 @@ function renderCalendarPreview() {
     } else {
         const user1Select = document.createElement("select")
         user1Select.classList.add("flex-1", "text-left", "cursor-pointer")
-
+        
         if (!usersData.find((user) => user === parent1)) {
             user1Select.classList.add("bg-yellow-200")
         }
@@ -417,7 +417,7 @@ function renderCalendarPreview() {
         const user2Select = document.createElement("select")
         user2Select.classList.add("flex-1", "text-left", "cursor-pointer")
 
-        if (!usersData.find((user) => user === parent2)) {
+        if (parent2 !== "Team" && !usersData.find((user) => user === parent2)) {
             user2Select.classList.add("bg-yellow-200")
         }
 
@@ -426,7 +426,7 @@ function renderCalendarPreview() {
         noSelectionUser2.textContent = "NOT SET"
         if (parent2 === "NOT SET") noSelectionUser2.selected = true
         user2Select.appendChild(noSelectionUser2)
-
+        
         usersData.forEach(user => {
             const option = document.createElement("option");
             option.value = user;
@@ -435,10 +435,26 @@ function renderCalendarPreview() {
             user2Select.appendChild(option);
         });
 
-        user2Select.addEventListener("change", () => {
+        if (parent2 === "Team") {
+            const teamOption = document.createElement("option");
+            teamOption.value = "Team";
+            teamOption.textContent = "Team";
+            teamOption.selected = true;
+            user2Select.appendChild(teamOption);
+
+            user2Select.value = "Team";  // Set "Team" as the value
+            user2Select.disabled = true; // Disable the select element
+
+            // Optional: add a class to style it differently when disabled
+            user2Select.classList.add("cursor-not-allowed");
+        }
+
+        if (!user2Select.disabled) {
+            user2Select.addEventListener("change", () => {
             calendar[day][1] = user2Select.value;
             renderCalendar()
         });
+        }
 
         flexContainer.appendChild(user1Select);
         flexContainer.appendChild(user2Select);
