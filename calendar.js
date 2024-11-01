@@ -106,10 +106,8 @@ export function assignUsersToCalendar(month, year, users, options = {}) {
             else if (hasOneUser) selectedUsers = [availableUsers[0], {name: "NOT SET"}]
             else selectedUsers = [{name: "NOT SET"}, {name: "NOT SET"}]
 
-            // Ensure that the two selected users are not the same
             if (hasEnoughUsers && selectedUsers[0].name === selectedUsers[1].name) {
-                // TODO: CHECK DISPLAYERROR
-                displayError(`Duplicate users in data set`);
+                displayError(`Some dataset duplication that should not happen. Please reach out to the code maintainer.`);
                 throw new Error(`Duplicate users in data set`);
             }
 
