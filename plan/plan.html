@@ -17,7 +17,7 @@
       type="module"
       src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"
     ></script>
-    <script defer type="module" src="./calendar.js"></script>
+    <script defer type="module" src="../calendar.js"></script>
     <style>
       /* Calendar styling */
 
@@ -274,7 +274,7 @@
         formatDate,
         formatDayOfWeek,
         displayError,
-      } from "./calendar.js";
+      } from "../calendar.js";
 
       let usersData = []; // To store user data temporarily
       let formattedUsers = []; // To store the formatted users data
@@ -303,7 +303,7 @@
 
         // Go back to the front page
         document.getElementById("back-button").addEventListener("click", () => {
-          window.location.href = "index.html"; // Navigate back to index.html
+          window.location.href = "../index.html"; // Navigate back to index.html
         });
 
         // Add event listeners for month and year change
