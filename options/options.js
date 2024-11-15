@@ -7,11 +7,6 @@ export function resetUsers() {
     alert("Benutzer wurden zurückgesetzt."); // Optional: Alert to confirm reset
   }
 }
-// Reset users in localStorage
-document
-  .getElementById("reset-users-button")
-  .addEventListener("click", resetUsers);
-
 // Go back to the front page
 document.getElementById("back-button").addEventListener("click", () => {
   window.location.href = "../index.html"; // Navigate back to index.html
