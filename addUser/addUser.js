@@ -1,5 +1,5 @@
 // Function to load users and display them as tiles
-function loadUsers() {
+export function loadUsers() {
   const userList = document.getElementById("user-list");
   userList.innerHTML = ""; // Clear the list first
 
@@ -69,47 +69,36 @@ function deleteUser(userName) {
   loadUsers(); // Reload the users after deleting
 }
 
-// Call loadUsers when the page is loaded
-window.onload = loadUsers;
+export function saveUser() {
+  const userName = document.getElementById("user-name").value.trim(); // Trim whitespace
+  if (userName) {
+    // Load current users from localStorage
+    const usersJson = localStorage.getItem("users");
+    let users = [];
 
-// Go back to the front page
-document.getElementById("back-button").addEventListener("click", () => {
-  window.location.href = "../index.html"; // Navigate back to index.html
-});
-
-// Save the user
-document
-  .getElementById("save-user-button")
-  .addEventListener("click", () => {
-    const userName = document.getElementById("user-name").value.trim(); // Trim whitespace
-    if (userName) {
-      // Load current users from localStorage
-      const usersJson = localStorage.getItem("users");
-      let users = [];
-
-      if (usersJson) {
-        try {
-          users = JSON.parse(usersJson); // Parse the JSON string
-        } catch (error) {
-          console.error(
-            "Error parsing JSON from localStorage during saving:",
-            error,
-          );
-        }
-      }
-
-      // Check if the user already exists
-      if (users.includes(userName)) {
-        alert("This user already exists. Please enter a different name.");
-      } else {
-        // Add the new user to the list
-        users.push(userName);
-
-        // Save the updated users back to localStorage
-        localStorage.setItem("users", JSON.stringify(users));
-
-        document.getElementById("user-name").value = ""; // Clear the input
-        loadUsers(); // Reload the users after saving
+    if (usersJson) {
+      try {
+        users = JSON.parse(usersJson); // Parse the JSON string
+      } catch (error) {
+        console.error(
+          "Error parsing JSON from localStorage during saving:",
+          error,
+        );
       }
     }
-  });
+
+    // Check if the user already exists
+    if (users.includes(userName)) {
+      alert("This user already exists. Please enter a different name.");
+    } else {
+      // Add the new user to the list
+      users.push(userName);
+
+      // Save the updated users back to localStorage
+      localStorage.setItem("users", JSON.stringify(users));
+
+      document.getElementById("user-name").value = ""; // Clear the input
+      loadUsers(); // Reload the users after saving
+    }
+  }
+}
