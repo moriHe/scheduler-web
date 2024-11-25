@@ -17,6 +17,7 @@ const WEEKDAY_MAPPING = {
   Fr: "Friday",
 };
 let holidays = [];
+let kitaOpenNoEd = [];
 let teamdays = [];
 
 // Load users and populate year select box
@@ -110,6 +111,7 @@ function renderCalendarPreview() {
   const options = {
     weekdays: selectedWeekdays, // only week days
     holidays, // List of holidays
+    kitaOpenNoEd,
     teamdays, // List of days the team takes a slot
   };
 
@@ -193,8 +195,25 @@ function renderCalendarPreview() {
 
       flexContainer.appendChild(rowDayDiv);
       flexContainer.appendChild(rowDateDiv);
+      if (meta.isKitaOpenNoEd) {
+        flexContainer.classList.add("bg-yellow-200")
+        const invalidDayInput = document.createElement("input");
+        invalidDayInput.type = "text"; // Make it an input field
+        invalidDayInput.value = calendar[day][2].invalidText || ""
+        invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
+        invalidDayInput.setAttribute("tabindex", "0"); // Make it focusable
 
-      if (!meta.isValidDay) {
+        // Add change event listener to the invalidDayInput
+        invalidDayInput.addEventListener('change', () => {
+          const newValue = invalidDayInput.value.trim();
+          calendar[day][2].invalidText = newValue;
+          renderCalendar()
+        });
+
+        flexContainer.appendChild(invalidDayInput);
+
+      }
+      else if (!meta.isValidDay) {
         flexContainer.classList.add("bg-red-200");
         const invalidDayInput = document.createElement("input");
         invalidDayInput.type = "text"; // Make it an input field
@@ -331,12 +350,14 @@ function updateCalendar() {
   formattedUsers.forEach((user) => (user.not_available = []));
   holidays = [];
   teamdays = [];
+  kitaOpenNoEd = [];
   selectedWeekdays = Array.from(
     document.querySelectorAll(".weekday-checkbox:checked"),
   ).map((checkbox) => checkbox.value);
 
   populateUserTable(formattedUsers); // Update the user table with the formatted users data
   updateHolidayCalendar();
+  updateKitaOpenNoEdCalendar();
   updateTeamTakesSlotCalendar();
 }
 
@@ -439,6 +460,10 @@ function populateUserTable(users) {
 
 function updateHolidayCalendar() {
   updateGenericCalender("holidays-calendar", holidays);
+}
+
+function updateKitaOpenNoEdCalendar() {
+  updateGenericCalender('kitaOpenNoEd-calendar', kitaOpenNoEd);
 }
 
 function updateTeamTakesSlotCalendar() {
