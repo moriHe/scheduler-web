@@ -141,6 +141,13 @@
             <div id="holidays-calendar" class="calendar"></div>
         </div>
 
+        <!-- Kita offen, kein Elterndienst Section -->
+        <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Kita offen, kein Elterndienst</h2>
+        <div class="mb-4">
+            <div id="kitaOpenNoEd-calendar" class="calendar"></div>
+        </div>
+
+
         <!-- Team Calendar Section -->
         <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Team übernimmt</h2>
         <div class="mb-4">
@@ -204,6 +211,7 @@
                 Fr: "Friday"
             };
             let holidays = [];
+            let kitaOpenNoEd = [];
             let teamdays = [];
         
             // Load users and populate year select box
@@ -287,6 +295,7 @@ function renderCalendarPreview() {
     const options = {
         weekdays: selectedWeekdays, // only week days
         holidays,  // List of holidays
+        kitaOpenNoEd,
         teamdays   // List of days the team takes a slot
     };
 
@@ -357,7 +366,25 @@ function renderCalendarPreview() {
     flexContainer.appendChild(rowDayDiv)
     flexContainer.appendChild(rowDateDiv)
 
-    if (!meta.isValidDay) {
+    if (meta.isKitaOpenNoEd) {
+        flexContainer.classList.add("bg-yellow-200")
+        const invalidDayInput = document.createElement("input");
+        invalidDayInput.type = "text"; // Make it an input field
+        invalidDayInput.value = calendar[day][2].invalidText || ""
+        invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
+        invalidDayInput.setAttribute("tabindex", "0"); // Make it focusable
+
+        // Add change event listener to the invalidDayInput
+        invalidDayInput.addEventListener('change', () => {
+            const newValue = invalidDayInput.value.trim(); 
+            calendar[day][2].invalidText = newValue;
+            renderCalendar()
+        });
+        
+        flexContainer.appendChild(invalidDayInput);
+
+    }
+    else if (!meta.isValidDay) {
         flexContainer.classList.add("bg-red-200")
         const invalidDayInput = document.createElement("input");
         invalidDayInput.type = "text"; // Make it an input field
@@ -379,7 +406,7 @@ function renderCalendarPreview() {
         user1Select.classList.add("flex-1", "text-left", "cursor-pointer")
         
         if (!usersData.find((user) => user === parent1)) {
-            user1Select.classList.add("bg-yellow-200")
+            user1Select.classList.add("bg-blue-200")
         }
 
         const noSelectionUser1 = document.createElement("option");
@@ -418,7 +445,7 @@ function renderCalendarPreview() {
         user2Select.classList.add("flex-1", "text-left", "cursor-pointer")
 
         if (parent2 !== "Team" && !usersData.find((user) => user === parent2)) {
-            user2Select.classList.add("bg-yellow-200")
+            user2Select.classList.add("bg-blue-200")
         }
 
         const noSelectionUser2 = document.createElement("option");
@@ -498,6 +525,7 @@ function renderCalendarPreview() {
         
                 populateUserTable(formattedUsers); // Update the user table with the formatted users data
                 updateHolidayCalendar();
+                updateKitaOpenNoEdCalendar();
                 updateTeamTakesSlotCalendar();
             }
         
@@ -595,6 +623,10 @@ function renderCalendarPreview() {
         
             function updateHolidayCalendar() {
                 updateGenericCalender('holidays-calendar', holidays);
+            }
+
+            function updateKitaOpenNoEdCalendar() {
+                updateGenericCalender('kitaOpenNoEd-calendar', kitaOpenNoEd);
             }
         
             function updateTeamTakesSlotCalendar() {
