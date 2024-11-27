@@ -18,6 +18,173 @@ function shuffleArray(array) {
   }
 }
 
+
+
+function updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedUser) {
+  if (hasEnoughUsers) {
+    _users.forEach((user) => {
+      if (user.name === selectedUser.name) {
+        console.log(averageServiceCount)
+        const newServiceCount = user.serviceCount + 1
+        let newPrio
+        if (newServiceCount >= averageServiceCount) {
+          newPrio = 1000
+        } else if (user.prioOffsetFactor === 0) {
+          newPrio = -1000
+        } else {
+          newPrio = 10 * user.prioOffsetFactor
+        }
+        user.prio = newPrio
+        user.serviceCount = newServiceCount
+      } else {
+        user.prio = user.prio === 1000 ? 1000 : user.prio === -1000 ? -1000 : user.prio - 10
+      }
+    })
+  }
+}
+
+
+export function testAssignUsersToCalendar(month, year, localUsers, options = {}) {
+  function isKitaOpenNoEd(date) {
+    const formattedDate = `${year}-${month}-${date}`;
+    return kitaOpenNoEd.includes(formattedDate);
+  }
+
+  // Helper function to check if a day is a holiday
+  function isHoliday(date) {
+    const formattedDate = `${year}-${month}-${date}`;
+    return holidays.includes(formattedDate);
+  }
+
+  function isTeamDay(date) {
+    const formattedDate = `${year}-${month}-${date}`;
+    return teamdays.includes(formattedDate);
+  }
+
+  // Helper function to check if a day is within the valid weekdays
+  function isValidWeekday(day) {
+    const date = new Date(year, month - 1, day);
+    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+
+    return weekdays.includes(weekday);
+  } function calcUniqueServiceDays() {
+    let total = 0;
+
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      if (isKitaOpenNoEd(day)) {
+        continue;
+
+      }
+      else if (!isValidWeekday(day) || isHoliday(day)) {
+        continue;
+      }
+      else if (isTeamDay(day)) {
+        // das eigentlich nicht ganz richtig
+        total = total + 1
+      } else {
+        total = total + 1
+      }
+    }
+    return total
+  }
+
+  const calendar = {}; // To store the user assignments per day
+  const { weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], holidays = [], kitaOpenNoEd = [], teamdays = [] } = options;
+
+  function isUserAvailable(user, date) {
+    const formattedDate = `${year}-${month}-${date}`;
+    return !user.not_available.includes(formattedDate);
+  }
+  function getAvailableUsersForDay(day, localUsers) {
+    return localUsers
+      .filter(user => isUserAvailable(user, day)) // Filter users who are available for the day
+  }
+  const daysInMonth = new Date(year, month, 0).getDate(); // Get the number of days in the month
+  const uniqueServiceDays = calcUniqueServiceDays(daysInMonth, month, year, options)
+  const oneFourthUniqueServices = uniqueServiceDays / 4
+  const halfUniqueServices = uniqueServiceDays / 2
+  const _users = [...localUsers].map((user) => {
+    const availableTotal = uniqueServiceDays - user["not_available"].length
+    const prioOffsetFactor = availableTotal <= oneFourthUniqueServices ? 0 :
+      availableTotal <= halfUniqueServices ? 2 : 1
+    return {
+      ...user,
+      serviceCount: 0,
+      prioOffsetFactor,
+      // the lower the number the higher the chance to be picked
+      prio: availableTotal <= oneFourthUniqueServices ? -1000 : -10 * prioOffsetFactor
+    }
+  })
+
+  const averageServiceCount = uniqueServiceDays * 2 / localUsers.length
+  for (let day = 1; day <= daysInMonth; day++) {
+    // Skip the day if it's a holiday or not a valid weekday
+    if (isKitaOpenNoEd(day)) {
+      calendar[day] = ["", "", { isKitaOpenNoEd: true, isValidDay: false, isAssigned: false }]
+      continue;
+
+    }
+    if (!isValidWeekday(day) || isHoliday(day)) {
+      calendar[day] = ["", "", { isKitaOpenNoEd: false, isValidDay: false, isAssigned: false }]
+      continue;
+    }
+
+    const availableUsers = getAvailableUsersForDay(day, _users);
+    const usersSortedByPrio = availableUsers.sort((a, b) => {
+      // First, sort by prio in ascending order
+      if (a.prio < b.prio) {
+        return -1; // a comes before b
+      }
+      if (a.prio > b.prio) {
+        return 1; // b comes before a
+      }
+
+      // If prio is the same, sort by serviceCount in ascending order
+      if (a.serviceCount < b.serviceCount) {
+        return -1; // a comes before b
+      }
+      if (a.serviceCount > b.serviceCount) {
+        return 1; // b comes before a
+      }
+
+      return Math.random() < 0.5 ? -1 : 1; // If both prio and serviceCount are the same, keep original order
+    })
+
+    if (isTeamDay(day)) {
+      const hasEnoughUsers = usersSortedByPrio.length >= 1
+
+      const selectedUser = hasEnoughUsers ? usersSortedByPrio[0] : { name: "NOT SET" }// Get the first available user
+      calendar[day] = [selectedUser.name, 'Team', { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers }]; // Assign user and "Team" for the second slot
+      updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedUser);
+    } else {
+      const hasEnoughUsers = usersSortedByPrio.length >= 2
+      const hasOneUser = usersSortedByPrio.length === 1
+
+      let selectedUsers
+      if (hasEnoughUsers) selectedUsers = usersSortedByPrio.slice(0, 2)
+      else if (hasOneUser) selectedUsers = [usersSortedByPrio[0], { name: "NOT SET" }]
+      else selectedUsers = [{ name: "NOT SET" }, { name: "NOT SET" }]
+
+      if (hasEnoughUsers && selectedUsers[0].name === selectedUsers[1].name) {
+        displayError(`Some dataset duplication that should not happen. Please reach out to the code maintainer.`);
+        throw new Error(`Duplicate users in data set`);
+      }
+
+      // Assign these users to the calendar for the current day
+      calendar[day] = [...selectedUsers.map(user => user.name), { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers }];
+      if (hasEnoughUsers) {
+        updateUsersArray(_users, averageServiceCount, true, selectedUsers[0])
+        updateUsersArray(_users, averageServiceCount, true, selectedUsers[1])
+      }
+      if (hasOneUser) {
+        updateUsersArray(_users, averageServiceCount, true, selectedUsers[0])
+      }
+    }
+  }
+  return calendar
+}
+
 // Function to assign users to calendar
 export function assignUsersToCalendar(month, year, users, options = {}) {
   const daysInMonth = new Date(year, month, 0).getDate(); // Get the number of days in the month

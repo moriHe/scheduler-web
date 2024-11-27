@@ -1,5 +1,6 @@
 import {
   assignUsersToCalendar,
+  testAssignUsersToCalendar,
   generatePDF,
   formatDate,
   formatDayOfWeek,
@@ -115,7 +116,7 @@ function renderCalendarPreview() {
     teamdays, // List of days the team takes a slot
   };
 
-  calendar = assignUsersToCalendar(month, year, formattedUsers, options);
+  calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
 
   function renderCalendar() {
     const previewBody = document.getElementById("calendar-preview-table");
@@ -322,7 +323,22 @@ function renderCalendarPreview() {
 
         if (!user2Select.disabled) {
           user2Select.addEventListener("change", () => {
-            calendar[day][1] = user2Select.value;
+            const isSet = user2Select.value !== "NOT SET";
+            const naDateArray =
+              formattedUsers.find((fUser) => {
+                return fUser.name === user2Select.value;
+              })?.not_available || [];
+
+            let continueProcess = true;
+            if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
+              continueProcess = confirm(
+                `User kann an diesem Tag nicht. Trotzdem eintragen?`,
+              );
+            }
+            if (continueProcess) {
+              calendar[day][1] = user2Select.value;
+            }
+
             renderCalendar();
           });
         }
