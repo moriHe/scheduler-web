@@ -117,7 +117,8 @@ export function testAssignUsersToCalendar(month, year, localUsers, options = {})
     }
   })
 
-  const averageServiceCount = uniqueServiceDays * 2 / localUsers.length
+  const averageServiceCount = Math.floor(uniqueServiceDays * 2 / localUsers.length)
+
   for (let day = 1; day <= daysInMonth; day++) {
     // Skip the day if it's a holiday or not a valid weekday
     if (isKitaOpenNoEd(day)) {
