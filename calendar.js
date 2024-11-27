@@ -134,6 +134,10 @@ export function testAssignUsersToCalendar(month, year, localUsers, options = {})
     const availableUsers = getAvailableUsersForDay(day, _users);
     const usersSortedByPrio = availableUsers.sort((a, b) => {
       // First, sort by prio in ascending order
+      // INFO: This if statement adds some randomness. If it messes up the calculation, remove it.
+      if (a.serviceCount === b.serviceCount && a.prioOffsetFactor === 1 && b.prioOffsetFactor === 1) {
+        return Math.random() < 0.5 ? -1 : 1
+      }
       if (a.prio < b.prio) {
         return -1; // a comes before b
       }
@@ -148,7 +152,6 @@ export function testAssignUsersToCalendar(month, year, localUsers, options = {})
       if (a.serviceCount > b.serviceCount) {
         return 1; // b comes before a
       }
-
       return Math.random() < 0.5 ? -1 : 1; // If both prio and serviceCount are the same, keep original order
     })
 
