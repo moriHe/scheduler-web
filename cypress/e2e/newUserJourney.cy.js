@@ -68,6 +68,47 @@ describe('Common navigation first time visitor', () => {
     users.forEach((user) => {
       cy.contains(user).should('be.visible'); // Check that the name is visible on the page
     });
+
+    // INFO: Start plan tests
+    cy.get('#back-button').click();
+    cy.get('#view-calendar-button').click();
+    cy.get('#month').select('Dezember');
+    cy.get('#year').select('2034');
+    cy.get('#month').should('have.value', '11');
+    cy.get('#year').should('have.value', '2034');
+
+    // INFO: Shallow check if the calendar has the right values.
+    // Assumption: If weekend values is empty at the end, it should be correct.
+    let expectedWeekendValues = new Set(['2', '3', '9', '10', '16', '17', '23', '24', '30', '31']);
+
+    cy.get('.calendar').first()
+      .children('.weekend')  // Get all children with the 'weekend' class
+      .should('have.length', expectedWeekendValues.size) // Ensure there are exactly 10 weekend days
+      .each(($el) => {
+        // Extract the text (date) of each weekend element
+        const dayText = $el.text().trim(); // Get the text of each day, removing extra whitespace
+
+        // Assert that the day is in the list of expected values
+        expect(expectedWeekendValues).to.include(dayText);
+        // Remove the day from the set after matching it
+        expectedWeekendValues.delete(dayText);
+      });
+
+    // After the loop, ensure that no expected values are left (i.e., each was found exactly once)
+    cy.wrap(expectedWeekendValues).should('be.empty'); // The Set should be empty
+
+    cy.get('.calendar').first()  // Select the first .calendar element
+      .children('.calendar-day') // Select all .calendar-day children
+      .filter((_, el) => {   // Filter elements based on conditions
+        const dayText = Cypress.$(el).text().trim();  // Get the text and trim any extra spaces
+        const hasWeekendClass = Cypress.$(el).hasClass('weekend');  // Check if the element has 'weekend' class
+        return dayText !== '' && !hasWeekendClass;  // Filter to only non-empty text and no weekend class
+      })
+      .each(($el) => {
+        cy.wrap($el).click();
+        cy.wrap($el).should('have.class', 'not-available');
+      });
+
     // INFO: END
   });
 });
