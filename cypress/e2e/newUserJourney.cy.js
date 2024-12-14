@@ -1,89 +1,106 @@
 // INFO: Tests a new user that adds users in on the user page and then creates a plan.
-describe('Common navigation first time visitor', () => {
+describe("Common navigation first time visitor", () => {
   beforeEach(() => {
     // Ignore uncaught exceptions
-    cy.on('uncaught:exception', (err, runnable) => {
+    cy.on("uncaught:exception", (err, runnable) => {
       // Return false to prevent Cypress from failing the test
       return false;
     });
   });
 
   const createUser = (userName) => {
-    cy.get('#user-name').type(userName); // Type the username
-    cy.get('#save-user-button').click(); // Click the save button
+    cy.get("#user-name").type(userName); // Type the username
+    cy.get("#save-user-button").click(); // Click the save button
   };
-  it('Should reset users and verify localStorage is cleared', () => {
+  it("Should reset users and verify localStorage is cleared", () => {
     // INFO: Reset localstorage for testing
-    cy.window().then((win) => win.localStorage.setItem("users", "Hello"))
+    cy.window().then((win) => win.localStorage.setItem("users", "Hello"));
     cy.window().then((win) => {
       const users = win.localStorage.getItem("users");
       expect(users).to.equal("Hello");
     });
 
     // INFO: Start testing
-    cy.visit('http://localhost:3000/index.html');
+    cy.visit("http://localhost:3000/index.html");
 
     // INFO: Alert and Confirm listeners that auto accept the boxes
-    cy.on('window:alert', (alertText) => {
-      expect(alertText).to.equal('Benutzer wurden zurückgesetzt.'); // Validate alert text
+    cy.on("window:alert", (alertText) => {
+      expect(alertText).to.equal("Benutzer wurden zurückgesetzt."); // Validate alert text
     });
-    cy.on('window:confirm', (confirmText) => {
-      expect(confirmText).to.equal('Möchten Sie die Benutzer wirklich zurücksetzen?');
+    cy.on("window:confirm", (confirmText) => {
+      expect(confirmText).to.equal(
+        "Möchten Sie die Benutzer wirklich zurücksetzen?",
+      );
     });
 
     // INFO: Go to options page and reset users
-    cy.get('#options-button').click();
-    cy.get('#reset-users-button').click();
+    cy.get("#options-button").click();
+    cy.get("#reset-users-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem('users');
+      const users = win.localStorage.getItem("users");
       expect(users).to.deep.equal("[]");
     });
 
     // INFO: Go to user page and add users
-    cy.get('#back-button').click();
-    cy.get('#add-user-button').click();
-    cy.get('#user-name').type("TEST_USER_A");
-    cy.get('#save-user-button').click();
+    cy.get("#back-button").click();
+    cy.get("#add-user-button").click();
+    cy.get("#user-name").type("TEST_USER_A");
+    cy.get("#save-user-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem('users');
+      const users = win.localStorage.getItem("users");
       expect(users).to.deep.equal('["TEST_USER_A"]');
     });
-    cy.get('#user-name').type("TEST_USER_B");
-    cy.get('#save-user-button').click();
+    cy.get("#user-name").type("TEST_USER_B");
+    cy.get("#save-user-button").click();
     cy.contains("TEST_USER_A");
     cy.contains("TEST_USER_B");
-    cy.get('.delete-button').first().click();
+    cy.get(".delete-button").first().click();
     cy.window().then((win) => {
       const users = win.localStorage.getItem("users");
       expect(users).to.deep.equal('["TEST_USER_B"]');
     });
-    cy.get('.delete-button').first().click();
-    const users = Array.from({ length: 16 }, (_, i) => `TEST_USER_${String.fromCharCode(65 + i)}`);
+    cy.get(".delete-button").first().click();
+    const users = Array.from(
+      { length: 16 },
+      (_, i) => `TEST_USER_${String.fromCharCode(65 + i)}`,
+    );
     users.forEach((user) => {
       createUser(user);
 
       // Optional: Add assertion or wait for reset between iterations
-      cy.get('#user-name').clear(); // Clear the input for the next user
+      cy.get("#user-name").clear(); // Clear the input for the next user
     });
     users.forEach((user) => {
-      cy.contains(user).should('be.visible'); // Check that the name is visible on the page
+      cy.contains(user).should("be.visible"); // Check that the name is visible on the page
     });
 
     // INFO: Start plan tests
-    cy.get('#back-button').click();
-    cy.get('#view-calendar-button').click();
-    cy.get('#month').select('Dezember');
-    cy.get('#year').select('2034');
-    cy.get('#month').should('have.value', '11');
-    cy.get('#year').should('have.value', '2034');
+    cy.get("#back-button").click();
+    cy.get("#view-calendar-button").click();
+    cy.get("#month").select("Dezember");
+    cy.get("#year").select("2034");
+    cy.get("#month").should("have.value", "11");
+    cy.get("#year").should("have.value", "2034");
 
     // INFO: Shallow check if the calendar has the right values.
     // Assumption: If weekend values is empty at the end, it should be correct.
-    let expectedWeekendValues = new Set(['2', '3', '9', '10', '16', '17', '23', '24', '30', '31']);
+    let expectedWeekendValues = new Set([
+      "2",
+      "3",
+      "9",
+      "10",
+      "16",
+      "17",
+      "23",
+      "24",
+      "30",
+      "31",
+    ]);
 
-    cy.get('.calendar').first()
-      .children('.weekend')  // Get all children with the 'weekend' class
-      .should('have.length', expectedWeekendValues.size) // Ensure there are exactly 10 weekend days
+    cy.get(".calendar")
+      .first()
+      .children(".weekend") // Get all children with the 'weekend' class
+      .should("have.length", expectedWeekendValues.size) // Ensure there are exactly 10 weekend days
       .each(($el) => {
         // Extract the text (date) of each weekend element
         const dayText = $el.text().trim(); // Get the text of each day, removing extra whitespace
@@ -95,21 +112,100 @@ describe('Common navigation first time visitor', () => {
       });
 
     // After the loop, ensure that no expected values are left (i.e., each was found exactly once)
-    cy.wrap(expectedWeekendValues).should('be.empty'); // The Set should be empty
+    cy.wrap(expectedWeekendValues).should("be.empty"); // The Set should be empty
 
-    cy.get('.calendar').first()  // Select the first .calendar element
-      .children('.calendar-day') // Select all .calendar-day children
-      .filter((_, el) => {   // Filter elements based on conditions
-        const dayText = Cypress.$(el).text().trim();  // Get the text and trim any extra spaces
-        const hasWeekendClass = Cypress.$(el).hasClass('weekend');  // Check if the element has 'weekend' class
-        return dayText !== '' && !hasWeekendClass;  // Filter to only non-empty text and no weekend class
+    // INFO: User a is not available the whole month.
+    cy.get(".calendar")
+      .first() // Select the first .calendar element
+      .children(".calendar-day") // Select all .calendar-day children
+      .filter((_, el) => {
+        // Filter elements based on conditions
+        const dayText = Cypress.$(el).text().trim(); // Get the text and trim any extra spaces
+        const hasWeekendClass = Cypress.$(el).hasClass("weekend"); // Check if the element has 'weekend' class
+        return dayText !== "" && !hasWeekendClass; // Filter to only non-empty text and no weekend class
       })
       .each(($el) => {
         cy.wrap($el).click();
-        cy.wrap($el).should('have.class', 'not-available');
+        cy.wrap($el).should("have.class", "not-available");
       });
+
+    //INFO: User B is only available day 5, 6 and 7 and 8. Click 8 and unselect it again.
+    cy.get(".calendar")
+      .eq(1) // Select the first .calendar element
+      .children(".calendar-day") // Select all .calendar-day children
+      .filter((_, el) => {
+        const dayText = Cypress.$(el).text().trim(); // Get the text and trim any extra spaces
+        const hasWeekendClass = Cypress.$(el).hasClass("weekend"); // Check if the element has 'weekend' class
+        const dayNumber = parseInt(dayText, 10); // Parse the text as a number
+
+        // Exclude empty days, weekend class, and specific days (1, 4, 5, 6, 7)
+        return (
+          dayText !== "" &&
+          !hasWeekendClass &&
+          ![1, 4, 5, 6, 7, 8].includes(dayNumber)
+        );
+      })
+      .each(($el) => {
+        const dayText = Cypress.$($el).text().trim(); // Get the day text
+        const dayNumber = parseInt(dayText, 10); // Convert it to a number
+
+        if (dayNumber === 8) {
+          // If the day is 8, click twice
+          cy.wrap($el).click();
+          cy.wrap($el).click();
+
+          // Confirm the element does NOT have the 'not-available' class
+          cy.wrap($el).should("not.have.class", "not-available");
+        } else {
+          // Otherwise, click once
+          cy.wrap($el).click();
+
+          // Confirm the element DOES have the 'not-available' class
+          cy.wrap($el).should("have.class", "not-available");
+        }
+      });
+    //INFO: Day 1 is holiday
+    cy.get("#holidays-calendar")
+      .find(".calendar-day") // Find all children with the class 'calendar-day'
+      .each(($el) => {
+        if ($el.text().trim() === "1") {
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).should("have.class", "not-available");
+        } else {
+          cy.wrap($el).should("not.have.class", "not-available");
+        }
+      });
+    // INFO: Day 4 is kita open, no shift for parents
+    cy.get("#kitaOpenNoEd-calendar")
+      .find(".calendar-day") // Find all children with the class 'calendar-day'
+      .each(($el) => {
+        if ($el.text().trim() === "4") {
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).should("have.class", "not-available");
+        } else {
+          cy.wrap($el).should("not.have.class", "not-available");
+        }
+      });
+    // INFO: Day 5 is team takes over 1 shift
+    cy.get("#team-calendar")
+      .find(".calendar-day") // Find all children with the class 'calendar-day'
+      .each(($el) => {
+        if ($el.text().trim() === "5") {
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).click(); // Example: Click on the element
+          cy.wrap($el).should("have.class", "not-available");
+        } else {
+          cy.wrap($el).should("not.have.class", "not-available");
+        }
+      });
+    // INFO: Show calendar preview
+    cy.get("#show-preview-button").click();
 
     // INFO: END
   });
 });
-
