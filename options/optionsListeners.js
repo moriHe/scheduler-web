@@ -1,8 +1,9 @@
 import { resetUsers, uploadUsers } from "./options.js"
-import { goToStartPageListener } from "/helpers/navigation.js"
 
 // Back to start page
-goToStartPageListener();
+document.getElementById("back-button").addEventListener("click", () => {
+  window.location.href = "../index.html"; // Navigate back to index.html
+});
 
 // Reset users in localStorage
 document

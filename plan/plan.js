@@ -1,5 +1,4 @@
 import {
-  assignUsersToCalendar,
   testAssignUsersToCalendar,
   generatePDF,
   formatDate,
