@@ -205,7 +205,78 @@ describe("Common navigation first time visitor", () => {
       });
     // INFO: Show calendar preview
     cy.get("#show-preview-button").click();
+    cy.get("#parent-summary")
+      .should("be.visible")
+      .and("not.contain", "TEST_USER_A");
 
+    cy.get("select").each(($select) => {
+      // Check that the selected option's value is not 'TEST_USER_A'
+      cy.wrap($select) // Wrap each <select> element
+        .find("option:selected") // Find the currently selected <option>
+        .should("not.have.value", "TEST_USER_A"); // Assert the selected option's value is not 'TEST_USER_A'
+    });
+
+    // List of users to check for selection counts
+
+    // List of users to check for selection counts
+    const testUsers = [
+      "TEST_USER_B",
+      "TEST_USER_C",
+      "TEST_USER_D",
+      "TEST_USER_E",
+      "TEST_USER_F",
+      "TEST_USER_G",
+      "TEST_USER_H",
+      "TEST_USER_I",
+      "TEST_USER_J",
+      "TEST_USER_K",
+      "TEST_USER_L",
+      "TEST_USER_M",
+      "TEST_USER_N",
+      "TEST_USER_O",
+      "TEST_USER_P",
+    ];
+
+    cy.get("#calendar-preview-table") // Select the table container
+      .should("be.visible") // Ensure the table is visible
+      .find("select") // Find all <select> elements within the table
+      .then(($selects) => {
+        const allSelectedValues = []; // Array to store all selected values
+
+        // Process each <select> element
+        cy.wrap($selects).each(($select) => {
+          cy.wrap($select)
+            .find("option:selected") // Get the selected option
+            .should("be.visible") // Ensure it's visible
+            .invoke("text") // Extract its text content
+            .then((selectedText) => {
+              allSelectedValues.push(selectedText); // Collect the selected value
+            });
+        });
+
+        // Use `.then` to validate after collecting all values
+        cy.wrap(null).then(() => {
+          cy.log("All Selected Values:", allSelectedValues); // Debugging log
+
+          // Check "Team" is selected exactly once
+          const teamCount = allSelectedValues.filter(
+            (value) => value === "Team",
+          ).length;
+          expect(teamCount).to.equal(1, "Team should appear exactly once");
+
+          // Check TEST_USER_B to TEST_USER_P appear between 2 and 3 times
+          testUsers.forEach((user) => {
+            const userCount = allSelectedValues.filter(
+              (value) => value === user,
+            ).length;
+            expect(userCount).to.be.within(
+              2,
+              3,
+              `${user} should appear at least 2 times and at most 3 times`,
+            );
+          });
+        });
+      });
     // INFO: END
   });
 });
