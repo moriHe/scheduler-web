@@ -1,200 +1,286 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plan erstellen</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.3/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/locale/de/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"
+    ></script>
     <script defer type="module" src="./plan.js"></script>
     <style>
-        /* Calendar styling */
+      /* Calendar styling */
 
-        .lighter-red-background {
+      .lighter-red-background {
         background-color: rgba(255, 0, 0, 0.5); /* Light red with 50% opacity */
         color: white; /* Optional for better visibility */
-        }
+      }
 
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin-top: 10px;
+      }
 
-        .calendar-header {
-            font-weight: bold;
-            padding: 5px;
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-        }
+      .calendar-header {
+        font-weight: bold;
+        padding: 5px;
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
+      }
 
+      .calendar-day {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #e5e7eb;
+        cursor: pointer;
+      }
+
+      .calendar-day:hover {
+        background-color: #e5e7eb;
+      }
+
+      .weekend {
+        background-color: #d1d5db; /* Light gray color */
+        color: #9ca3af; /* Gray text color */
+        cursor: default;
+      }
+
+      .weekend:hover {
+        background-color: #d1d5db;
+      }
+
+      .excluded {
+        background-color: #d1d5db; /* Light gray color */
+        color: #9ca3af; /* Gray text color */
+        cursor: default; /* Default cursor for excluded days */
+      }
+
+      .excluded:hover {
+        background-color: #d1d5db;
+      }
+
+      .not-available {
+        background-color: #f87171; /* Red for not available */
+        color: white;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
         .calendar-day {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #e5e7eb;
-            cursor: pointer;
+          padding: 5px;
         }
-
-        .calendar-day:hover {
-            background-color: #e5e7eb;
-        }
-
-        .weekend {
-            background-color: #d1d5db; /* Light gray color */
-            color: #9ca3af; /* Gray text color */
-            cursor: default;
-        }
-
-        .weekend:hover {
-            background-color: #d1d5db;
-        }
-
-        .excluded {
-            background-color: #d1d5db; /* Light gray color */
-            color: #9ca3af; /* Gray text color */
-            cursor: default; /* Default cursor for excluded days */
-        }
-
-        .excluded:hover {
-            background-color: #d1d5db;
-        }
-
-        .not-available {
-            background-color: #f87171; /* Red for not available */
-            color: white;
-        }
-
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .calendar-day {
-                padding: 5px;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body class="bg-gray-100 h-screen w-screen flex flex-col items-center justify-start p-6">
+  <body
+    class="bg-gray-100 h-screen w-screen flex flex-col items-center justify-start p-6"
+  >
     <!-- Plan Creation Container -->
-    <div id="plan-creation-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Plan erstellen</h1>
+    <div
+      id="plan-creation-container"
+      class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center"
+    >
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">Plan erstellen</h1>
 
-        <!-- Month and Year Selection -->
-        <div class="mb-6">
-            <label for="month" class="mr-2 font-semibold">Monat:</label>
-            <select id="month" class="border rounded p-2">
-                <option value="0">Januar</option>
-                <option value="1">Februar</option>
-                <option value="2">März</option>
-                <option value="3">April</option>
-                <option value="4">Mai</option>
-                <option value="5">Juni</option>
-                <option value="6">Juli</option>
-                <option value="7">August</option>
-                <option value="8">September</option>
-                <option value="9">Oktober</option>
-                <option value="10">November</option>
-                <option value="11">Dezember</option>
-            </select>
+      <!-- Month and Year Selection -->
+      <div class="mb-6">
+        <label for="month" class="mr-2 font-semibold">Monat:</label>
+        <select id="month" class="border rounded p-2">
+          <option value="0">Januar</option>
+          <option value="1">Februar</option>
+          <option value="2">März</option>
+          <option value="3">April</option>
+          <option value="4">Mai</option>
+          <option value="5">Juni</option>
+          <option value="6">Juli</option>
+          <option value="7">August</option>
+          <option value="8">September</option>
+          <option value="9">Oktober</option>
+          <option value="10">November</option>
+          <option value="11">Dezember</option>
+        </select>
 
-            <label for="year" class="ml-4 mr-2 font-semibold">Jahr:</label>
-            <select id="year" class="border rounded p-2">
-                <!-- Dynamically populated later -->
-            </select>
+        <label for="year" class="ml-4 mr-2 font-semibold">Jahr:</label>
+        <select id="year" class="border rounded p-2">
+          <!-- Dynamically populated later -->
+        </select>
+      </div>
+
+      <!-- Available days -->
+      <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Wochentage</h2>
+        <div id="weekdays-container" class="flex justify-center space-x-4">
+          <label
+            ><input
+              type="checkbox"
+              class="weekday-checkbox"
+              value="Mo"
+              checked
+            />
+            Montag</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              class="weekday-checkbox"
+              value="Di"
+              checked
+            />
+            Dienstag</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              class="weekday-checkbox"
+              value="Mi"
+              checked
+            />
+            Mittwoch</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              class="weekday-checkbox"
+              value="Do"
+              checked
+            />
+            Donnerstag</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              class="weekday-checkbox"
+              value="Fr"
+              checked
+            />
+            Freitag</label
+          >
+          <label
+            ><input type="checkbox" class="weekday-checkbox" value="Sa" />
+            Samstag</label
+          >
+          <label
+            ><input type="checkbox" class="weekday-checkbox" value="So" />
+            Sonntag</label
+          >
         </div>
+      </div>
 
-        <!-- Available days -->
-        <div class="mb-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Wochentage</h2>
-            <div id="weekdays-container" class="flex justify-center space-x-4">
-                <label><input type="checkbox" class="weekday-checkbox" value="Mo" checked> Montag</label>
-                <label><input type="checkbox" class="weekday-checkbox" value="Di" checked> Dienstag</label>
-                <label><input type="checkbox" class="weekday-checkbox" value="Mi" checked> Mittwoch</label>
-                <label><input type="checkbox" class="weekday-checkbox" value="Do" checked> Donnerstag</label>
-                <label><input type="checkbox" class="weekday-checkbox" value="Fr" checked> Freitag</label>
-            </div>
-        </div>
+      <!-- Users and Calendar Table -->
+      <h2 class="text-xl font-bold text-gray-800 mb-4">
+        Verfügbarkeiten Eltern
+      </h2>
+      <table class="min-w-full bg-white border border-gray-300">
+        <thead>
+          <tr>
+            <th class="border-b-2 border-gray-300 p-2">Eltern</th>
+            <th class="border-b-2 border-gray-300 p-2">Kalender</th>
+          </tr>
+        </thead>
+        <tbody id="user-table-body">
+          <!-- Dynamically populated later -->
+        </tbody>
+      </table>
 
-        <!-- Users and Calendar Table -->
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Verfügbarkeiten Eltern</h2>
-        <table class="min-w-full bg-white border border-gray-300">
-            <thead>
-                <tr>
-                    <th class="border-b-2 border-gray-300 p-2">Eltern</th>
-                    <th class="border-b-2 border-gray-300 p-2">Kalender</th>
-                </tr>
-            </thead>
-            <tbody id="user-table-body">
-                <!-- Dynamically populated later -->
-            </tbody>
-        </table>
+      <!-- Holidays Section -->
+      <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">
+        Feiertage und einzelne Sperrtermine
+      </h2>
+      <div class="mb-4">
+        <div id="holidays-calendar" class="calendar"></div>
+      </div>
 
-        <!-- Holidays Section -->
-        <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Feiertage und einzelne Sperrtermine</h2>
-        <div class="mb-4">
-            <div id="holidays-calendar" class="calendar"></div>
-        </div>
+      <!-- Kita offen, kein Elterndienst Section -->
+      <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">
+        Kita offen, kein Elterndienst
+      </h2>
+      <div class="mb-4">
+        <div id="kitaOpenNoEd-calendar" class="calendar"></div>
+      </div>
 
-        <!-- Kita offen, kein Elterndienst Section -->
-        <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Kita offen, kein Elterndienst</h2>
-        <div class="mb-4">
-            <div id="kitaOpenNoEd-calendar" class="calendar"></div>
-        </div>
+      <!-- Team Calendar Section -->
+      <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Team übernimmt</h2>
+      <div class="mb-4">
+        <div id="team-calendar" class="calendar"></div>
+      </div>
 
-
-        <!-- Team Calendar Section -->
-        <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Team übernimmt</h2>
-        <div class="mb-4">
-            <div id="team-calendar" class="calendar"></div>
-        </div>
-
-        <!-- Button to Show Preview -->
-        <button id="show-preview-button" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-            Show Preview
-        </button>
-        <button id="back-button" class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
-            Zurück
-        </button>
+      <!-- Button to Show Preview -->
+      <button
+        id="show-preview-button"
+        class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        Show Preview
+      </button>
+      <button
+        id="back-button"
+        class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+      >
+        Zurück
+      </button>
     </div>
 
     <!-- Calendar Preview Container -->
-    <div id="calendar-preview-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center hidden">
-        <div class="flex justify-center gap-10 mb-6 my-20">
-            <h1 class="text-3xl font-bold text-gray-800">Preview</h1>
-            <button id="preview-button" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <ion-icon name="refresh" class="mr-2"></ion-icon>
-            </button>
+    <div
+      id="calendar-preview-container"
+      class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center hidden"
+    >
+      <div class="flex justify-center gap-10 mb-6 my-20">
+        <h1 class="text-3xl font-bold text-gray-800">Preview</h1>
+        <button
+          id="preview-button"
+          class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <ion-icon name="refresh" class="mr-2"></ion-icon>
+        </button>
+      </div>
+      <div id="calendar-preview-table" class="w-3xl max-w-3xl">
+        <div class="flex w-full text-gray-800 font-bold bg-gray-200 py-2">
+          <div class="w-1/12 text-left">Tag</div>
+          <div class="w-1/6 text-left">Datum</div>
+          <div class="flex-1 text-left">Elternpaar 1</div>
+          <div class="flex-1 text-left">Elternpaar 2</div>
         </div>
-        <div id="calendar-preview-table" class="w-3xl max-w-3xl">
-            <div class="flex w-full text-gray-800 font-bold bg-gray-200 py-2">
-                <div class="w-1/12 text-left">Tag</div>
-                <div class="w-1/6 text-left">Datum</div>
-                <div class="flex-1 text-left">Elternpaar 1</div>
-                <div class="flex-1 text-left">Elternpaar 2</div>
-            </div>
-        </div>
+      </div>
 
-        <div id="parent-summary" class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-1 w-80 border border-gray-300">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">Parent Counts</h3>
-        </div>
+      <div
+        id="parent-summary"
+        class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-1 w-80 border border-gray-300"
+      >
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Parent Counts</h3>
+      </div>
 
-        <div class="mt-10">
-            <div id="error-message" class="bg-red-500 text-white p-4 rounded hidden"></div>
+      <div class="mt-10">
+        <div
+          id="error-message"
+          class="bg-red-500 text-white p-4 rounded hidden"
+        ></div>
 
-            <button id="generate-pdf-button" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                Generate Calendar PDF
-            </button>
-            <button id="back-creation-button" class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
-                Zurück
-            </button>
-        </div>
+        <button
+          id="generate-pdf-button"
+          class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          Generate Calendar PDF
+        </button>
+        <button
+          id="back-creation-button"
+          class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          Zurück
+        </button>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>

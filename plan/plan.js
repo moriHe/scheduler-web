@@ -15,6 +15,8 @@ const WEEKDAY_MAPPING = {
   Mi: "Wednesday",
   Do: "Thursday",
   Fr: "Friday",
+  Sa: "Saturday",
+  So: "Sunday",
 };
 let holidays = [];
 let kitaOpenNoEd = [];
@@ -47,7 +49,7 @@ window.onload = () => {
 
   document
     .getElementById("show-preview-button")
-    .addEventListener("click", function() {
+    .addEventListener("click", function () {
       // Hide the plan creation container
       document
         .getElementById("plan-creation-container")
@@ -65,7 +67,7 @@ window.onload = () => {
   // Function to go back to the plan creation container
   document
     .getElementById("back-creation-button")
-    .addEventListener("click", function() {
+    .addEventListener("click", function () {
       // Show the plan creation container
       document
         .getElementById("plan-creation-container")
@@ -196,33 +198,27 @@ function renderCalendarPreview() {
       flexContainer.appendChild(rowDayDiv);
       flexContainer.appendChild(rowDateDiv);
       if (meta.isKitaOpenNoEd) {
-        flexContainer.classList.add("bg-yellow-200")
+        flexContainer.classList.add("bg-yellow-200");
         const invalidDayInput = document.createElement("input");
         invalidDayInput.type = "text"; // Make it an input field
-        invalidDayInput.value = calendar[day][2].invalidText || ""
+        invalidDayInput.value = calendar[day][2].invalidText || "";
         invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
         invalidDayInput.setAttribute("tabindex", "0"); // Make it focusable
 
         // Add change event listener to the invalidDayInput
-        invalidDayInput.addEventListener('change', () => {
+        invalidDayInput.addEventListener("change", () => {
           const newValue = invalidDayInput.value.trim();
           calendar[day][2].invalidText = newValue;
-          renderCalendar()
+          renderCalendar();
         });
 
         flexContainer.appendChild(invalidDayInput);
-
-      }
-      else if (!meta.isValidDay) {
+      } else if (!meta.isValidDay) {
         flexContainer.classList.add("bg-red-200");
         const invalidDayInput = document.createElement("input");
         invalidDayInput.type = "text"; // Make it an input field
         invalidDayInput.value = calendar[day][2].invalidText || "";
-        invalidDayInput.classList.add(
-          "flex-1",
-          "text-center",
-          "bg-red-200",
-        );
+        invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
         invalidDayInput.setAttribute("tabindex", "0"); // Make it focusable
 
         // Add change event listener to the invalidDayInput
@@ -235,11 +231,7 @@ function renderCalendarPreview() {
         flexContainer.appendChild(invalidDayInput);
       } else {
         const user1Select = document.createElement("select");
-        user1Select.classList.add(
-          "flex-1",
-          "text-left",
-          "cursor-pointer",
-        );
+        user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
 
         if (!usersData.find((user) => user === parent1)) {
           user1Select.classList.add("bg-yellow-200");
@@ -279,16 +271,9 @@ function renderCalendarPreview() {
         });
 
         const user2Select = document.createElement("select");
-        user2Select.classList.add(
-          "flex-1",
-          "text-left",
-          "cursor-pointer",
-        );
+        user2Select.classList.add("flex-1", "text-left", "cursor-pointer");
 
-        if (
-          parent2 !== "Team" &&
-          !usersData.find((user) => user === parent2)
-        ) {
+        if (parent2 !== "Team" && !usersData.find((user) => user === parent2)) {
           user2Select.classList.add("bg-yellow-200");
         }
 
@@ -352,13 +337,11 @@ function renderCalendarPreview() {
   renderCalendar();
 }
 
-document
-  .getElementById("preview-button")
-  .addEventListener("click", () => {
-    // Reload the calendar preview
-    renderCalendarPreview();
-    console.log("Preview updated");
-  });
+document.getElementById("preview-button").addEventListener("click", () => {
+  // Reload the calendar preview
+  renderCalendarPreview();
+  console.log("Preview updated");
+});
 
 function updateCalendar() {
   // Clear not_available array for each user when switching months or years
@@ -429,9 +412,7 @@ function populateUserTable(users) {
       const dayOfWeek = new Date(year, parseInt(month), day).getDay();
       const dayName = daysOfWeek[dayOfWeek - 1];
 
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        dayButton.classList.add("weekend"); // Grey out weekend days
-      } else if (!selectedWeekdays.includes(dayName)) {
+      if (!selectedWeekdays.includes(dayName)) {
         // If the day is not in the selected weekdays, mark it as excluded
         dayButton.classList.add("excluded"); // Gray out excluded days
         dayButton.style.cursor = "default"; // Ensure default cursor
@@ -448,8 +429,7 @@ function populateUserTable(users) {
           const dateKey = `${year}-${parseInt(month) + 1}-${day}`;
 
           // Check if the day is currently in not_available
-          const isCurrentlyNotAvailable =
-            user.not_available.includes(dateKey);
+          const isCurrentlyNotAvailable = user.not_available.includes(dateKey);
           if (isCurrentlyNotAvailable) {
             // Remove from not_available
             user.not_available = user.not_available.filter(
@@ -478,7 +458,7 @@ function updateHolidayCalendar() {
 }
 
 function updateKitaOpenNoEdCalendar() {
-  updateGenericCalender('kitaOpenNoEd-calendar', kitaOpenNoEd);
+  updateGenericCalender("kitaOpenNoEd-calendar", kitaOpenNoEd);
 }
 
 function updateTeamTakesSlotCalendar() {
@@ -523,9 +503,7 @@ function updateGenericCalender(id, subjectArray) {
     const dayOfWeek = new Date(year, parseInt(month), day).getDay();
     const dayName = daysOfWeek[dayOfWeek - 1];
 
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      dayButton.classList.add("weekend"); // Grey out weekend days
-    } else if (!selectedWeekdays.includes(dayName)) {
+    if (!selectedWeekdays.includes(dayName)) {
       // If the day is not in the selected weekdays, mark it as excluded
       dayButton.classList.add("excluded"); // Gray out excluded days
       dayButton.style.cursor = "default"; // Ensure default cursor
@@ -599,4 +577,3 @@ document.querySelectorAll(".weekday-checkbox").forEach((checkbox) => {
     updateCalendar();
   });
 });
-

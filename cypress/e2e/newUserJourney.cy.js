@@ -105,7 +105,7 @@ describe("Common navigation first time visitor", () => {
 
     cy.get(".calendar")
       .first()
-      .children(".weekend") // Get all children with the 'weekend' class
+      .children(".excluded") // Get all children with the 'weekend' class
       .should("have.length", expectedWeekendValues.size) // Ensure there are exactly 10 weekend days
       .each(($el) => {
         // Extract the text (date) of each weekend element
@@ -127,7 +127,7 @@ describe("Common navigation first time visitor", () => {
       .filter((_, el) => {
         // Filter elements based on conditions
         const dayText = Cypress.$(el).text().trim(); // Get the text and trim any extra spaces
-        const hasWeekendClass = Cypress.$(el).hasClass("weekend"); // Check if the element has 'weekend' class
+        const hasWeekendClass = Cypress.$(el).hasClass("excluded"); // Check if the element has 'weekend' class
         return dayText !== "" && !hasWeekendClass; // Filter to only non-empty text and no weekend class
       })
       .each(($el) => {
@@ -141,7 +141,7 @@ describe("Common navigation first time visitor", () => {
       .children(".calendar-day") // Select all .calendar-day children
       .filter((_, el) => {
         const dayText = Cypress.$(el).text().trim(); // Get the text and trim any extra spaces
-        const hasWeekendClass = Cypress.$(el).hasClass("weekend"); // Check if the element has 'weekend' class
+        const hasWeekendClass = Cypress.$(el).hasClass("excluded"); // Check if the element has 'weekend' class
         const dayNumber = parseInt(dayText, 10); // Parse the text as a number
 
         // Exclude empty days, weekend class, and specific days (1, 4, 5, 6, 7)
