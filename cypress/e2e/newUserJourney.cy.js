@@ -276,6 +276,48 @@ describe("Common navigation first time visitor", () => {
             );
           });
         });
+        cy.get("#calendar-preview-table")
+          .children()
+          .each((child, index) => {
+            // Skip the first child
+            if (index === 0) return;
+
+            // Extract date and day information for validation
+            const dayIndex = index - 1;
+            const date = new Date(2034, 11, 1 + dayIndex); // Assuming December 2034
+            const day = date.toLocaleDateString("de-DE", { weekday: "short" }); // "Mo", "Di", etc.
+
+            const formattedDate = date
+              .toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })
+              .replace(/\.$/, ""); // "dd.MM" without trailing period
+            // Check classes and content based on the schema
+            if (day === "Sa" || day === "So" || formattedDate === "01.12") {
+              cy.wrap(child)
+                .should("have.class", "bg-red-200") // Sa and Su should have bg-red-200
+                .children()
+                .eq(0)
+                .should("have.text", day) // First child matches day
+                .next()
+                .should("have.text", formattedDate); // Second child matches formatted date
+            } else if (formattedDate === "04.12") {
+              cy.wrap(child)
+                .should("have.class", "bg-yellow-200") // 04.12 should have bg-yellow-200
+                .children()
+                .eq(0)
+                .should("have.text", day) // First child matches day
+                .next()
+                .should("have.text", formattedDate); // Second child matches formatted date
+            } else {
+              cy.wrap(child)
+                .should("not.have.class", "bg-yellow-200") // Non-highlighted days
+                .and("not.have.class", "bg-red-200")
+                .children()
+                .eq(0)
+                .should("have.text", day) // First child matches day
+                .next()
+                .should("have.text", formattedDate); // Second child matches formatted date
+            }
+          });
       });
     // INFO: END
   });
