@@ -6,6 +6,8 @@ describe("Common navigation first time visitor", () => {
       // Return false to prevent Cypress from failing the test
       return false;
     });
+
+    cy.window().then((win) => win.localStorage.clear()); // Clear localStorage
   });
 
   const createUser = (userName) => {
@@ -13,6 +15,12 @@ describe("Common navigation first time visitor", () => {
     cy.get("#save-user-button").click(); // Click the save button
   };
   it("Should reset users and verify localStorage is cleared", () => {
+    let confirmCounter = 0;
+    const confirmPopups = [
+      "Möchten Sie die Benutzer wirklich zurücksetzen?",
+      "User kann an diesem Tag nicht. Trotzdem eintragen?",
+      "User kann an diesem Tag nicht. Trotzdem eintragen?",
+    ];
     // INFO: Reset localstorage for testing
     cy.window().then((win) => win.localStorage.setItem("users", "Hello"));
     cy.window().then((win) => {
@@ -24,13 +32,11 @@ describe("Common navigation first time visitor", () => {
     cy.visit("http://localhost:3000/index.html");
 
     // INFO: Alert and Confirm listeners that auto accept the boxes
-    cy.on("window:alert", (alertText) => {
+    cy.once("window:alert", (alertText) => {
       expect(alertText).to.equal("Benutzer wurden zurückgesetzt."); // Validate alert text
     });
     cy.on("window:confirm", (confirmText) => {
-      expect(confirmText).to.equal(
-        "Möchten Sie die Benutzer wirklich zurücksetzen?",
-      );
+      expect(confirmText).to.equal(confirmPopups[confirmCounter++]);
     });
 
     // INFO: Go to options page and reset users
@@ -319,6 +325,46 @@ describe("Common navigation first time visitor", () => {
             }
           });
       });
+    // Locate the #calendar-preview-table and select the child at index 11
+    cy.get("#calendar-preview-table")
+      .children()
+      .eq(11) // Select the child at index 11
+      .as("targetRow"); // Alias for reusability
+
+    // Modify the third child (select element) of the target row
+    cy.get("@targetRow")
+      .children()
+      .eq(2) // Third child (index 2)
+      .select("TEST_USER_B"); // Change the value to TEST_USER_B
+
+    // Verify the change did not persist
+    cy.get("@targetRow").children().eq(2).should("have.value", "TEST_USER_B");
+
+    cy.get("#calendar-preview-table")
+      .children()
+      .eq(11) // Select the child at index 11
+      .as("targetRow1"); // Alias for reusability
+
+    // Modify the third child (select element) of the target row
+    cy.get("@targetRow1")
+      .children()
+      .eq(3) // fourth child (index 3)
+      .select("TEST_USER_B"); // Change the value to TEST_USER_B
+
+    // Verify the change did not persist
+    cy.get("@targetRow1").children().eq(3).should("have.value", "TEST_USER_B");
+
+    cy.get("#calendar-preview-table")
+      .children()
+      .eq(5) // Select the child at index 11
+      .as("targetRow2"); // Alias for reusability
+
+    // Modify the third child (select element) of the target row
+    cy.get("@targetRow2")
+      .children()
+      .eq(2) // Third child (index 2)
+      .select("TEST_USER_B"); // Change the value to TEST_USER_B
+    cy.get("@targetRow2").children().eq(2).should("have.value", "TEST_USER_B");
     // INFO: END
   });
 });
