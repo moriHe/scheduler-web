@@ -121,7 +121,7 @@
 
       <!-- Available days -->
       <div class="mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Wochentage</h2>
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Dienstplan-Tage</h2>
         <div id="weekdays-container" class="flex justify-center space-x-4">
           <label
             ><input
@@ -181,12 +181,12 @@
 
       <!-- Users and Calendar Table -->
       <h2 class="text-xl font-bold text-gray-800 mb-4">
-        Verfügbarkeiten Eltern
+        Sperrtermine Familien
       </h2>
       <table class="min-w-full bg-white border border-gray-300">
         <thead>
           <tr>
-            <th class="border-b-2 border-gray-300 p-2">Eltern</th>
+            <th class="border-b-2 border-gray-300 p-2">Familie</th>
             <th class="border-b-2 border-gray-300 p-2">Kalender</th>
           </tr>
         </thead>
@@ -197,7 +197,7 @@
 
       <!-- Holidays Section -->
       <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">
-        Feiertage und einzelne Sperrtermine
+        Kita geschlossen (zB Feiertage)
       </h2>
       <div class="mb-4">
         <div id="holidays-calendar" class="calendar"></div>
@@ -205,14 +205,14 @@
 
       <!-- Kita offen, kein Elterndienst Section -->
       <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">
-        Kita offen, kein Elterndienst
+        Kita offen, aber es gibt keinen Elterndienst
       </h2>
       <div class="mb-4">
         <div id="kitaOpenNoEd-calendar" class="calendar"></div>
       </div>
 
       <!-- Team Calendar Section -->
-      <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">Team übernimmt</h2>
+      <h2 class="text-xl font-bold text-gray-800 mb-4 mt-10">ErzieherInnen übernehmen einen Elterndienst</h2>
       <div class="mb-4">
         <div id="team-calendar" class="calendar"></div>
       </div>
@@ -222,7 +222,7 @@
         id="show-preview-button"
         class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
-        Show Preview
+        Zeige Vorschau
       </button>
       <button
         id="back-button"
@@ -238,7 +238,7 @@
       class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl text-center hidden"
     >
       <div class="flex justify-center gap-10 mb-6 my-20">
-        <h1 class="text-3xl font-bold text-gray-800">Preview</h1>
+        <h1 class="text-3xl font-bold text-gray-800">Vorschau</h1>
         <button
           id="preview-button"
           class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -250,8 +250,8 @@
         <div class="flex w-full text-gray-800 font-bold bg-gray-200 py-2">
           <div class="w-1/12 text-left">Tag</div>
           <div class="w-1/6 text-left">Datum</div>
-          <div class="flex-1 text-left">Elternpaar 1</div>
-          <div class="flex-1 text-left">Elternpaar 2</div>
+          <div class="flex-1 text-left">Erste Familie</div>
+          <div class="flex-1 text-left">Zweite Familie</div>
         </div>
       </div>
 
@@ -259,7 +259,6 @@
         id="parent-summary"
         class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-1 w-80 border border-gray-300"
       >
-        <h3 class="text-lg font-semibold text-gray-800 mb-2">Parent Counts</h3>
       </div>
 
       <div class="mt-10">
@@ -272,7 +271,7 @@
           id="generate-pdf-button"
           class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          Generate Calendar PDF
+          Erstelle PDF
         </button>
         <button
           id="back-creation-button"
