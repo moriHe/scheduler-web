@@ -1,0 +1,58 @@
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Seite</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen flex justify-center items-center">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-lg overflow-y-auto" style="max-height: 90vh;">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Info</h1>
+        </header>
+<section>
+    <p class="text-gray-700 text-lg">
+        Willkommen! Dieser Elterndienstplaner wurde entwickelt, um den Prozess der Dienstplanung in Elterninitiativen zu vereinfachen. Statt mühsam Excel-Tabellen zu bearbeiten, kannst du hier mit wenigen Klicks einen Monatsplan erstellen, der sich leicht anpassen lässt. Dabei wird automatisch darauf geachtet, dass die Dienste gleichmäßig auf alle Eltern verteilt werden.
+    </p>
+    <p class="text-gray-700 text-lg mt-4">
+        So funktioniert es:
+    </p>
+    <ul class="list-disc list-inside mt-4 space-y-2 text-gray-700">
+        <li>Nutze den Button „Familie hinzufügen“, um alle Familien in die Liste aufzunehmen.</li>
+        <li>Gehe anschließend auf „Plan erstellen“ und wähle den gewünschten Monat und das Jahr.</li>
+        <li>Für jede Familie gibt es einen separaten Kalender, in dem du Sperrtermine bequem markieren kannst.</li>
+        <li>Sperrtermine sind Tage, an denen die Familie keinen Dienst übernehmen kann – bitte nicht vergessen!</li>
+        <li>Du kannst außerdem angeben, an welchen Tagen die Kita geschlossen ist (z. B. Feiertage). Diese Tage werden in der PDF rot markiert.</li>
+        <li>Zusätzlich lassen sich Tage definieren, an denen kein Elterndienst erforderlich ist, da sich z. B. alle früher in der Kita für die Weihnachtsfeier treffen. Diese Tage erscheinen später in Gelb.</li>
+        <li>Falls Erzieher:innen den Dienst übernehmen, kannst du das ebenfalls im Kalender festhalten.</li>
+    </ul>
+    <p class="text-gray-700 text-lg mt-4">
+        Sobald alle Termine eingetragen sind, kannst du dir eine Vorschau der PDF anzeigen lassen. Oben rechts siehst du zudem eine Liste aller Familien samt der Anzahl ihrer Dienste.
+    </p>
+    <p class="text-gray-700 text-lg mt-4">
+        Hier sind einige praktische Funktionen der Vorschau:
+    </p>
+    <ul class="list-disc list-inside mt-4 space-y-2 text-gray-700">
+        <li>Ein Klick auf den blauen Knopf oben generiert jedes Mal einen neuen Dienstplan.</li>
+        <li>Du kannst einzelne Felder anklicken, um manuell Änderungen vorzunehmen und Eltern neu zuzuweisen.</li>
+        <li>Falls du versehentlich Eltern auswählst, die an einem Tag nicht können, erhältst du eine Warnung.</li>
+        <li>Die Liste oben rechts zeigt dir die Dienstanzahl pro Familie. Beim Klick auf eine Familie werden ihre Dienste grün hervorgehoben.</li>
+    </ul>
+    <p class="text-gray-700 text-lg mt-4">
+        Wenn alles stimmt, kannst du die PDF erstellen und deinen Dienstplan herunterladen.
+    </p>
+</section>
+        <button
+          id="back-button"
+          class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          Zurück
+        </button>
+    </div>
+    <script defer>
+        document.getElementById('back-button').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
