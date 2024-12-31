@@ -384,7 +384,7 @@ export function generatePDF(calendar, month, year, usersData = []) {
   if (!continueProcess) return
 
   // Prepare the headers
-  const headers = [['Tag', 'Datum', 'Elternpaar 1', 'Elternpaar 2']];
+  const headers = [['Tag', 'Datum', 'Elternteile 1', 'Elternteile 2']];
 
   // Set the desired width of the table
   const wantedTableWidth = 160; // Adjust this width based on your needs
