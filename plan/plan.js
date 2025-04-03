@@ -5,7 +5,8 @@ import {
   formatDayOfWeek,
   displayError,
 } from "../calendar.js";
-
+// TODO: Beim Rendern der Kalender unter User Namen Button einfügen. Der muss dann
+// user.not_available = parsed json array überschreiben und rerendern. fertig nutze populateUserTable dafür
 let usersData = []; // To store user data temporarily
 let formattedUsers = []; // To store the formatted users data
 let selectedWeekdays = [];
@@ -371,8 +372,54 @@ function populateUserTable(users) {
     row.classList.add("border-b");
 
     const userCell = document.createElement("td");
-    userCell.classList.add("p-2");
-    userCell.textContent = user.name; // Display user name
+    userCell.classList.add("p-4", "border", "border-gray-300", "rounded-lg"); // Adding padding and borders to the cell
+
+// Create an element to display the user's name with padding and a nice font
+    const userNameElement = document.createElement("div");
+    userNameElement.textContent = user.name; // Display user name
+    userNameElement.classList.add("font-semibold", "text-lg", "mb-2", "text-gray-800", "p-2", "bg-gray-100", "rounded-md"); // Styling for name
+    userCell.appendChild(userNameElement);
+
+// Create an input field to paste the JSON string
+    const jsonInput = document.createElement("input");
+    jsonInput.type = "text";
+    jsonInput.placeholder = "Paste JSON here";
+    jsonInput.classList.add("w-full", "p-2", "border", "border-gray-300", "rounded-md", "mt-2", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500", "bg-white");
+
+// Create a button to confirm the pasting
+    const confirmButton = document.createElement("button");
+    confirmButton.textContent = "Confirm";
+    confirmButton.classList.add("mt-2", "px-4", "py-2", "bg-blue-500", "text-white", "rounded-md", "hover:bg-blue-600", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500");
+
+    confirmButton.addEventListener("click", function() {
+      try {
+        const jsonData = JSON.parse(jsonInput.value); // Try parsing the JSON string
+
+        // Check if jsonData is an array
+        if (Array.isArray(jsonData)) {
+          // Validate if all elements are strings in the date format "YYYY-MM-DD"
+          const dateRegex = /^\d{4}-\d{1,2}-\d{1,2}$/;
+          const isValid = jsonData.every(item => typeof item === 'string' && dateRegex.test(item));
+
+          if (isValid) {
+            user.not_available = jsonData; // Store the valid JSON array
+            populateUserTable(users); // Update the table
+            alert("JSON successfully pasted and validated!");
+          } else {
+            alert("The JSON array contains invalid dates or incorrect format.");
+          }
+        } else {
+          alert("The JSON is not an array.");
+        }
+      } catch (error) {
+        alert("Invalid JSON. Please try again.");
+      }
+    });
+
+// Append the input field and button to the user cell
+    userCell.appendChild(jsonInput);
+    userCell.appendChild(confirmButton);
+
     row.appendChild(userCell);
 
     const calendarCell = document.createElement("td");
