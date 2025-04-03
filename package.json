@@ -5,6 +5,7 @@
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html",
+    "postbuild": "javascript-obfuscator dist --output dist",
     "preview": "serve dist",
     "cypress": "cypress open",
     "clearCache": "npx parcel cache clean",
@@ -26,6 +27,7 @@
     "eslint": "^9.14.0",
     "eslint-plugin-cypress": "^4.1.0",
     "globals": "^15.12.0",
+    "javascript-obfuscator": "^4.1.1",
     "parcel": "^2.14.4",
     "serve": "^14.2.4"
   }
