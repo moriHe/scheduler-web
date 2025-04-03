@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Einzelkalender</title>
+  <link
+          href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+          rel="stylesheet"
+  />
+  <style>
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .calendar-header {
+      font-weight: bold;
+      padding: 5px;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+    }
+    .calendar-day {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      background-color: white;
+    }
+    .calendar-day:hover {
+      background-color: #e5e7eb;
+    }
+    /* When selected, mark the cell red */
+    .selected {
+      background-color: #f87171;
+      color: white;
+    }
+    /* Styling for weekends: non-clickable, gray */
+    .weekend {
+      background-color: #d1d5db;
+      color: #9ca3af;
+      cursor: default;
+    }
+    .weekend:hover {
+      background-color: #d1d5db;
+    }
+    /* Preformatted output wrapping */
+    #json-output {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    /* Outer calendar wrapper with fixed height to reserve space */
+    #calendar-wrapper {
+      height: 400px; /* Adjust as needed */
+      overflow-y: auto;
+      padding-bottom: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center p-6">
+<div id="plan-creation-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl">
+  <!-- Month/Year Selection -->
+  <div class="my-5 flex flex-col">
+    <div class="mb-3">
+      <label for="month" class="mr-2 font-semibold">Monat:</label>
+      <select id="month" class="border rounded p-2">
+        <option value="0">Januar</option>
+        <option value="1">Februar</option>
+        <option value="2">März</option>
+        <option value="3">April</option>
+        <option value="4">Mai</option>
+        <option value="5">Juni</option>
+        <option value="6">Juli</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">Oktober</option>
+        <option value="10">November</option>
+        <option value="11">Dezember</option>
+      </select>
+    </div>
+    <div>
+      <label for="year" class="ml-4 mr-2 font-semibold">Jahr:</label>
+      <select id="year" class="border rounded p-2"></select>
+    </div>
+  </div>
+
+  <!-- Fixed-height Calendar Wrapper -->
+  <div id="calendar-wrapper" class="w-full max-w-lg bg-white p-4 rounded shadow-md mx-auto">
+    <!-- Calendar Container -->
+    <div id="calendar-container"></div>
+  </div>
+
+  <!-- Generate JSON and Copy Buttons -->
+  <div class="flex flex-col items-center mt-6 w-full max-w-lg mx-auto">
+    <button id="generate-json" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded mb-2">
+      Generate json
+    </button>
+    <button id="copy-json" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded">
+      Copy JSON
+    </button>
+  </div>
+
+  <!-- Display JSON output -->
+  <pre id="json-output" class="mt-4 mx-auto w-full max-w-lg bg-white p-4 rounded border border-gray-300"></pre>
+</div>
+
+<script>
+  // Global variable to hold selected dates (formatted as YYYY-M-D)
+  let selectedDates = [];
+
+  // Populate the year select box with current year and next 10 years.
+  function populateYearSelect() {
+    const yearSelect = document.getElementById("year");
+    const currentYear = new Date().getFullYear();
+    for (let i = currentYear; i <= currentYear + 10; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = i;
+      yearSelect.appendChild(option);
+    }
+  }
+
+  // Render the calendar grid for a full week (Monday to Sunday)
+  function renderCalendar() {
+    const calendarContainer = document.getElementById("calendar-container");
+    calendarContainer.innerHTML = ""; // Clear previous calendar
+
+    const monthSelect = document.getElementById("month");
+    const yearSelect = document.getElementById("year");
+    const month = parseInt(monthSelect.value);
+    const year = parseInt(yearSelect.value);
+
+    // Create calendar header with day names (Mo, Di, Mi, Do, Fr, Sa, So)
+    const daysOfWeek = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+    const headerRow = document.createElement("div");
+    headerRow.classList.add("calendar");
+    daysOfWeek.forEach(day => {
+      const headerCell = document.createElement("div");
+      headerCell.classList.add("calendar-header");
+      headerCell.textContent = day;
+      headerRow.appendChild(headerCell);
+    });
+    calendarContainer.appendChild(headerRow);
+
+    // Determine the day of the week for the 1st of the month.
+    let firstDay = new Date(year, month, 1).getDay();
+    firstDay = (firstDay + 6) % 7;
+
+    // Fill in empty cells until the first day.
+    const grid = document.createElement("div");
+    grid.classList.add("calendar");
+    for (let i = 0; i < firstDay; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.classList.add("calendar-day");
+      grid.appendChild(emptyCell);
+    }
+
+    // Number of days in the month
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateObj = new Date(year, month, day);
+      const weekdayIndex = (dateObj.getDay() + 6) % 7;
+      const dateKey = `${year}-${month + 1}-${day}`; // Format as YYYY-M-D
+      const dayCell = document.createElement("div");
+      dayCell.classList.add("calendar-day");
+      dayCell.textContent = day;
+
+      // If it's Saturday (index 5) or Sunday (index 6), mark as weekend
+      if (weekdayIndex === 5 || weekdayIndex === 6) {
+        dayCell.classList.add("weekend");
+      } else {
+        dayCell.addEventListener("click", () => {
+          if (selectedDates.includes(dateKey)) {
+            selectedDates = selectedDates.filter(date => date !== dateKey);
+            dayCell.classList.remove("selected");
+          } else {
+            selectedDates.push(dateKey);
+            dayCell.classList.add("selected");
+          }
+        });
+      }
+      if (selectedDates.includes(dateKey)) {
+        dayCell.classList.add("selected");
+      }
+      grid.appendChild(dayCell);
+    }
+
+    // Pad the last row with empty cells if necessary.
+    const totalCells = firstDay + daysInMonth;
+    const remainder = totalCells % 7;
+    if (remainder > 0) {
+      for (let i = 0; i < 7 - remainder; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.classList.add("calendar-day");
+        grid.appendChild(emptyCell);
+      }
+    }
+
+    calendarContainer.appendChild(grid);
+  }
+
+  // Button listeners for generating and copying JSON.
+  document.getElementById("generate-json").addEventListener("click", () => {
+    const jsonOutput = document.getElementById("json-output");
+    const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
+    jsonOutput.textContent = JSON.stringify(sortedDates, null, 2);
+  });
+
+  document.getElementById("copy-json").addEventListener("click", async () => {
+    const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
+    const compactJson = JSON.stringify(sortedDates);
+    try {
+      await navigator.clipboard.writeText(compactJson);
+      alert("JSON copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  });
+
+  window.onload = () => {
+    populateYearSelect();
+    const today = new Date();
+    const nextMonth = (today.getMonth() + 1) % 12;
+    const nextYear = today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear();
+
+    document.getElementById("month").value = nextMonth;
+    document.getElementById("year").value = nextYear;
+
+    renderCalendar();
+
+    // Add event listeners to update the calendar when month or year changes.
+    document.getElementById("month").addEventListener("change", renderCalendar);
+    document.getElementById("year").addEventListener("change", renderCalendar);
+  };
+</script>
+</body>
+</html>
