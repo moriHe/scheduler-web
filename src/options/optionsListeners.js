@@ -2,7 +2,7 @@ import { resetUsers, uploadUsers } from "./options.js"
 
 // Back to start page
 document.getElementById("back-button").addEventListener("click", () => {
-  window.location.href = "../index.html"; // Navigate back to index.html
+  window.location.href = "/index.html"; // Navigate back to index.html
 });
 
 // Reset users in localStorage
