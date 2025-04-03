@@ -5,8 +5,6 @@ import {
   formatDayOfWeek,
   displayError,
 } from "../calendar.js";
-// TODO: Beim Rendern der Kalender unter User Namen Button einfügen. Der muss dann
-// user.not_available = parsed json array überschreiben und rerendern. fertig nutze populateUserTable dafür
 let usersData = []; // To store user data temporarily
 let formattedUsers = []; // To store the formatted users data
 let selectedWeekdays = [];
