@@ -30,6 +30,12 @@ window.onload = () => {
   }
 
   populateYearSelect();
+  const today = new Date();
+  const nextMonth = (today.getMonth() + 1) % 12;
+  const nextYear = today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear();
+
+  document.getElementById("month").value = nextMonth;
+  document.getElementById("year").value = nextYear;
   formatUsersData(usersData); // Convert to required format only once
   updateCalendar(); // Populate the calendar for the default month/year
 
@@ -402,7 +408,6 @@ function populateUserTable(users) {
           if (isValid) {
             user.not_available = jsonData; // Store the valid JSON array
             populateUserTable(users); // Update the table
-            alert("JSON successfully pasted and validated!");
           } else {
             alert("The JSON array contains invalid dates or incorrect format.");
           }
@@ -410,7 +415,7 @@ function populateUserTable(users) {
           alert("The JSON is not an array.");
         }
       } catch (error) {
-        alert("Invalid JSON. Please try again.");
+        alert("Invalid JSON. Please try again. " + error?.message);
       }
     });
 
