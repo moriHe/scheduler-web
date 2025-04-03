@@ -29,7 +29,7 @@ describe("Common navigation first time visitor", () => {
     });
 
     // INFO: Start testing
-    cy.visit("http://localhost:3000/index.html");
+    cy.visit("http://localhost:1234/index.html");
 
     // INFO: Alert and Confirm listeners that auto accept the boxes
     cy.once("window:alert", (alertText) => {
