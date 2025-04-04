@@ -371,7 +371,9 @@ function populateUserTable(users) {
   const month = document.getElementById("month").value;
   const year = document.getElementById("year").value;
 
-  users.forEach((user) => {
+  users
+      .sort((a, b) => a?.name?.localeCompare(b?.name))
+      .forEach((user) => {
     const row = document.createElement("tr");
     row.classList.add("border-b");
 
