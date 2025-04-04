@@ -1,24 +1,45 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Impressum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Impressum</h1>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
 
-    <h2>Angaben gemäß § 5 TMG:</h2>
-    <p>Max Mustermann<br>
-        Musterstraße 1<br>
-        12345 Musterstadt<br>
-        Telefon: +49 123 456789<br>
-        E-Mail: <a href="mailto:kontakt@musterwebsite.de">kontakt@musterwebsite.de</a></p>
+<main class="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-md rounded-2xl">
+    <h1 class="text-3xl font-bold mb-6">Impressum</h1>
 
-    <h2>Haftungsausschluss</h2>
-    <p>Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Dienstanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf dieser Seite nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">Angaben gemäß § 5 TMG</h2>
+        <p>
+            <strong>Max Mustermann</strong><br />
+            Musterstraße 1<br />
+            12345 Musterstadt<br />
+            Deutschland
+        </p>
+    </section>
 
-    <h2>Links zu externen Websites</h2>
-    <p>Unsere Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">Kontakt</h2>
+        <p>
+            E-Mail: <a href="mailto:max@example.com" class="text-blue-600 underline">max@example.com</a>
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">Haftungsausschluss</h2>
+        <p>
+            Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links.
+            Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
+        </p>
+    </section>
+
+    <footer class="text-sm text-gray-600 mt-10 border-t pt-4">
+        Stand: April 2025
+    </footer>
+</main>
+
 </body>
 </html>
