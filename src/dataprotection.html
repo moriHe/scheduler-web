@@ -1,57 +1,87 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Datenschutzerklärung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Datenschutzerklärung</h1>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
 
-    <h2>1. Allgemeine Hinweise und Pflichtinformationen</h2>
-    <p>Die folgende Datenschutzerklärung informiert Sie über die Erhebung und Verarbeitung Ihrer personenbezogenen Daten, wenn Sie unsere Website oder unsere Dienste nutzen. Diese Erklärung bezieht sich auf die Nutzung von [Ihre Website oder App Name] und umfasst auch die Nutzung von Local Storage sowie der DigitalOcean App Platform.</p>
+<main class="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-md rounded-2xl">
+    <h1 class="text-3xl font-bold mb-6">Datenschutzerklärung</h1>
 
-    <h3>Verantwortlicher</h3>
-    <p>Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:<br>
-        Max Mustermann<br>
-        Musterstraße 1<br>
-        12345 Musterstadt<br>
-        Telefon: +49 123 456789<br>
-        E-Mail: <a href="mailto:kontakt@musterwebsite.de">kontakt@musterwebsite.de</a></p>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">Verantwortlich</h2>
+        <p>
+            <strong>[Dein Name oder Firmenname]</strong><br />
+            [Adresse]<br />
+            <a href="mailto:deine@email.de" class="text-blue-600 underline">deine@email.de</a>
+        </p>
+    </section>
 
-    <h3>Datenschutzbeauftragter</h3>
-    <p>Für datenschutzrechtliche Anfragen erreichen Sie uns unter: <a href="mailto:datenschutz@musterwebsite.de">datenschutz@musterwebsite.de</a></p>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">1. Zugriffsdaten und Hosting</h2>
+        <p>
+            Beim Besuch dieser Website werden automatisch Informationen durch den Hostinganbieter
+            <strong>DigitalOcean, LLC</strong> verarbeitet und in sogenannten Server-Logfiles gespeichert.
+            Diese Informationen umfassen:
+        </p>
+        <ul class="list-disc list-inside mt-2">
+            <li>Besuchte Seite</li>
+            <li>Datum und Uhrzeit des Zugriffs</li>
+            <li>Übertragene Datenmenge</li>
+            <li>Quelle/Verweis, von welchem Sie auf die Seite gelangten</li>
+            <li>Verwendeter Browser</li>
+            <li>Verwendetes Betriebssystem</li>
+            <li>IP-Adresse (anonymisiert oder gekürzt, sofern möglich)</li>
+        </ul>
+        <p class="mt-2">
+            Die Verarbeitung erfolgt gemäß Art. 6 Abs. 1 lit. f DSGVO auf Basis des berechtigten Interesses
+            an einer stabilen und sicheren Bereitstellung dieser Website.
+        </p>
+        <p class="mt-2">
+            Die Server befinden sich in Rechenzentren der DigitalOcean, LLC, 101 Avenue of the Americas, 10th Floor,
+            New York, NY 10013, USA. Es besteht ein Auftragsverarbeitungsvertrag (AVV) mit DigitalOcean. Die
+            Datenverarbeitung kann dabei außerhalb der EU stattfinden. DigitalOcean sichert geeignete Garantien
+            gemäß Art. 46 DSGVO zu.
+        </p>
+    </section>
 
-    <h2>2. Erhebung und Speicherung personenbezogener Daten sowie Art und Zweck ihrer Verwendung</h2>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">2. Einsatz von Webtechnologien</h2>
+        <p>
+            Diese Website verwendet <strong>Tailwind CSS</strong> sowie <strong>Ionicons</strong>, die über ein
+            Content Delivery Network (CDN) eingebunden sind. Dabei kann es technisch bedingt zu Anfragen an
+            Server von Drittanbietern kommen (z. B. jsdelivr oder unpkg).
+        </p>
+        <p class="mt-2">
+            Auch hierbei können IP-Adressen übermittelt werden. Es erfolgt jedoch keine Speicherung oder
+            Auswertung durch uns.
+        </p>
+    </section>
 
-    <h3>a) Beim Besuch der Website</h3>
-    <p>Wenn Sie unsere Website besuchen, werden automatisch Informationen an den Server unserer Website übermittelt. Diese Informationen werden temporär in einer sogenannten Logdatei gespeichert. Folgende Daten werden dabei ohne Ihr Zutun erfasst und bis zur automatisierten Löschung gespeichert:</p>
-    <ul>
-        <li>IP-Adresse</li>
-        <li>Datum und Uhrzeit des Zugriffs</li>
-        <li>Name und URL der abgerufenen Datei</li>
-        <li>Website, von der der Zugriff erfolgt (Referrer-URL)</li>
-        <li>Verwendeter Browser und ggf. das Betriebssystem Ihres Rechners sowie der Name Ihres Access-Providers</li>
-    </ul>
-    <p>Die Verarbeitung dieser Daten erfolgt zu dem Zweck, die Nutzung der Website zu ermöglichen (Verbindungsaufbau), die Systemsicherheit und -stabilität zu gewährleisten sowie die administrativen Funktionen der Website zu ermöglichen. Die Rechtsgrundlage dafür ist Art. 6 Abs. 1 lit. f DSGVO.</p>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">3. Keine Cookies, kein Tracking</h2>
+        <p>
+            Diese Website verwendet <strong>keine Cookies</strong>, <strong>kein Webtracking</strong> und erhebt
+            <strong>keine personenbezogenen Daten</strong> aktiv (z. B. durch Formulare).
+        </p>
+    </section>
 
-    <h3>b) Nutzung von Local Storage</h3>
-    <p>Unsere Website nutzt Local Storage, um bestimmte Daten lokal auf Ihrem Gerät zu speichern. Diese Daten sind in der Regel für den schnellen Zugriff auf Informationen oder für die Benutzererfahrung relevant (z. B. gespeicherte Einstellungen). Sie können die Nutzung von Local Storage in den Einstellungen Ihres Browsers einschränken oder deaktivieren.</p>
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">4. Ihre Rechte</h2>
+        <p>
+            Sie haben jederzeit das Recht auf Auskunft über Ihre gespeicherten personenbezogenen Daten sowie
+            auf Berichtigung, Löschung oder Einschränkung der Verarbeitung. Außerdem haben Sie ein
+            Beschwerderecht bei einer zuständigen Datenschutzaufsichtsbehörde.
+        </p>
+    </section>
 
-    <h3>c) DigitalOcean App Platform</h3>
-    <p>Unsere Website oder App wird über die DigitalOcean App Platform gehostet. DigitalOcean erfasst Daten in Übereinstimmung mit ihrer eigenen Datenschutzrichtlinie, die Sie hier einsehen können: <a href="https://www.digitalocean.com/legal/privacy-policy/" target="_blank">DigitalOcean Datenschutzrichtlinie</a>.</p>
+    <footer class="text-sm text-gray-600 mt-10 border-t pt-4">
+        Stand: April 2025
+    </footer>
+</main>
 
-    <h2>3. Ihre Rechte</h2>
-    <p>Sie haben das Recht:</p>
-    <ul>
-        <li>Auskunft über Ihre gespeicherten personenbezogenen Daten zu erhalten</li>
-        <li>Ihre personenbezogenen Daten zu berichtigen, zu löschen oder die Verarbeitung einzuschränken</li>
-        <li>Widerspruch gegen die Verarbeitung Ihrer personenbezogenen Daten einzulegen</li>
-        <li>Ihre Daten in einem strukturierten, gängigen und maschinenlesbaren Format zu erhalten</li>
-    </ul>
-    <p>Wenn Sie eines dieser Rechte ausüben möchten, können Sie uns unter der oben angegebenen E-Mail-Adresse kontaktieren.</p>
-
-    <h2>4. Änderungen der Datenschutzerklärung</h2>
-    <p>Wir behalten uns vor, diese Datenschutzerklärung gelegentlich zu ändern. Änderungen werden an dieser Stelle veröffentlicht. Bitte informieren Sie sich regelmäßig über die aktuelle Version.</p>
 </body>
 </html>
