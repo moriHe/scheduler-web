@@ -41,7 +41,7 @@ window.onload = () => {
 
   // Go back to the front page
   document.getElementById("back-button").addEventListener("click", () => {
-    window.location.href = "/index.html"; // Navigate back to index.html
+    window.location.href = "/kitashiftplan.html"; // Navigate back to kitashiftplan.html
   });
 
   // Add event listeners for month and year change

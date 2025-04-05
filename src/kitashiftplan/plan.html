@@ -17,7 +17,7 @@
       type="module"
       src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"
     ></script>
-    <script defer type="module" src="plan/plan.js"></script>
+    <script defer type="module" src="../plan/plan.js"></script>
     <style>
       /* Calendar styling */
 
@@ -86,7 +86,7 @@
   </head>
 
   <body
-    class="bg-gray-100 h-screen w-screen flex flex-col items-center justify-start p-6"
+    class="bg-gray-100 h-screen w-screen flex flex-col items-center justify-start p-6 min-h-screen"
   >
     <!-- Plan Creation Container -->
     <div
@@ -281,9 +281,11 @@
         </button>
       </div>
     </div>
-  </body>
-<footer class="w-full py-2 bg-gray-100 text-sm text-left">
+    <footer class="w-full py-2 bg-gray-100 text-sm text-left">
+      <div class="mx-4">
         <a href="/src/imprint.html" class="text-black mr-2">Impressum</a> |
         <a href="/src/dataprotection.html" class="text-black ml-2">Datenschutzerklärung</a>
-</footer>
+      </div>
+    </footer>
+  </body>
 </html>
