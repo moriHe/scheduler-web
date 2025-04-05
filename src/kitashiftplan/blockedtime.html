@@ -58,8 +58,8 @@
     }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center p-6">
-<div id="plan-creation-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl">
+<body class="bg-gray-100 items-center justify-center p-6 flex flex-col min-h-screen h-screen">
+<div id="plan-creation-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl flex-1">
   <!-- Month/Year Selection -->
   <div class="my-5 flex flex-col">
     <div class="mb-3">
@@ -110,7 +110,12 @@
     Zurück
   </button>
 </div>
-
+<footer class="w-full py-2 bg-gray-100 text-sm text-left">
+  <div class="mx-4">
+    <a href="/src/imprint.html" class="text-black mr-2">Impressum</a> |
+    <a href="/src/dataprotection.html" class="text-black ml-2">Datenschutzerklärung</a>
+  </div>
+</footer>
 <script>
   // Global variable to hold selected dates (formatted as YYYY-M-D)
   let selectedDates = [];
@@ -246,10 +251,4 @@
   });
 </script>
 </body>
-<footer class="absolute bottom-0 left-0 w-full py-2 bg-gray-100 text-sm text-left">
-  <div class="mx-4">
-    <a href="/src/imprint.html" class="text-black mr-2">Impressum</a> |
-    <a href="/src/dataprotection.html" class="text-black ml-2">Datenschutzerklärung</a>
-  </div>
-</footer>
 </html>

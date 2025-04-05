@@ -5,8 +5,8 @@
     <title>Info Seite</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 h-screen flex justify-center items-center">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-lg overflow-y-auto" style="max-height: 90vh;">
+<body class="bg-gray-100 justify-center items-center flex flex-col min-h-screen h-screen">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-lg overflow-y-auto flex-1" style="max-height: 90vh;">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Info</h1>
         </header>
@@ -49,17 +49,17 @@
           Zurück
         </button>
     </div>
+    <footer class="w-full py-2 bg-gray-100 text-sm text-left">
+        <div class="mx-4">
+            <a href="/src/imprint.html" class="text-black mr-2">Impressum</a> |
+            <a href="/src/dataprotection.html" class="text-black ml-2">Datenschutzerklärung</a>
+        </div>
+    </footer>
     <script defer>
         document.getElementById('back-button').addEventListener('click', () => {
             window.location.href = 'index.html';
         });
     </script>
 </body>
-<footer class="absolute bottom-0 left-0 w-full py-2 bg-gray-100 text-sm text-left">
-    <div class="mx-4">
-        <a href="/src/imprint.html" class="text-black mr-2">Impressum</a> |
-        <a href="/src/dataprotection.html" class="text-black ml-2">Datenschutzerklärung</a>
-    </div>
-</footer>
 
 </html>
