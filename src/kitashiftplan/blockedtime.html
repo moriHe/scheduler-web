@@ -223,7 +223,39 @@
     const compactJson = JSON.stringify(sortedDates);
     try {
       await navigator.clipboard.writeText(compactJson);
-      alert("JSON copied to clipboard!");
+      const toastDiv = document.createElement("div");
+      toastDiv.classList.add(
+              "fixed", // Position fixed
+              "bottom-4", // 4 units from bottom
+              "left-4", // 4 units from left
+              "bg-green-500", // Green background
+              "text-black", // Black text
+              "p-4", // Padding 4 units
+              "rounded-lg", // Rounded corners
+              "opacity-0", // Initially transparent
+              "transition-opacity", // Enable opacity transition
+              "duration-500", // Transition duration 500ms
+              "z-50" // High z-index to stay on top
+      );
+
+      toastDiv.textContent = "Sperrzeiten kopiert und versandbereit."; // Set message
+
+      document.body.appendChild(toastDiv); // Append to body
+
+      // Display toast
+      setTimeout(() => {
+        toastDiv.classList.remove("opacity-0"); // Make visible
+        toastDiv.classList.add("opacity-100");
+      }, 10); // Short delay to ensure transition works
+
+      // Fade out after 3 seconds
+      setTimeout(() => {
+        toastDiv.classList.remove("opacity-100"); // Make transparent
+        toastDiv.classList.add("opacity-0");
+        setTimeout(() => {
+          toastDiv.remove(); // Remove from DOM after fade out
+        }, 500); // Remove after transition
+      }, 3000); // 3 seconds
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
