@@ -4,8 +4,7 @@
   "description": "",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html",
-    "postbuild": "javascript-obfuscator dist --output dist",
+    "build": "parcel build src/index.html && javascript-obfuscator dist --output dist",
     "preview": "serve dist",
     "cypress": "cypress open",
     "clearCache": "npx parcel cache clean",
