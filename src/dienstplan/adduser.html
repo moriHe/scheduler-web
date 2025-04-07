@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mitarbeiter Hinzufügen</title> <link
+        href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+        rel="stylesheet"
+/>
+    <script defer type="module" src="../adduser/addUserListener.js"></script>
+</head>
+<body class="bg-gradient-to-br from-teal-100 to-cyan-100 items-center justify-center flex flex-col min-h-screen h-screen font-sans"> <div
+        class="bg-white shadow-lg rounded-xl p-10 w-full max-w-md overflow-y-auto space-y-8"
+>
+    <h1 class="text-3xl font-semibold text-gray-900">Mitarbeiter Hinzufügen</h1> <input
+        type="text"
+        id="user-name" placeholder="Mitarbeitername" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+/>
+
+    <div class="flex justify-between items-center mt-6">
+        <button
+                id="save-user-button" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+        >
+            Mitarbeiter Speichern </button>
+
+        <button
+                id="back-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+            Zurück
+        </button>
+    </div>
+
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-green-600 mb-4">Mitarbeiter:</h2> <div id="user-list" class="space-y-2"> </div>
+    </div>
+</div>
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+    <div class="flex justify-center space-x-4">
+        <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+        <span>|</span>
+        <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+    </div>
+</footer>
+</body>
+</html>

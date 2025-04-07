@@ -4,39 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Einzelkalender</title>
-  <link
-          href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-          rel="stylesheet"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      margin-top: 10px;
+      gap: 0.25rem; /* Reduced gap */
+      margin-top: 0.5rem; /* Reduced margin */
     }
     .calendar-header {
-      font-weight: bold;
-      padding: 5px;
+      font-weight: 600;
+      padding: 0.4rem; /* Reduced padding */
       background-color: #f3f4f6;
       border: 1px solid #e5e7eb;
+      font-size: 0.875rem; /* Reduced font size */
     }
     .calendar-day {
-      padding: 10px;
+      padding: 0.6rem; /* Reduced padding */
       text-align: center;
       border: 1px solid #e5e7eb;
       cursor: pointer;
       background-color: white;
+      font-size: 0.875rem; /* Reduced font size */
     }
     .calendar-day:hover {
       background-color: #e5e7eb;
     }
-    /* When selected, mark the cell red */
     .selected {
       background-color: #f87171;
       color: white;
     }
-    /* Styling for weekends: non-clickable, gray */
     .weekend {
       background-color: #d1d5db;
       color: #9ca3af;
@@ -45,26 +42,23 @@
     .weekend:hover {
       background-color: #d1d5db;
     }
-    /* Preformatted output wrapping */
     #json-output {
       white-space: pre-wrap;
       word-wrap: break-word;
     }
-    /* Outer calendar wrapper with fixed height to reserve space */
     #calendar-wrapper {
-      height: 400px; /* Adjust as needed */
-      overflow-y: auto;
-      padding-bottom: 10px;
+      height: auto; /* Changed to auto */
+      overflow-y: visible; /* Changed to visible */
+      padding-bottom: 0.5rem; /* Reduced padding */
     }
   </style>
 </head>
-<body class="bg-gray-100 items-center justify-center p-6 flex flex-col min-h-screen h-screen">
-<div id="plan-creation-container" class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl flex-1">
-  <!-- Month/Year Selection -->
-  <div class="my-5 flex flex-col">
-    <div class="mb-3">
-      <label for="month" class="mr-2 font-semibold">Monat:</label>
-      <select id="month" class="border rounded p-2">
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center justify-center font-sans">
+<div id="plan-creation-container" class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl flex-1 space-y-8">
+  <div class="flex flex-col space-y-4">
+    <div class="flex items-center space-x-4">
+      <label for="month" class="font-medium text-gray-700">Monat:</label>
+      <select id="month" class="border rounded-md p-2">
         <option value="0">Januar</option>
         <option value="1">Februar</option>
         <option value="2">März</option>
@@ -78,49 +72,40 @@
         <option value="10">November</option>
         <option value="11">Dezember</option>
       </select>
-    </div>
-    <div>
-      <label for="year" class="ml-4 mr-2 font-semibold">Jahr:</label>
-      <select id="year" class="border rounded p-2"></select>
+      <label for="year" class="font-medium text-gray-700">Jahr:</label>
+      <select id="year" class="border rounded-md p-2"></select>
     </div>
   </div>
 
-  <!-- Fixed-height Calendar Wrapper -->
-  <div id="calendar-wrapper" class="w-full max-w-lg bg-white p-4 rounded shadow-md mx-auto">
-    <!-- Calendar Container -->
+  <div id="calendar-wrapper" class="w-full bg-white p-4 rounded-md shadow-md mx-auto">
     <div id="calendar-container"></div>
   </div>
 
-  <!-- Generate JSON and Copy Buttons -->
-  <div class="flex flex-col items-center mt-6 w-full max-w-lg mx-auto">
-    <button id="generate-json" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded mb-2">
+  <div class="flex flex-col items-center space-y-4 mt-6">
+    <button id="generate-json" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">
       Generiere Sperrzeiten
     </button>
-    <button id="copy-json" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded">
+    <button id="copy-json" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">
       Kopiere Sperrzeiten
     </button>
   </div>
 
-  <!-- Display JSON output -->
-  <pre id="json-output" class="mt-4 mx-auto w-full max-w-lg bg-white p-4 rounded border border-gray-300"></pre>
-  <button
-          id="back-button"
-          class="mt-10 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-  >
+  <pre id="json-output" class="mt-6 w-full bg-white p-4 rounded-md border border-gray-300"></pre>
+
+  <button id="back-button" class="mt-10 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300">
     Zurück
   </button>
 </div>
-<footer class="w-full py-2 bg-gray-100 text-sm text-left">
-  <div class="mx-4">
-    <a href="/src/imprint.html" class="text-black mr-2">Impressum</a> |
-    <a href="/src/dataprotection.html" class="text-black ml-2">Datenschutzerklärung</a>
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+    <span>|</span>
+    <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
   </div>
 </footer>
 <script>
-  // Global variable to hold selected dates (formatted as YYYY-M-D)
   let selectedDates = [];
 
-  // Populate the year select box with current year and next 10 years.
   function populateYearSelect() {
     const yearSelect = document.getElementById("year");
     const currentYear = new Date().getFullYear();
@@ -132,17 +117,15 @@
     }
   }
 
-  // Render the calendar grid for a full week (Monday to Sunday)
   function renderCalendar() {
     const calendarContainer = document.getElementById("calendar-container");
-    calendarContainer.innerHTML = ""; // Clear previous calendar
+    calendarContainer.innerHTML = "";
 
     const monthSelect = document.getElementById("month");
     const yearSelect = document.getElementById("year");
     const month = parseInt(monthSelect.value);
     const year = parseInt(yearSelect.value);
 
-    // Create calendar header with day names (Mo, Di, Mi, Do, Fr, Sa, So)
     const daysOfWeek = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
     const headerRow = document.createElement("div");
     headerRow.classList.add("calendar");
@@ -154,11 +137,9 @@
     });
     calendarContainer.appendChild(headerRow);
 
-    // Determine the day of the week for the 1st of the month.
     let firstDay = new Date(year, month, 1).getDay();
     firstDay = (firstDay + 6) % 7;
 
-    // Fill in empty cells until the first day.
     const grid = document.createElement("div");
     grid.classList.add("calendar");
     for (let i = 0; i < firstDay; i++) {
@@ -167,17 +148,15 @@
       grid.appendChild(emptyCell);
     }
 
-    // Number of days in the month
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
       const dateObj = new Date(year, month, day);
       const weekdayIndex = (dateObj.getDay() + 6) % 7;
-      const dateKey = `${year}-${month + 1}-${day}`; // Format as YYYY-M-D
+      const dateKey = `${year}-${month + 1}-${day}`;
       const dayCell = document.createElement("div");
       dayCell.classList.add("calendar-day");
       dayCell.textContent = day;
 
-      // If it's Saturday (index 5) or Sunday (index 6), mark as weekend
       if (weekdayIndex === 5 || weekdayIndex === 6) {
         dayCell.classList.add("weekend");
       } else {
@@ -197,7 +176,6 @@
       grid.appendChild(dayCell);
     }
 
-    // Pad the last row with empty cells if necessary.
     const totalCells = firstDay + daysInMonth;
     const remainder = totalCells % 7;
     if (remainder > 0) {
@@ -211,7 +189,6 @@
     calendarContainer.appendChild(grid);
   }
 
-  // Button listeners for generating and copying JSON.
   document.getElementById("generate-json").addEventListener("click", () => {
     const jsonOutput = document.getElementById("json-output");
     const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
@@ -223,39 +200,60 @@
     const compactJson = JSON.stringify(sortedDates);
     try {
       await navigator.clipboard.writeText(compactJson);
-      const toastDiv = document.createElement("div");
-      toastDiv.classList.add(
-              "fixed", // Position fixed
-              "bottom-4", // 4 units from bottom
-              "left-4", // 4 units from left
-              "bg-green-500", // Green background
-              "text-black", // Black text
-              "p-4", // Padding 4 units
-              "rounded-lg", // Rounded corners
-              "opacity-0", // Initially transparent
-              "transition-opacity", // Enable opacity transition
-              "duration-500", // Transition duration 500ms
-              "z-50" // High z-index to stay on top
-      );
+      document.getElementById("copy-json").addEventListener("click", async () => {
+        const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
+        const compactJson = JSON.stringify(sortedDates);
+        try {
+          await navigator.clipboard.writeText(compactJson);
+          const toastDiv = document.createElement("div");
+          toastDiv.classList.add(
+                  "fixed",
+                  "bottom-4",
+                  "left-4",
+                  "bg-green-100", // Light green background
+                  "text-green-800", // Dark green text
+                  "p-4",
+                  "rounded-lg", // Rounded corners
+                  "shadow-md", // Subtle shadow
+                  "opacity-0",
+                  "transition-opacity",
+                  "duration-300", // Shorter transition
+                  "z-50",
+                  "flex", // Flexbox for layout
+                  "items-center", // Vertical alignment
+                  "space-x-2", // Spacing between icon and text
+                  "border", // Add a border
+                  "border-green-300", // Border color
+          );
 
-      toastDiv.textContent = "Sperrzeiten kopiert und versandbereit."; // Set message
+          // Add checkmark icon (you'll need to include an icon library or use inline SVG)
+          const checkIcon = document.createElement("span");
+          checkIcon.textContent = "✓"; // Or use an SVG icon here
+          checkIcon.classList.add("text-green-600", "font-bold"); // Style the icon
+          toastDiv.appendChild(checkIcon);
 
-      document.body.appendChild(toastDiv); // Append to body
+          const toastText = document.createElement("span");
+          toastText.textContent = "Sperrzeiten kopiert!";
+          toastDiv.appendChild(toastText);
 
-      // Display toast
-      setTimeout(() => {
-        toastDiv.classList.remove("opacity-0"); // Make visible
-        toastDiv.classList.add("opacity-100");
-      }, 10); // Short delay to ensure transition works
+          document.body.appendChild(toastDiv);
 
-      // Fade out after 3 seconds
-      setTimeout(() => {
-        toastDiv.classList.remove("opacity-100"); // Make transparent
-        toastDiv.classList.add("opacity-0");
-        setTimeout(() => {
-          toastDiv.remove(); // Remove from DOM after fade out
-        }, 500); // Remove after transition
-      }, 3000); // 3 seconds
+          setTimeout(() => {
+            toastDiv.classList.remove("opacity-0");
+            toastDiv.classList.add("opacity-100");
+          }, 10);
+
+          setTimeout(() => {
+            toastDiv.classList.remove("opacity-100");
+            toastDiv.classList.add("opacity-0");
+            setTimeout(() => {
+              toastDiv.remove();
+            }, 300); // Shorter fade-out
+          }, 2000); // Shorter display time
+        } catch (err) {
+          console.error("Failed to copy: ", err);
+        }
+      });
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
@@ -272,14 +270,12 @@
 
     renderCalendar();
 
-    // Add event listeners to update the calendar when month or year changes.
     document.getElementById("month").addEventListener("change", renderCalendar);
     document.getElementById("year").addEventListener("change", renderCalendar);
   };
 
-  // Go back to the front page
   document.getElementById("back-button").addEventListener("click", () => {
-    window.location.href = "/kitashiftplan.html"; // Navigate back to kitashiftplan.html
+    window.location.href = "/kitashiftplan.html";
   });
 </script>
 </body>

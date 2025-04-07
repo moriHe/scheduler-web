@@ -2,3 +2,4 @@
 - obfuscration: wird automatisch nach npm run build ausgeführt. Falls nicht -> npm run postbuild laufen lassen
 - npm run preview um dist zu previewen
 - dist generieren: npm run build
+- tsop -> two shifts one person each

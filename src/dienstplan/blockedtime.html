@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urlaub/Abwesenheit</title> <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <style>
+        /* Styles identical to original, kept for brevity */
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; margin-top: 0.5rem; }
+        .calendar-header { font-weight: 600; padding: 0.4rem; background-color: #f3f4f6; border: 1px solid #e5e7eb; font-size: 0.875rem; }
+        .calendar-day { padding: 0.6rem; text-align: center; border: 1px solid #e5e7eb; cursor: pointer; background-color: white; font-size: 0.875rem; }
+        .calendar-day:hover { background-color: #e5e7eb; }
+        .selected { background-color: #f87171; color: white; }
+        .weekend { background-color: #d1d5db; color: #9ca3af; cursor: default; }
+        .weekend:hover { background-color: #d1d5db; }
+        #json-output { white-space: pre-wrap; word-wrap: break-word; }
+        #calendar-wrapper { height: auto; overflow-y: visible; padding-bottom: 0.5rem; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-teal-100 to-cyan-100 min-h-screen flex flex-col items-center justify-center font-sans"> <div id="plan-creation-container" class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl flex-1 space-y-8">
+    <div class="flex flex-col space-y-4">
+        <div class="flex items-center space-x-4">
+            <label for="month" class="font-medium text-gray-700">Monat:</label>
+            <select id="month" class="border rounded-md p-2">
+                <option value="0">Januar</option>
+                <option value="1">Februar</option>
+                <option value="2">März</option>
+                <option value="3">April</option>
+                <option value="4">Mai</option>
+                <option value="5">Juni</option>
+                <option value="6">Juli</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">Oktober</option>
+                <option value="10">November</option>
+                <option value="11">Dezember</option>
+            </select>
+            <label for="year" class="font-medium text-gray-700">Jahr:</label>
+            <select id="year" class="border rounded-md p-2"></select>
+        </div>
+    </div>
+
+    <div id="calendar-wrapper" class="w-full bg-white p-4 rounded-md shadow-md mx-auto">
+        <div id="calendar-container"></div>
+    </div>
+
+    <div class="flex flex-col items-center space-y-4 mt-6">
+        <button id="generate-json" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">
+            Generiere Abwesenheiten </button>
+        <button id="copy-json" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">
+            Kopiere Abwesenheiten </button>
+    </div>
+
+    <pre id="json-output" class="mt-6 w-full bg-white p-4 rounded-md border border-gray-300"></pre>
+
+    <button id="back-button" class="mt-10 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300">
+        Zurück
+    </button>
+</div>
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+    <div class="flex justify-center space-x-4">
+        <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+        <span>|</span>
+        <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+    </div>
+</footer>
+<script>
+    // Inline JS copied from original, with modifications indicated
+
+    let selectedDates = []; // Represents blocked/absence dates
+
+    function populateYearSelect() {
+        const yearSelect = document.getElementById("year");
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i <= currentYear + 10; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
+    }
+
+    function renderCalendar() {
+        const calendarContainer = document.getElementById("calendar-container");
+        calendarContainer.innerHTML = "";
+
+        const monthSelect = document.getElementById("month");
+        const yearSelect = document.getElementById("year");
+        const month = parseInt(monthSelect.value);
+        const year = parseInt(yearSelect.value);
+
+        const daysOfWeek = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+        const headerRow = document.createElement("div");
+        headerRow.classList.add("calendar");
+        daysOfWeek.forEach(day => {
+            const headerCell = document.createElement("div");
+            headerCell.classList.add("calendar-header");
+            headerCell.textContent = day;
+            headerRow.appendChild(headerCell);
+        });
+        calendarContainer.appendChild(headerRow);
+
+        let firstDay = new Date(year, month, 1).getDay();
+        firstDay = (firstDay + 6) % 7; // Adjust so Monday is 0
+
+        const grid = document.createElement("div");
+        grid.classList.add("calendar");
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement("div");
+            emptyCell.classList.add("calendar-day");
+            grid.appendChild(emptyCell);
+        }
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateObj = new Date(year, month, day);
+            const weekdayIndex = (dateObj.getDay() + 6) % 7; // Monday is 0
+            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`; // Format YYYY-MM-DD
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("calendar-day");
+            dayCell.textContent = day;
+
+            if (weekdayIndex === 5 || weekdayIndex === 6) { // Saturday or Sunday
+                dayCell.classList.add("weekend");
+            } else {
+                dayCell.addEventListener("click", () => {
+                    if (selectedDates.includes(dateKey)) {
+                        selectedDates = selectedDates.filter(date => date !== dateKey);
+                        dayCell.classList.remove("selected");
+                    } else {
+                        selectedDates.push(dateKey);
+                        dayCell.classList.add("selected");
+                    }
+                });
+            }
+            // Re-apply selected class if date is already in the array (e.g., on re-render)
+            if (selectedDates.includes(dateKey)) {
+                // Make sure weekend days don't become selectable if they are in the list somehow
+                if (!dayCell.classList.contains('weekend')) {
+                    dayCell.classList.add("selected");
+                }
+            }
+            grid.appendChild(dayCell);
+        }
+
+        const totalCells = firstDay + daysInMonth;
+        const remainder = totalCells % 7;
+        if (remainder > 0) {
+            for (let i = 0; i < 7 - remainder; i++) {
+                const emptyCell = document.createElement("div");
+                emptyCell.classList.add("calendar-day");
+                grid.appendChild(emptyCell);
+            }
+        }
+
+        calendarContainer.appendChild(grid);
+    }
+
+    document.getElementById("generate-json").addEventListener("click", () => {
+        const jsonOutput = document.getElementById("json-output");
+        // Ensure consistent YYYY-MM-DD format before sorting and stringifying
+        const formattedDates = selectedDates.map(date => {
+            const parts = date.split('-');
+            return `${parts[0]}-${String(parts[1]).padStart(2, '0')}-${String(parts[2]).padStart(2, '0')}`;
+        });
+        const sortedDates = [...new Set(formattedDates)].sort(); // Use Set to remove duplicates just in case
+        jsonOutput.textContent = JSON.stringify(sortedDates, null, 2);
+    });
+
+    document.getElementById("copy-json").addEventListener("click", async () => {
+        // Ensure consistent YYYY-MM-DD format before sorting and stringifying
+        const formattedDates = selectedDates.map(date => {
+            const parts = date.split('-');
+            return `${parts[0]}-${String(parts[1]).padStart(2, '0')}-${String(parts[2]).padStart(2, '0')}`;
+        });
+        const sortedDates = [...new Set(formattedDates)].sort(); // Use Set to remove duplicates
+        const compactJson = JSON.stringify(sortedDates);
+        if (!compactJson || compactJson === '[]') {
+            console.log("No dates selected to copy."); // Optional: Add user feedback for empty selection
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(compactJson);
+            // --- Toast Notification Logic ---
+            const toastDiv = document.createElement("div");
+            toastDiv.classList.add(
+                "fixed", "bottom-4", "left-4", "bg-green-100", "text-green-800",
+                "p-4", "rounded-lg", "shadow-md", "opacity-0", "transition-opacity",
+                "duration-300", "z-50", "flex", "items-center", "space-x-2",
+                "border", "border-green-300"
+            );
+            const checkIcon = document.createElement("span");
+            checkIcon.textContent = "✓";
+            checkIcon.classList.add("text-green-600", "font-bold");
+            toastDiv.appendChild(checkIcon);
+            const toastText = document.createElement("span");
+            toastText.textContent = "Abwesenheiten kopiert!"; // *** MODIFIED TEXT ***
+            toastDiv.appendChild(toastText);
+            document.body.appendChild(toastDiv);
+            setTimeout(() => { toastDiv.classList.add("opacity-100"); }, 10); // Fade in
+            setTimeout(() => {
+                toastDiv.classList.remove("opacity-100");
+                setTimeout(() => { toastDiv.remove(); }, 300); // Remove after fade out
+            }, 2000); // Display duration
+            // --- End Toast Logic ---
+        } catch (err) {
+            console.error("Failed to copy: ", err);
+            // Optional: Add user feedback for copy failure
+        }
+    });
+
+
+    window.onload = () => {
+        populateYearSelect();
+        const today = new Date();
+        // Default to current or next month/year as before
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        document.getElementById("month").value = currentMonth;
+        document.getElementById("year").value = currentYear;
+
+        renderCalendar();
+
+        document.getElementById("month").addEventListener("change", renderCalendar);
+        document.getElementById("year").addEventListener("change", renderCalendar);
+    };
+
+    // *** MODIFIED Back Button Link ***
+    document.getElementById("back-button").addEventListener("click", () => {
+        window.location.href = "/dienstplan.html"; // Go back to the Dienstplan overview
+    });
+</script>
+</body>
+</html>

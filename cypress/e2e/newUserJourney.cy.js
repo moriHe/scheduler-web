@@ -29,7 +29,7 @@ describe("Common navigation first time visitor", () => {
     });
 
     // INFO: Start testing
-    cy.visit("http://localhost:1234/index.html");
+    cy.visit("http://localhost:1234/kitashiftplan.html");
 
     // INFO: Alert and Confirm listeners that auto accept the boxes
     cy.once("window:alert", (alertText) => {
@@ -77,7 +77,7 @@ describe("Common navigation first time visitor", () => {
       cy.get("#user-name").clear(); // Clear the input for the next user
     });
     users.forEach((user) => {
-      cy.contains(user).should("be.visible"); // Check that the name is visible on the page
+      cy.contains(user).scrollIntoView().should("be.visible"); // Check that the name is visible on the page
     });
 
     // INFO: Start plan tests
