@@ -30,6 +30,10 @@
     .calendar-day:hover {
       background-color: #e5e7eb;
     }
+
+    .calendar-day.selected:hover {
+      background-color: #f87171;
+    }
     .selected {
       background-color: #f87171;
       color: white;
@@ -168,7 +172,6 @@
             selectedDates.push(dateKey);
             dayCell.classList.add("selected");
           }
-          renderCalendar()
         });
       }
       if (selectedDates.includes(dateKey)) {
