@@ -389,7 +389,7 @@ function populateUserTable(users) {
 // Create an input field to paste the JSON string
     const jsonInput = document.createElement("input");
     jsonInput.type = "text";
-    jsonInput.placeholder = "Paste JSON here";
+    jsonInput.placeholder = "Generierte Sperrzeit einfügen";
     jsonInput.classList.add("w-full", "p-2", "border", "border-gray-300", "rounded-md", "mt-2", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500", "bg-white");
 
 // Create a button to confirm the pasting
