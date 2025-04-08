@@ -201,15 +201,13 @@
   document.getElementById("generate-json").addEventListener("click", () => {
     const jsonOutput = document.getElementById("json-output");
     const sortedDates = [...selectedDates]
-            .map(normalizeISO)
-            .sort((a, b) => new Date(a) - new Date(b));
+            .sort((a, b) => new Date(normalizeISO(a)) - new Date(normalizeISO(b)));
     jsonOutput.textContent = JSON.stringify(sortedDates, null, 2);
   });
 
   document.getElementById("copy-json").addEventListener("click", async () => {
     const sortedDates = [...selectedDates]
-            .map(normalizeISO)
-            .sort((a, b) => new Date(a) - new Date(b));
+            .sort((a, b) => new Date(normalizeISO(a)) - new Date(normalizeISO(b)));
     const compactJson = JSON.stringify(sortedDates);
     try {
       await navigator.clipboard.writeText(compactJson);
