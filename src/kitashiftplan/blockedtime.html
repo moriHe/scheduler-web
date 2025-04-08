@@ -193,71 +193,58 @@
     calendarContainer.appendChild(grid);
   }
 
+  function normalizeISO(dateStr) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+
   document.getElementById("generate-json").addEventListener("click", () => {
     const jsonOutput = document.getElementById("json-output");
-    const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
+    const sortedDates = [...selectedDates]
+            .map(normalizeISO)
+            .sort((a, b) => new Date(a) - new Date(b));
     jsonOutput.textContent = JSON.stringify(sortedDates, null, 2);
   });
 
   document.getElementById("copy-json").addEventListener("click", async () => {
-    const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
+    const sortedDates = [...selectedDates]
+            .map(normalizeISO)
+            .sort((a, b) => new Date(a) - new Date(b));
     const compactJson = JSON.stringify(sortedDates);
     try {
       await navigator.clipboard.writeText(compactJson);
-      document.getElementById("copy-json").addEventListener("click", async () => {
-        const sortedDates = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
-        const compactJson = JSON.stringify(sortedDates);
-        try {
-          await navigator.clipboard.writeText(compactJson);
-          const toastDiv = document.createElement("div");
-          toastDiv.classList.add(
-                  "fixed",
-                  "bottom-4",
-                  "left-4",
-                  "bg-green-100", // Light green background
-                  "text-green-800", // Dark green text
-                  "p-4",
-                  "rounded-lg", // Rounded corners
-                  "shadow-md", // Subtle shadow
-                  "opacity-0",
-                  "transition-opacity",
-                  "duration-300", // Shorter transition
-                  "z-50",
-                  "flex", // Flexbox for layout
-                  "items-center", // Vertical alignment
-                  "space-x-2", // Spacing between icon and text
-                  "border", // Add a border
-                  "border-green-300", // Border color
-          );
 
-          // Add checkmark icon (you'll need to include an icon library or use inline SVG)
-          const checkIcon = document.createElement("span");
-          checkIcon.textContent = "✓"; // Or use an SVG icon here
-          checkIcon.classList.add("text-green-600", "font-bold"); // Style the icon
-          toastDiv.appendChild(checkIcon);
+      const toastDiv = document.createElement("div");
+      toastDiv.classList.add(
+              "fixed", "bottom-4", "left-4", "bg-green-100", "text-green-800",
+              "p-4", "rounded-lg", "shadow-md", "opacity-0", "transition-opacity",
+              "duration-300", "z-50", "flex", "items-center", "space-x-2",
+              "border", "border-green-300"
+      );
 
-          const toastText = document.createElement("span");
-          toastText.textContent = "Sperrzeiten kopiert!";
-          toastDiv.appendChild(toastText);
+      const checkIcon = document.createElement("span");
+      checkIcon.textContent = "✓";
+      checkIcon.classList.add("text-green-600", "font-bold");
+      toastDiv.appendChild(checkIcon);
 
-          document.body.appendChild(toastDiv);
+      const toastText = document.createElement("span");
+      toastText.textContent = "Sperrzeiten kopiert!";
+      toastDiv.appendChild(toastText);
 
-          setTimeout(() => {
-            toastDiv.classList.remove("opacity-0");
-            toastDiv.classList.add("opacity-100");
-          }, 10);
+      document.body.appendChild(toastDiv);
 
-          setTimeout(() => {
-            toastDiv.classList.remove("opacity-100");
-            toastDiv.classList.add("opacity-0");
-            setTimeout(() => {
-              toastDiv.remove();
-            }, 300); // Shorter fade-out
-          }, 2000); // Shorter display time
-        } catch (err) {
-          console.error("Failed to copy: ", err);
-        }
-      });
+      setTimeout(() => {
+        toastDiv.classList.remove("opacity-0");
+        toastDiv.classList.add("opacity-100");
+      }, 10);
+
+      setTimeout(() => {
+        toastDiv.classList.remove("opacity-100");
+        toastDiv.classList.add("opacity-0");
+        setTimeout(() => {
+          toastDiv.remove();
+        }, 300);
+      }, 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
