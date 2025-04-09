@@ -309,7 +309,7 @@ export function generatePDF(calendar, month, year, usersData = []) {
 
     // Titel und Untertitel zentrieren
     doc.setFontSize(16);
-    doc.text('Elterndienstplan', doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+    doc.text('Dienstplan', doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
     doc.setFontSize(12);
     doc.text(`${window.dateFns.format(new Date(year, month - 1), 'MMMM yyyy', { locale: window.dateFns.locale.de })}`, doc.internal.pageSize.getWidth() / 2, 22, { align: 'center' });
 
@@ -323,13 +323,13 @@ export function generatePDF(calendar, month, year, usersData = []) {
     doc.rect(legendLeftMargin, legendStartY, boxSize, boxSize, 'F');
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
-    doc.text("Kita offen, kein Elterndienst", legendLeftMargin + boxSize + 5, legendStartY + boxSize - 1);
+    doc.text("Geöffnet, keine Schichten notwendig", legendLeftMargin + boxSize + 5, legendStartY + boxSize - 1);
 
     // Legende: Roter Kasten
     const redBoxX = legendLeftMargin + 90;
     doc.setFillColor(255, 204, 204);
     doc.rect(redBoxX, legendStartY, boxSize, boxSize, 'F');
-    doc.text("Kita geschlossen", redBoxX + boxSize + 5, legendStartY + boxSize - 1);
+    doc.text("Geschlossen", redBoxX + boxSize + 5, legendStartY + boxSize - 1);
 
     let startY = legendStartY + 10;
     let continueProcess = true;
@@ -353,7 +353,7 @@ export function generatePDF(calendar, month, year, usersData = []) {
         rows.push({ data: [dayParent1, dateParent1, parent1Content, parent2, parent3], meta });
     }
 
-    const headers = [['Tag', 'Datum', 'Elternteil 1', 'Elternteil 2', 'Elternteil 3']];
+    const headers = [['Tag', 'Datum', 'Schicht 1', 'Schicht 2', 'Schicht 3']];
     const wantedTableWidth = 160;
     const margin = (pageWidth - wantedTableWidth) / 2;
 
