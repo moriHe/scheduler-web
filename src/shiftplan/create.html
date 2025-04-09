@@ -85,6 +85,16 @@
     <select id="year" class="border rounded-md p-2"></select>
   </div>
   <div>
+    <div class="flex items-center justify-center space-x-4">
+      <label class="flex items-center space-x-2">
+        <input type="radio" name="shifts-per-day" value="2" class="h-4 w-4">
+        <span class="text-sm font-medium text-gray-700">2 Schichten pro Tag</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="radio" name="shifts-per-day" value="3" class="h-4 w-4" checked>
+        <span class="text-sm font-medium text-gray-700">3 Schichten pro Tag</span>
+      </label>
+    </div>
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Tage</h2>
     <div id="weekdays-container" class="flex justify-center space-x-4">
       <label class="flex items-center space-x-2">
