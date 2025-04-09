@@ -334,35 +334,72 @@ export function generatePDF(calendar, month, year, usersData = []) {
     let startY = legendStartY + 10;
     let continueProcess = true;
     let actionTaken = false;
-
     const rows = [];
+
+    // Erzeugen der Zeilen-Daten aus dem Kalender
     for (const day in calendar) {
         const [parent1, parent2, parent3, meta] = calendar[day];
-        if (!continueProcess) break;
-        const isUser1InDataSet = usersData.find(user => user === parent1);
-        const isUser2InDataSet = usersData.find(user => user === parent2) || parent2 === "Team";
-        const isUser3InDataSet = usersData.find(user => user === parent3) || parent3 === "Team";
-        if (!actionTaken && meta.isValidDay && !isUser1InDataSet && !isUser2InDataSet && !isUser3InDataSet) {
+        if (!actionTaken && meta.isValidDay && !usersData.find(user => user === parent1) &&
+            !usersData.find(user => user === parent2) && !usersData.find(user => user === parent3)) {
             const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}, ${parent3}. Trotzdem fortfahren?`);
             continueProcess = confirmedChoice;
             actionTaken = true;
         }
-        const dateParent1 = formatDate(day, month, year);
-        const dayParent1 = formatDayOfWeek(day, month, year);
-        const parent1Content = meta.isValidDay ? parent1 : meta.invalidText || "";
-        rows.push({ data: [dayParent1, dateParent1, parent1Content, parent2, parent3], meta });
+        const formattedDate = formatDate(day, month, year);
+        const dayOfWeek = formatDayOfWeek(day, month, year);
+        // Bei gültigen Tagen wird der Inhalt aus der ersten Spalte übernommen.
+        // Für ungültige Tage (z.B. Feiertage) bzw. "KitaOpenNoEd" nutzen wir später einen fixen Text.
+        const normalShiftText = meta.isValidDay ? parent1 : "";
+
+        // Speichere die Zeile inklusive Meta-Daten
+        rows.push({ data: [dayOfWeek, formattedDate, normalShiftText, parent2, parent3], meta });
     }
 
+    // Neuer Body‑Array, der für spezielle Tage (nicht valide oder KitaOpenNoEd) die Schicht-Spalten zusammenfasst:
+    console.log(rows)
+    const tableBody = rows.map(row => {
+        if (!row.meta.isValidDay || row.meta.isKitaOpenNoEd) {
+            let specialText = "";
+            let fillColor;
+            if (row.meta.isKitaOpenNoEd) {
+                specialText = row.meta.invalidText ?? "";
+                fillColor = [255, 230, 153];  // Gelb
+            } else {
+                specialText = row.meta.invalidText ?? "";
+                fillColor = [255, 204, 204];  // Rot
+            }
+            // Für diese Zeile haben wir zwei Zellen für Tag und Datum und eine Zelle (colSpan:3) für Schichtinfo
+            return [
+                row.data[0],
+                row.data[1],
+                {
+                    content: specialText,
+                    colSpan: 3,
+                    styles: { halign: 'center', fillColor: fillColor, textColor: [50, 50, 50] }
+                }
+            ];
+        } else {
+            // Normale Zeile: 5 Spalten, ohne Veränderung
+            return row.data;
+        }
+    });
+
+    // Überschrift der Tabelle (Header) – hier bleiben wir bei 5 Zellen, da autoTable Body-Zeilen über colSpan korrekt zusammenführt.
     const headers = [['Tag', 'Datum', 'Schicht 1', 'Schicht 2', 'Schicht 3']];
-    const wantedTableWidth = 160;
+
+    // Gesamte Tabellenspaltenbreiten (aus Column-Styles)
+    // Spalte 0: 10, Spalte 1: 20, Spalte 2: 60, Spalte 3: 50, Spalte 4: 50 => Summe = 190
+    const wantedTableWidth = 190;
     const margin = (pageWidth - wantedTableWidth) / 2;
 
+    // Aufruf von autoTable – alternativ: Für normale Zeilen nutzen wir das Alternating Row Style
     doc.autoTable({
         head: headers,
-        body: rows.map(row => row.data),
+        body: tableBody,
         startY: startY,
         theme: 'grid',
         headStyles: { fillColor: [100, 100, 255] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
         bodyStyles: { halign: 'center' },
         columnStyles: {
             0: { cellWidth: 10 },
@@ -371,29 +408,9 @@ export function generatePDF(calendar, month, year, usersData = []) {
             3: { cellWidth: 50 },
             4: { cellWidth: 50 }
         },
-        margin: { left: margin, right: margin },
-        didDrawCell: function(data) {
-            if (data.row.section === 'head') return;
-            const row = rows[data.row.index];
-            if (row.meta.isKitaOpenNoEd && data.column.index === 2) {
-                const mergedWidth = data.cell.width + data.table.columns[3].width + data.table.columns[4].width;
-                doc.setFillColor(255, 230, 153);
-                doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F');
-                doc.setTextColor(50, 50, 50);
-                doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-            } else if (!row.meta.isValidDay && data.column.index === 2) {
-                const mergedWidth = data.cell.width + data.table.columns[3].width + data.table.columns[4].width;
-                doc.setFillColor(255, 204, 204);
-                doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F');
-                doc.setTextColor(50, 50, 50);
-                doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-            } else if (row.meta.isValidDay && data.row.index % 2 !== 0) {
-                doc.setFillColor(245, 245, 245);
-                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-                doc.setTextColor(0, 0, 0);
-                doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-            }
-        }
+        margin: { left: margin, right: margin }
     });
+
     return doc.output('blob');
 }
+
