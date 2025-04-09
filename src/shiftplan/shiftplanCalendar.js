@@ -332,7 +332,6 @@ export function generatePDF(calendar, month, year, usersData = []) {
     doc.text("Geschlossen", redBoxX + boxSize + 5, legendStartY + boxSize - 1);
 
     let startY = legendStartY + 10;
-    let continueProcess = true;
     let actionTaken = false;
     const rows = [];
 
@@ -342,7 +341,9 @@ export function generatePDF(calendar, month, year, usersData = []) {
         if (!actionTaken && meta.isValidDay && !usersData.find(user => user === parent1) &&
             !usersData.find(user => user === parent2) && !usersData.find(user => user === parent3)) {
             const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}, ${parent3}. Trotzdem fortfahren?`);
-            continueProcess = confirmedChoice;
+            if (!confirmedChoice) {
+                return
+            }
             actionTaken = true;
         }
         const formattedDate = formatDate(day, month, year);
@@ -356,7 +357,6 @@ export function generatePDF(calendar, month, year, usersData = []) {
     }
 
     // Neuer Body‑Array, der für spezielle Tage (nicht valide oder KitaOpenNoEd) die Schicht-Spalten zusammenfasst:
-    console.log(rows)
     const tableBody = rows.map(row => {
         if (!row.meta.isValidDay || row.meta.isKitaOpenNoEd) {
             let specialText = "";
