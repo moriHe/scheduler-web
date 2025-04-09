@@ -137,12 +137,36 @@ export function testAssignUsersToCalendar(month, year, localUsers, options = {})
         });
 
         if (isTeamDay(day)) {
-            // Bei Team-Tagen: Ein Elternteil und zwei feste "Team"
-            const hasEnoughUsers = usersSortedByPrio.length >= 1;
-            const selectedUser = hasEnoughUsers ? usersSortedByPrio[0] : { name: "NOT SET" };
-            calendar[day] = [selectedUser.name, 'Team', 'Team', { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers }];
-            updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedUser);
-        } else {
+            // Bei Team-Tagen: Zwei Elternteile und eine feste "Team"-Spalte
+            const hasEnoughUsers = usersSortedByPrio.length >= 2;
+            let selectedUser1, selectedUser2;
+
+            if (hasEnoughUsers) {
+                [selectedUser1, selectedUser2] = usersSortedByPrio.slice(0, 2);
+            } else if (usersSortedByPrio.length === 1) {
+                selectedUser1 = usersSortedByPrio[0];
+                selectedUser2 = { name: "NOT SET" };
+            } else {
+                selectedUser1 = { name: "NOT SET" };
+                selectedUser2 = { name: "NOT SET" };
+            }
+
+            calendar[day] = [
+                selectedUser1.name,
+                selectedUser2.name,
+                'Team',
+                { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers }
+            ];
+
+            // Aktualisiere die User-Daten für die ausgewählten Nutzer
+            if (usersSortedByPrio.length >= 2) {
+                updateUsersArray(_users, averageServiceCount, true, selectedUser1);
+                updateUsersArray(_users, averageServiceCount, true, selectedUser2);
+            } else if (usersSortedByPrio.length === 1) {
+                updateUsersArray(_users, averageServiceCount, true, selectedUser1);
+            }
+        }
+         else {
             // Regulärer Tag – wähle drei Eltern aus
             const hasEnoughUsers = availableUsers.length >= 3;
             const hasTwoUsers = availableUsers.length === 2;
