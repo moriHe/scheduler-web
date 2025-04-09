@@ -24,14 +24,14 @@ export function uploadUsers() {
             const uniqueUsers = new Set(users);
             if (uniqueUsers.size !== users.length) {
                 alert(
-                    "Es gibt doppelte Benutzernamen in der Datei. Bitte entfernen Sie die Duplikate und versuchen Sie es erneut.",
+                    "Es gibt doppelte Personennamen in der Datei. Bitte entfernen Sie die Duplikate und versuchen Sie es erneut.",
                 );
                 return; // Stop execution if duplicates are found
             }
 
             // If no duplicates, save the users to localStorage
             localStorage.setItem("shiftplanUsers", JSON.stringify(users));
-            alert("Benutzer wurden erfolgreich hochgeladen.");
+            alert("Personen wurden erfolgreich hochgeladen.");
         } catch (error) {
             console.log(error)
             alert(
@@ -46,10 +46,10 @@ export function uploadUsers() {
 
 export function resetUsers() {
     const confirmReset = confirm(
-        "Möchten Sie die Benutzer wirklich zurücksetzen?",
+        "Möchten Sie die Personen wirklich zurücksetzen?",
     );
     if (confirmReset) {
         localStorage.setItem("shiftplanUsers", JSON.stringify([])); // Reset users to an empty array
-        alert("Benutzer wurden zurückgesetzt."); // Optional: Alert to confirm reset
+        alert("Personen wurden zurückgesetzt."); // Optional: Alert to confirm reset
     }
 }
