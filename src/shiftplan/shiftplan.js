@@ -506,7 +506,7 @@ document.getElementById("generate-pdf-button").addEventListener("click", async (
         const fileBlob = generatePDF(calendar, month, year, usersData);
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(fileBlob);
-        downloadLink.download = `elterndienstplan_${year}_${month}.pdf`;
+        downloadLink.download = `dienstplan_${year}_${month}.pdf`;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
