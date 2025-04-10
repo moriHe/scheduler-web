@@ -121,8 +121,12 @@ function renderCalendarPreview() {
     kitaOpenNoEd,
     teamdays, // List of days the team takes a slot
   };
-
-  calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
+  const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
+  if (shiftValue === "3") {
+    calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
+  } else {
+    // 2 spalten kalender
+  }
 
   function renderCalendar() {
     const previewBody = document.getElementById("calendar-preview-table");
