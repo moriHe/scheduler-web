@@ -121,11 +121,11 @@ function renderCalendarPreview() {
     kitaOpenNoEd,
     teamdays, // List of days the team takes a slot
   };
-  const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
-  if (shiftValue === "3") {
-    calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
+  const shiftType = document.querySelector('input[name="shifts-per-day"]:checked')
+  if (shiftType && shiftType.value === "3") {
+    console.log("not implemented for 3 cols")
   } else {
-    // 2 spalten kalender
+    calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
   }
 
   function renderCalendar() {
