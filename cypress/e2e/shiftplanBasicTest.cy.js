@@ -215,6 +215,7 @@ describe("Common navigation first time visitor", () => {
         }
       });
     // INFO: Show calendar preview
+    cy.get('#nameInput').type('TESTUSER');
     cy.get("#show-preview-button").click();
     cy.get("#parent-summary")
       .should("be.visible")
@@ -271,9 +272,9 @@ describe("Common navigation first time visitor", () => {
 
           // Check "Team" is selected exactly once
           const teamCount = allSelectedValues.filter(
-            (value) => value === "Team",
+            (value) => value === "TESTUSER",
           ).length;
-          expect(teamCount).to.equal(1, "Team should appear exactly once");
+          expect(teamCount).to.equal(1, "TESTUSER should appear exactly once");
 
           // Check TEST_USER_B to TEST_USER_P appear between 2 and 3 times
           testUsers.forEach((user) => {

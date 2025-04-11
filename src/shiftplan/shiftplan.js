@@ -44,11 +44,25 @@ window.onload = () => {
 
     document.getElementById("month").addEventListener("change", () => updateCalendar());
     document.getElementById("year").addEventListener("change", () => updateCalendar());
+
+    document.getElementById("onlySelected").addEventListener("click", () => {
+        renderCalendarPreview(formattedUsers.filter(user => user.name !== document.getElementById("nameInput")?.value?.trim()))
+        document.getElementById("customModal").classList.add("hidden");
+    })
+
+    document.getElementById("cancel").addEventListener("click", () => {
+        document.getElementById("customModal").classList.add("hidden");
+    })
     document.getElementById("show-preview-button").addEventListener("click", function () {
-        const specificPerson = document.getElementById("nameInput")?.value;
+        const specificPerson = document.getElementById("nameInput")?.value?.trim();
         const isSpecificPersonInUsersArray = usersData?.find(user => user === specificPerson);
         if (isSpecificPersonInUsersArray) {
             showCustomModal(specificPerson);
+            return
+        }
+
+        if (teamdays.length !== 0 && !specificPerson) {
+            alert("Bitte Person im ausgewählte Schichten Kalender eintragen.")
             return
         }
         renderCalendarPreview();
@@ -99,6 +113,7 @@ function renderCalendarPreview(subsetFormattedUsers) {
         holidays,
         kitaOpenNoEd,
         teamdays,
+        specificPerson: document.getElementById("nameInput")?.value
     };
 
     const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
@@ -250,6 +265,7 @@ function renderCalendarThreeCols(month, year) {
                 if (user === parent2) option.selected = true;
                 user2Select.appendChild(option);
             });
+            // parent2 sollte eigentlich nichts mehr mit Team zu tun haben im 3 Cols Calendar. Das ist in parent3 gehandlet
             if (parent2 === "Team") {
                 const teamOption = document.createElement("option");
                 teamOption.value = "Team";
@@ -274,10 +290,9 @@ function renderCalendarThreeCols(month, year) {
                     renderCalendarThreeCols(month, year);
                 });
             }
-
             const user3Select = document.createElement("select");
             user3Select.classList.add("flex-1", "text-left", "cursor-pointer");
-            if (parent3 !== "Team" && !usersData.find(user => user === parent3)) {
+            if (!meta.hasSpecificPerson && !usersData.find(user => user === parent3)) {
                 user3Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser3 = document.createElement("option");
@@ -292,13 +307,13 @@ function renderCalendarThreeCols(month, year) {
                 if (user === parent3) option.selected = true;
                 user3Select.appendChild(option);
             });
-            if (parent3 === "Team") {
+            if (meta.hasSpecificPerson) {
                 const teamOption = document.createElement("option");
-                teamOption.value = "Team";
-                teamOption.textContent = "Team";
+                teamOption.value = parent3;
+                teamOption.textContent = parent3;
                 teamOption.selected = true;
                 user3Select.appendChild(teamOption);
-                user3Select.value = "Team";
+                user3Select.value = parent3;
                 user3Select.disabled = true;
                 user3Select.classList.add("cursor-not-allowed");
             }
@@ -448,7 +463,7 @@ function renderCalendarTwoCol(month, year) {
 
             const user2Select = document.createElement("select");
             user2Select.classList.add("flex-1", "text-left", "cursor-pointer");
-            if (parent2 !== "Team" && !usersData.find(user => user === parent2)) {
+            if (!meta.hasSpecificPerson && !usersData.find(user => user === parent2)) {
                 user2Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser2 = document.createElement("option");
@@ -463,13 +478,13 @@ function renderCalendarTwoCol(month, year) {
                 if (user === parent2) option.selected = true;
                 user2Select.appendChild(option);
             });
-            if (parent2 === "Team") {
+            if (meta.hasSpecificPerson) {
                 const teamOption = document.createElement("option");
-                teamOption.value = "Team";
-                teamOption.textContent = "Team";
+                teamOption.value = parent2;
+                teamOption.textContent = parent2;
                 teamOption.selected = true;
                 user2Select.appendChild(teamOption);
-                user2Select.value = "Team";
+                user2Select.value = parent2;
                 user2Select.disabled = true;
                 user2Select.classList.add("cursor-not-allowed");
             }
@@ -715,21 +730,6 @@ document.querySelectorAll(".weekday-checkbox").forEach((checkbox) => {
 
 function showCustomModal(personName) {
     document.getElementById("modalText").innerHTML = `
-    ${personName} erhält ausgewählte Schichten und hat zusätzlich einen Sperrtermin-Kalender.<br>
-    Drücken Sie "Nur ausgewählte" wenn die Person ausschließlich die ausgewählten Schichten erhalten soll.<br>
-    Drücken Sie "Zusätzliche", wenn die Person weitere Schichten durch die Autozuweisung erhalten soll.
-  `;
+    ${personName} erhält ausgewählte Schichten und wird aus der Autozuweisung entfernt.`;
     document.getElementById("customModal").classList.remove("hidden");
-
-    document.getElementById("onlySelected").addEventListener("click", () => {
-        renderCalendarPreview(formattedUsers.filter(user => user.name !== personName))
-        document.getElementById("customModal").classList.add("hidden");
-    })
-    document.getElementById("withAutoAssign").addEventListener("click", () => {
-        renderCalendarPreview()
-        document.getElementById("customModal").classList.add("hidden");
-    })
-    document.getElementById("cancel").addEventListener("click", () => {
-        document.getElementById("customModal").classList.add("hidden");
-    })
 }

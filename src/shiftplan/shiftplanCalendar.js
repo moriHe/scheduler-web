@@ -150,12 +150,12 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
                 selectedUser1 = { name: "NOT SET" };
                 selectedUser2 = { name: "NOT SET" };
             }
-
+            console.log(options.specificPerson)
             calendar[day] = [
                 selectedUser1.name,
                 selectedUser2.name,
-                'Team',
-                { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers }
+                options.specificPerson ?? 'k.A.',
+                { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers, hasSpecificPerson: options.specificPerson !== undefined }
             ];
 
             // Aktualisiere die User-Daten für die ausgewählten Nutzer
@@ -430,7 +430,7 @@ export function assignUsersCalendarTwoCols(month, year, localUsers, options = {}
             // Bei Team-Tagen: Ein Elternteil und eine feste "Team"-Spalte
             const hasEnoughUsers = usersSortedByPrio.length >= 1;
             let selectedUser = hasEnoughUsers ? usersSortedByPrio[0] : { name: "NOT SET" };
-            calendar[day] = [selectedUser.name, 'Team', { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers }];
+            calendar[day] = [selectedUser.name, options.specificPerson ?? 'k.A.', { isKitaOpenNoEd: false, isValidDay: true, isAssigned: hasEnoughUsers, hasSpecificPerson: true }];
             if (hasEnoughUsers) {
                 updateUsersArray(_users, averageServiceCount, true, selectedUser);
             }
