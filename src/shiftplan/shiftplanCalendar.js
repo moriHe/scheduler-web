@@ -305,7 +305,11 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
     });
 
     // Überschrift der Tabelle (Header) – hier bleiben wir bei 5 Zellen, da autoTable Body-Zeilen über colSpan korrekt zusammenführt.
-    const headers = [['Tag', 'Datum', 'Schicht 1', 'Schicht 2', 'Schicht 3']];
+    const schicht1 = localStorage.getItem('threecol-label-1') || "Schicht 1";
+    const schicht2 = localStorage.getItem('threecol-label-2') || "Schicht 2";
+    const schicht3 = localStorage.getItem('threecol-label-3') || "Schicht 3";
+
+    const headers = [['Tag', 'Datum', schicht1, schicht2, schicht3]];
 
     // Gesamte Tabellenspaltenbreiten (aus Column-Styles)
     // Spalte 0: 10, Spalte 1: 20, Spalte 2: 60, Spalte 3: 50, Spalte 4: 50 => Summe = 190
@@ -546,7 +550,10 @@ export function generatePDFTwoCols(calendar, month, year, usersData = []) {
     });
 
     // Tabellenkopf – 4 Spalten
-    const headers = [['Tag', 'Datum', 'Schicht 1', 'Schicht 2']];
+    const schicht1 = localStorage.getItem('twocol-label-1') || "Schicht 1";
+    const schicht2 = localStorage.getItem('twocol-label-2') || "Schicht 2";
+
+    const headers = [['Tag', 'Datum', schicht1, schicht2]];
     const wantedTableWidth = 150;
     const margin = (pageWidth - wantedTableWidth) / 2;
 

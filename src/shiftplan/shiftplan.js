@@ -25,6 +25,21 @@ let teamdays = [];
 
 // Laden der Nutzerdaten und Initialisierung der Jahresauswahl
 window.onload = () => {
+
+    function configureHeaders(labelArray, registerEventListener) {
+        labelArray.forEach((label, index) => {
+            const input = document.getElementById(label);
+            input.value = localStorage.getItem(label) || `Schicht ${index + 1}`;
+            if (registerEventListener) {
+                input.addEventListener('input', () => {
+                    localStorage.setItem(label, input.value.trim());
+                });
+            }
+        });
+    }
+    configureHeaders( ['twocol-label-1', 'twocol-label-2'], true)
+    configureHeaders( ['threecol-label-1', 'threecol-label-2', 'threecol-label-3'], true)
+
     const jsonUsers = localStorage.getItem("shiftplanUsers");
     if (jsonUsers) {
         usersData = JSON.parse(jsonUsers);
@@ -54,6 +69,8 @@ window.onload = () => {
         document.getElementById("customModal").classList.add("hidden");
     })
     document.getElementById("show-preview-button").addEventListener("click", function () {
+        configureHeaders( ['twocol-label-1', 'twocol-label-2'], false)
+        configureHeaders( ['threecol-label-1', 'threecol-label-2', 'threecol-label-3'], false)
         const specificPerson = document.getElementById("nameInput")?.value?.trim();
         const isSpecificPersonInUsersArray = usersData?.find(user => user === specificPerson);
         if (isSpecificPersonInUsersArray) {
