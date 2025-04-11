@@ -115,24 +115,32 @@ function renderCalendarPreview(subsetFormattedUsers) {
         teamdays,
         specificPerson: document.getElementById("nameInput")?.value
     };
+    const previewBody = document.getElementById("calendar-preview-table");
+    const twoColHeader = document.getElementById("tableheadersTwoCols");
+    const threeColHeader = document.getElementById("tableheadersThreeCols");
+
+    previewBody.innerHTML = "";
+    previewBody.appendChild(twoColHeader);
+    previewBody.appendChild(threeColHeader);
 
     const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
     if (shiftValue === "3") {
         calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options);
-        renderCalendarThreeCols(month, year);
+        twoColHeader.classList.add("hidden");
+        threeColHeader.classList.remove("hidden");
+        renderCalendarThreeCols(month, year, previewBody);
+
+
     } else {
         calendar = assignUsersCalendarTwoCols(month, year, usersToAssign, options);
-        renderCalendarTwoCol(month, year);
+        renderCalendarTwoCol(month, year, previewBody);
+        threeColHeader.classList.add("hidden");
+        twoColHeader.classList.remove("hidden");
     }
 
 }
 
-function renderCalendarThreeCols(month, year) {
-    const previewBody = document.getElementById("calendar-preview-table");
-    const firstRow = previewBody.firstElementChild;
-    previewBody.innerHTML = "";
-    previewBody.appendChild(firstRow);
-
+function renderCalendarThreeCols(month, year, previewBody) {
     const calendarEntries = Object.entries(calendar).map(
         ([day, [parent1, parent2, parent3, meta]]) => ({ day, parent1, parent2, parent3, meta })
     );
@@ -341,12 +349,7 @@ function renderCalendarThreeCols(month, year) {
     }
 }
 
-function renderCalendarTwoCol(month, year) {
-    const previewBody = document.getElementById("calendar-preview-table");
-    const firstRow = previewBody.firstElementChild;
-    previewBody.innerHTML = "";
-    previewBody.appendChild(firstRow);
-
+function renderCalendarTwoCol(month, year, previewBody) {
     // Für 2 Spalten: [parent1, parent2, meta]
     const calendarEntries = Object.entries(calendar).map(
         ([day, [parent1, parent2, meta]]) => ({ day, parent1, parent2, meta })
