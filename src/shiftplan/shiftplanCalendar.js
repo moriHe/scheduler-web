@@ -257,19 +257,29 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
 
     // Erzeugen der Zeilen-Daten aus dem Kalender
     for (const day in calendar) {
-        const [parent1, parent2, parent3, meta] = calendar[day];
-        if (!actionTaken && meta.isValidDay && !usersData.find(user => user === parent1) &&
-            !usersData.find(user => user === parent2) && !usersData.find(user => user === parent3)) {
-            const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}, ${parent3}. Trotzdem fortfahren?`);
-            if (!confirmedChoice) {
-                return
-            }
-            actionTaken = true;
+        let [parent1, parent2, parent3, meta] = calendar[day];
+
+        if (!actionTaken) {
+            if (meta.isValidDay && !usersData.find(user => user === parent1) ||
+                !usersData.find(user => user === parent2) || !usersData.find(user => user === parent3)) {
+                const confirmedChoice = confirm(`Person(en) nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}, ${parent3}. Trotzdem fortfahren?`);
+                if (!confirmedChoice) {
+                    return
+                }
+                actionTaken = true;
+        }
         }
         const formattedDate = formatDate(day, month, year);
         const dayOfWeek = formatDayOfWeek(day, month, year);
         // Bei gültigen Tagen wird der Inhalt aus der ersten Spalte übernommen.
         // Für ungültige Tage (z.B. Feiertage) bzw. "KitaOpenNoEd" nutzen wir später einen fixen Text.
+        if (parent1 === "NOT SET")
+            parent1 = ""
+        if (parent2 === "NOT SET")
+            parent2 = ""
+        if (parent3 === "NOT SET")
+            parent3 = ""
+
         const normalShiftText = meta.isValidDay ? parent1 : "";
 
         // Speichere die Zeile inklusive Meta-Daten
@@ -510,18 +520,26 @@ export function generatePDFTwoCols(calendar, month, year, usersData = []) {
 
     // Erzeugen der Zeilen-Daten aus dem Kalender (Format: [parent1, parent2, meta])
     for (const day in calendar) {
-        const [parent1, parent2, meta] = calendar[day];
-        if (!actionTaken && meta.isValidDay &&
-            !usersData.find(user => user === parent1) &&
-            !usersData.find(user => user === parent2)) {
-            const confirmedChoice = confirm(`User nicht im Datenset gefunden: ${parent1}, ${parent2}. Trotzdem fortfahren?`);
-            if (!confirmedChoice) {
-                return;
-            }
-            actionTaken = true;
+        let [parent1, parent2, meta] = calendar[day];
+
+        if (!actionTaken) {
+            if (meta.isValidDay &&
+                !usersData.find(user => user === parent1) ||
+                !usersData.find(user => user === parent2)) {
+                const confirmedChoice = confirm(`Person(en) nicht im Datenset gefunden: ${parent1}, ${parent2}. Trotzdem fortfahren?`);
+                if (!confirmedChoice) {
+                    return;
+                }
+                actionTaken = true;
+        }
         }
         const formattedDate = formatDate(day, month, year);
         const dayOfWeek = formatDayOfWeek(day, month, year);
+
+        if (parent1 === "NOT SET")
+            parent1 = ""
+        if (parent2 === "NOT SET")
+            parent2 = ""
         // Bei gültigen Tagen: Schicht 1 entspricht parent1
         const normalShiftText = meta.isValidDay ? parent1 : "";
         rows.push({data: [dayOfWeek, formattedDate, normalShiftText, parent2], meta});
