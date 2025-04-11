@@ -269,6 +269,8 @@ function renderCalendarThreeCols(month, year, previewBody) {
                 }
                 if (continueProcess) {
                     calendar[day][0] = user1Select.value;
+                } else {
+                    user1Select.value = calendar[day][0];
                 }
                 renderCalendarThreeCols(month, year);
             });
@@ -311,6 +313,8 @@ function renderCalendarThreeCols(month, year, previewBody) {
                     }
                     if (continueProcess) {
                         calendar[day][1] = user2Select.value;
+                    } else {
+                        user2Select.value = calendar[day][1];
                     }
                     renderCalendarThreeCols(month, year);
                 });
@@ -352,6 +356,8 @@ function renderCalendarThreeCols(month, year, previewBody) {
                     }
                     if (continueProcess) {
                         calendar[day][2] = user3Select.value;
+                    } else {
+                        user3Select.value = calendar[day][2];
                     }
                     renderCalendarThreeCols(month, year);
                 });
@@ -477,6 +483,8 @@ function renderCalendarTwoCol(month, year, previewBody) {
                 }
                 if (continueProcess) {
                     calendar[day][0] = user1Select.value;
+                } else {
+                    user1Select.value = calendar[day][0];
                 }
                 renderCalendarTwoCol(month, year);
             });
@@ -518,6 +526,8 @@ function renderCalendarTwoCol(month, year, previewBody) {
                     }
                     if (continueProcess) {
                         calendar[day][1] = user2Select.value;
+                    } else {
+                        user2Select.value = calendar[day][1];
                     }
                     renderCalendarTwoCol(month, year);
                 });
