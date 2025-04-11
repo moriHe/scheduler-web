@@ -132,32 +132,31 @@ function renderCalendarPreview(subsetFormattedUsers) {
         teamdays,
         specificPerson: document.getElementById("nameInput")?.value
     };
+
+    const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
+    if (shiftValue === "3") {
+        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options);
+        renderCalendarThreeCols(month, year);
+
+
+    } else {
+        calendar = assignUsersCalendarTwoCols(month, year, usersToAssign, options);
+        renderCalendarTwoCol(month, year);
+    }
+
+}
+
+function renderCalendarThreeCols(month, year) {
     const previewBody = document.getElementById("calendar-preview-table");
     const twoColHeader = document.getElementById("tableheadersTwoCols");
     const threeColHeader = document.getElementById("tableheadersThreeCols");
 
     previewBody.innerHTML = "";
+    twoColHeader.classList.add("hidden");
+    threeColHeader.classList.remove("hidden");
     previewBody.appendChild(twoColHeader);
     previewBody.appendChild(threeColHeader);
 
-    const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
-    if (shiftValue === "3") {
-        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options);
-        twoColHeader.classList.add("hidden");
-        threeColHeader.classList.remove("hidden");
-        renderCalendarThreeCols(month, year, previewBody);
-
-
-    } else {
-        calendar = assignUsersCalendarTwoCols(month, year, usersToAssign, options);
-        renderCalendarTwoCol(month, year, previewBody);
-        threeColHeader.classList.add("hidden");
-        twoColHeader.classList.remove("hidden");
-    }
-
-}
-
-function renderCalendarThreeCols(month, year, previewBody) {
     const calendarEntries = Object.entries(calendar).map(
         ([day, [parent1, parent2, parent3, meta]]) => ({ day, parent1, parent2, parent3, meta })
     );
@@ -225,7 +224,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][3].invalidText = newValue;
-                renderCalendarThreeCols(month, year, previewBody);
+                renderCalendarThreeCols(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
         } else if (!meta.isValidDay) {
@@ -238,13 +237,15 @@ function renderCalendarThreeCols(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][3].invalidText = newValue;
-                renderCalendarThreeCols(month, year, previewBody);
+                renderCalendarThreeCols(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
         } else {
             // Erstelle drei Select-Elemente für die drei Elternteile
             const user1Select = document.createElement("select");
             user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            console.log(parent1)
+            console.log(usersData)
             if (!usersData.find(user => user === parent1)) {
                 user1Select.classList.add("bg-yellow-200");
             }
@@ -272,7 +273,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
                 } else {
                     user1Select.value = calendar[day][0];
                 }
-                renderCalendarThreeCols(month, year, previewBody);
+                renderCalendarThreeCols(month, year);
             });
 
             const user2Select = document.createElement("select");
@@ -316,7 +317,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
                     } else {
                         user2Select.value = calendar[day][1];
                     }
-                    renderCalendarThreeCols(month, year, previewBody);
+                    renderCalendarThreeCols(month, year);
                 });
             }
             const user3Select = document.createElement("select");
@@ -359,7 +360,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
                     } else {
                         user3Select.value = calendar[day][2];
                     }
-                    renderCalendarThreeCols(month, year, previewBody);
+                    renderCalendarThreeCols(month, year);
                 });
             }
 
@@ -372,7 +373,17 @@ function renderCalendarThreeCols(month, year, previewBody) {
     }
 }
 
-function renderCalendarTwoCol(month, year, previewBody) {
+function renderCalendarTwoCol(month, year) {
+    const previewBody = document.getElementById("calendar-preview-table");
+    const twoColHeader = document.getElementById("tableheadersTwoCols");
+    const threeColHeader = document.getElementById("tableheadersThreeCols");
+
+    previewBody.innerHTML = "";
+    threeColHeader.classList.add("hidden");
+    twoColHeader.classList.remove("hidden");
+    previewBody.appendChild(twoColHeader);
+    previewBody.appendChild(threeColHeader);
+    
     // Für 2 Spalten: [parent1, parent2, meta]
     const calendarEntries = Object.entries(calendar).map(
         ([day, [parent1, parent2, meta]]) => ({ day, parent1, parent2, meta })
@@ -439,7 +450,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][2].invalidText = newValue;
-                renderCalendarTwoCol(month, year, previewBody);
+                renderCalendarTwoCol(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
         } else if (!meta.isValidDay) {
@@ -452,7 +463,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][2].invalidText = newValue;
-                renderCalendarTwoCol(month, year, previewBody);
+                renderCalendarTwoCol(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
         } else {
@@ -486,7 +497,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
                 } else {
                     user1Select.value = calendar[day][0];
                 }
-                renderCalendarTwoCol(month, year, previewBody);
+                renderCalendarTwoCol(month, year);
             });
 
             const user2Select = document.createElement("select");
@@ -529,7 +540,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
                     } else {
                         user2Select.value = calendar[day][1];
                     }
-                    renderCalendarTwoCol(month, year, previewBody);
+                    renderCalendarTwoCol(month, year);
                 });
             }
             flexContainer.appendChild(user1Select);
