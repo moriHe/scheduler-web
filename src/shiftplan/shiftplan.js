@@ -244,8 +244,6 @@ function renderCalendarThreeCols(month, year) {
             // Erstelle drei Select-Elemente für die drei Elternteile
             const user1Select = document.createElement("select");
             user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
-            console.log(parent1)
-            console.log(usersData)
             if (!usersData.find(user => user === parent1)) {
                 user1Select.classList.add("bg-yellow-200");
             }
