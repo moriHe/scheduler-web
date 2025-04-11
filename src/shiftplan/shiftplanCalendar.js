@@ -259,8 +259,10 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
         let [parent1, parent2, parent3, meta] = calendar[day];
 
         if (!actionTaken) {
-            if (meta.isValidDay && !usersData.find(user => user === parent1) ||
-                !usersData.find(user => user === parent2) || !usersData.find(user => user === parent3)) {
+            const areAllUsersKnown = !usersData.find(user => user === parent1) ||
+                !usersData.find(user => user === parent2) || !usersData.find(user => user === parent3)
+            if (meta.isValidDay && areAllUsersKnown) {
+
                 const confirmedChoice = confirm(`Person(en) nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}, ${parent3}. Trotzdem fortfahren?`);
                 if (!confirmedChoice) {
                     return
@@ -522,9 +524,10 @@ export function generatePDFTwoCols(calendar, month, year, usersData = []) {
         let [parent1, parent2, meta] = calendar[day];
 
         if (!actionTaken) {
-            if (meta.isValidDay &&
-                !usersData.find(user => user === parent1) ||
-                !usersData.find(user => user === parent2)) {
+            const areAllUsersKnown = !!usersData.find(user => user === parent1) ||
+                !usersData.find(user => user === parent2)
+
+            if (meta.isValidDay && areAllUsersKnown) {
                 const confirmedChoice = confirm(`Person(en) nicht im Datenset gefunden: ${parent1}, ${parent2}. Trotzdem fortfahren?`);
                 if (!confirmedChoice) {
                     return;
