@@ -44,10 +44,13 @@ window.onload = () => {
 
     document.getElementById("month").addEventListener("change", () => updateCalendar());
     document.getElementById("year").addEventListener("change", () => updateCalendar());
-
     document.getElementById("show-preview-button").addEventListener("click", function () {
-        document.getElementById("plan-creation-container").classList.add("hidden");
-        document.getElementById("calendar-preview-container").classList.remove("hidden");
+        const specificPerson = document.getElementById("nameInput")?.value;
+        const isSpecificPersonInUsersArray = usersData?.find(user => user === specificPerson);
+        if (isSpecificPersonInUsersArray) {
+            showCustomModal(specificPerson);
+            return
+        }
         renderCalendarPreview();
     });
 
@@ -79,7 +82,11 @@ function populateYearSelect() {
 
 let calendar = null;
 
-function renderCalendarPreview() {
+function renderCalendarPreview(subsetFormattedUsers) {
+    document.getElementById("plan-creation-container").classList.add("hidden");
+    document.getElementById("calendar-preview-container").classList.remove("hidden");
+
+    const usersToAssign = subsetFormattedUsers ?? formattedUsers
     const month = parseInt(document.getElementById("month").value) + 1;
     const year = parseInt(document.getElementById("year").value);
 
@@ -96,10 +103,10 @@ function renderCalendarPreview() {
 
     const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
     if (shiftValue === "3") {
-        calendar = assignUsersCalendarThreeCols(month, year, formattedUsers, options);
+        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options);
         renderCalendarThreeCols(month, year);
     } else {
-        calendar = assignUsersCalendarTwoCols(month, year, formattedUsers, options);
+        calendar = assignUsersCalendarTwoCols(month, year, usersToAssign, options);
         renderCalendarTwoCol(month, year);
     }
 
@@ -705,3 +712,24 @@ document.querySelectorAll(".weekday-checkbox").forEach((checkbox) => {
         updateCalendar();
     });
 });
+
+function showCustomModal(personName) {
+    document.getElementById("modalText").innerHTML = `
+    ${personName} erhält ausgewählte Schichten und hat zusätzlich einen Sperrtermin-Kalender.<br>
+    Drücken Sie "Nur ausgewählte" wenn die Person ausschließlich die ausgewählten Schichten erhalten soll.<br>
+    Drücken Sie "Zusätzliche", wenn die Person weitere Schichten durch die Autozuweisung erhalten soll.
+  `;
+    document.getElementById("customModal").classList.remove("hidden");
+
+    document.getElementById("onlySelected").addEventListener("click", () => {
+        renderCalendarPreview(formattedUsers.filter(user => user.name !== personName))
+        document.getElementById("customModal").classList.add("hidden");
+    })
+    document.getElementById("withAutoAssign").addEventListener("click", () => {
+        renderCalendarPreview()
+        document.getElementById("customModal").classList.add("hidden");
+    })
+    document.getElementById("cancel").addEventListener("click", () => {
+        document.getElementById("customModal").classList.add("hidden");
+    })
+}
