@@ -24,7 +24,6 @@ function updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedU
   if (hasEnoughUsers) {
     _users.forEach((user) => {
       if (user.name === selectedUser.name) {
-        console.log(averageServiceCount)
         const newServiceCount = user.serviceCount + 1
         let newPrio
         if (newServiceCount >= averageServiceCount) {
