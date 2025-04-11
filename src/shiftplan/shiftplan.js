@@ -225,7 +225,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][3].invalidText = newValue;
-                renderCalendarThreeCols(month, year);
+                renderCalendarThreeCols(month, year, previewBody);
             });
             flexContainer.appendChild(invalidDayInput);
         } else if (!meta.isValidDay) {
@@ -238,7 +238,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][3].invalidText = newValue;
-                renderCalendarThreeCols(month, year);
+                renderCalendarThreeCols(month, year, previewBody);
             });
             flexContainer.appendChild(invalidDayInput);
         } else {
@@ -272,7 +272,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
                 } else {
                     user1Select.value = calendar[day][0];
                 }
-                renderCalendarThreeCols(month, year);
+                renderCalendarThreeCols(month, year, previewBody);
             });
 
             const user2Select = document.createElement("select");
@@ -316,7 +316,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
                     } else {
                         user2Select.value = calendar[day][1];
                     }
-                    renderCalendarThreeCols(month, year);
+                    renderCalendarThreeCols(month, year, previewBody);
                 });
             }
             const user3Select = document.createElement("select");
@@ -359,7 +359,7 @@ function renderCalendarThreeCols(month, year, previewBody) {
                     } else {
                         user3Select.value = calendar[day][2];
                     }
-                    renderCalendarThreeCols(month, year);
+                    renderCalendarThreeCols(month, year, previewBody);
                 });
             }
 
@@ -439,7 +439,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][2].invalidText = newValue;
-                renderCalendarTwoCol(month, year);
+                renderCalendarTwoCol(month, year, previewBody);
             });
             flexContainer.appendChild(invalidDayInput);
         } else if (!meta.isValidDay) {
@@ -452,7 +452,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
             invalidDayInput.addEventListener("change", () => {
                 const newValue = invalidDayInput.value.trim();
                 calendar[day][2].invalidText = newValue;
-                renderCalendarTwoCol(month, year);
+                renderCalendarTwoCol(month, year, previewBody);
             });
             flexContainer.appendChild(invalidDayInput);
         } else {
@@ -486,7 +486,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
                 } else {
                     user1Select.value = calendar[day][0];
                 }
-                renderCalendarTwoCol(month, year);
+                renderCalendarTwoCol(month, year, previewBody);
             });
 
             const user2Select = document.createElement("select");
@@ -529,7 +529,7 @@ function renderCalendarTwoCol(month, year, previewBody) {
                     } else {
                         user2Select.value = calendar[day][1];
                     }
-                    renderCalendarTwoCol(month, year);
+                    renderCalendarTwoCol(month, year, previewBody);
                 });
             }
             flexContainer.appendChild(user1Select);
