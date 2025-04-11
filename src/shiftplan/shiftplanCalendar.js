@@ -150,7 +150,6 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
                 selectedUser1 = { name: "NOT SET" };
                 selectedUser2 = { name: "NOT SET" };
             }
-            console.log(options.specificPerson)
             calendar[day] = [
                 selectedUser1.name,
                 selectedUser2.name,
