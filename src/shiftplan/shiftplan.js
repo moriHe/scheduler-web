@@ -1,9 +1,10 @@
 import {
-    testAssignUsersToCalendar,
-    generatePDF,
+    assignUsersCalendarThreeCols,
+    assignUsersCalendarTwoCols,
+    generatePDFThreeCols,
     formatDate,
     formatDayOfWeek,
-    displayError,
+    displayError, generatePDFTwoCols,
 } from "./shiftplanCalendar.js";
 
 let usersData = [];         // Temporäre Speicherung der Nutzerdaten
@@ -93,222 +94,398 @@ function renderCalendarPreview() {
         teamdays,
     };
 
-    calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
+    const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
+    if (shiftValue === "3") {
+        calendar = assignUsersCalendarThreeCols(month, year, formattedUsers, options);
+        renderCalendarThreeCols(month, year);
+    } else {
+        calendar = assignUsersCalendarTwoCols(month, year, formattedUsers, options);
+        renderCalendarTwoCol(month, year);
+    }
 
-    function renderCalendar() {
-        const previewBody = document.getElementById("calendar-preview-table");
-        const firstRow = previewBody.firstElementChild;
-        previewBody.innerHTML = "";
-        previewBody.appendChild(firstRow);
+}
 
-        const calendarEntries = Object.entries(calendar).map(
-            ([day, [parent1, parent2, parent3, meta]]) => ({ day, parent1, parent2, parent3, meta })
-        );
+function renderCalendarThreeCols(month, year) {
+    const previewBody = document.getElementById("calendar-preview-table");
+    const firstRow = previewBody.firstElementChild;
+    previewBody.innerHTML = "";
+    previewBody.appendChild(firstRow);
 
-        const parentCount = {};
-        calendarEntries.forEach(({ parent1, parent2, parent3, meta }) => {
-            if (meta.isValidDay && parent1 && parent1 !== "NOT SET")
-                parentCount[parent1] = (parentCount[parent1] || 0) + 1;
-            if (meta.isValidDay && parent2 && parent2 !== "NOT SET")
-                parentCount[parent2] = (parentCount[parent2] || 0) + 1;
-            if (meta.isValidDay && parent3 && parent3 !== "NOT SET")
-                parentCount[parent3] = (parentCount[parent3] || 0) + 1;
-        });
+    const calendarEntries = Object.entries(calendar).map(
+        ([day, [parent1, parent2, parent3, meta]]) => ({ day, parent1, parent2, parent3, meta })
+    );
 
-        const summaryDiv = document.getElementById("parent-summary");
-        summaryDiv.innerHTML = "";
-        Object.entries(parentCount)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .forEach(([parent, count]) => {
-                const summaryItem = document.createElement("div");
-                summaryItem.classList.add("flex", "justify-between", "py-1", "cursor-pointer");
-                summaryItem.innerHTML = `
+    const parentCount = {};
+    calendarEntries.forEach(({ parent1, parent2, parent3, meta }) => {
+        if (meta.isValidDay && parent1 && parent1 !== "NOT SET")
+            parentCount[parent1] = (parentCount[parent1] || 0) + 1;
+        if (meta.isValidDay && parent2 && parent2 !== "NOT SET")
+            parentCount[parent2] = (parentCount[parent2] || 0) + 1;
+        if (meta.isValidDay && parent3 && parent3 !== "NOT SET")
+            parentCount[parent3] = (parentCount[parent3] || 0) + 1;
+    });
+
+    const summaryDiv = document.getElementById("parent-summary");
+    summaryDiv.innerHTML = "";
+    Object.entries(parentCount)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([parent, count]) => {
+            const summaryItem = document.createElement("div");
+            summaryItem.classList.add("flex", "justify-between", "py-1", "cursor-pointer");
+            summaryItem.innerHTML = `
                 <span class="font-medium text-gray-800">${parent}</span>
                 <span class="text-gray-600">(${count})</span>
             `;
-                summaryItem.addEventListener("click", () => {
-                    document.querySelectorAll("#parent-summary > div").forEach((item) => item.classList.remove("bg-green-200"));
-                    summaryItem.classList.add("bg-green-200");
-                    const selects = document.querySelectorAll("#calendar-preview-table select");
-                    selects.forEach((select) => {
-                        if (select.value === parent)
-                            select.classList.add("bg-green-200");
-                        else
-                            select.classList.remove("bg-green-200");
-                    });
+            summaryItem.addEventListener("click", () => {
+                document.querySelectorAll("#parent-summary > div").forEach((item) => item.classList.remove("bg-green-200"));
+                summaryItem.classList.add("bg-green-200");
+                const selects = document.querySelectorAll("#calendar-preview-table select");
+                selects.forEach((select) => {
+                    if (select.value === parent)
+                        select.classList.add("bg-green-200");
+                    else
+                        select.classList.remove("bg-green-200");
                 });
-                summaryDiv.appendChild(summaryItem);
+            });
+            summaryDiv.appendChild(summaryItem);
+        });
+
+    for (const entry of calendarEntries) {
+        const { day, parent1, parent2, parent3, meta } = entry;
+        const flexContainer = document.createElement("div");
+        flexContainer.classList.add("flex", "w-full", "py-1", "border");
+
+        const rowDayDiv = document.createElement("div");
+        const rowDay = formatDayOfWeek(day, month, year);
+        rowDayDiv.textContent = rowDay;
+        rowDayDiv.classList.add("w-1/12", "text-left");
+
+        const rowDateDiv = document.createElement("div");
+        const rowDate = formatDate(day, month, year);
+        rowDateDiv.textContent = rowDate;
+        rowDateDiv.classList.add("w-1/6", "text-left");
+
+        flexContainer.appendChild(rowDayDiv);
+        flexContainer.appendChild(rowDateDiv);
+
+        if (meta.isKitaOpenNoEd) {
+            flexContainer.classList.add("bg-yellow-200");
+            const invalidDayInput = document.createElement("input");
+            invalidDayInput.type = "text";
+            invalidDayInput.value = calendar[day][3].invalidText || "";
+            invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
+            invalidDayInput.setAttribute("tabindex", "0");
+            invalidDayInput.addEventListener("change", () => {
+                const newValue = invalidDayInput.value.trim();
+                calendar[day][3].invalidText = newValue;
+                renderCalendarThreeCols(month, year);
+            });
+            flexContainer.appendChild(invalidDayInput);
+        } else if (!meta.isValidDay) {
+            flexContainer.classList.add("bg-red-200");
+            const invalidDayInput = document.createElement("input");
+            invalidDayInput.type = "text";
+            invalidDayInput.value = calendar[day][3].invalidText || "";
+            invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
+            invalidDayInput.setAttribute("tabindex", "0");
+            invalidDayInput.addEventListener("change", () => {
+                const newValue = invalidDayInput.value.trim();
+                calendar[day][3].invalidText = newValue;
+                renderCalendarThreeCols(month, year);
+            });
+            flexContainer.appendChild(invalidDayInput);
+        } else {
+            // Erstelle drei Select-Elemente für die drei Elternteile
+            const user1Select = document.createElement("select");
+            user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            if (!usersData.find(user => user === parent1)) {
+                user1Select.classList.add("bg-yellow-200");
+            }
+            const noSelectionUser1 = document.createElement("option");
+            noSelectionUser1.value = "NOT SET";
+            noSelectionUser1.textContent = "NOT SET";
+            if (parent1 === "NOT SET") noSelectionUser1.selected = true;
+            user1Select.appendChild(noSelectionUser1);
+            usersData.forEach((user) => {
+                const option = document.createElement("option");
+                option.value = user;
+                option.textContent = user;
+                if (user === parent1) option.selected = true;
+                user1Select.appendChild(option);
+            });
+            user1Select.addEventListener("change", () => {
+                const isSet = user1Select.value !== "NOT SET";
+                const naDateArray = formattedUsers.find(fUser => fUser.name === user1Select.value)?.not_available || [];
+                let continueProcess = true;
+                if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
+                    continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
+                }
+                if (continueProcess) {
+                    calendar[day][0] = user1Select.value;
+                }
+                renderCalendarThreeCols(month, year);
             });
 
-        for (const entry of calendarEntries) {
-            const { day, parent1, parent2, parent3, meta } = entry;
-            const flexContainer = document.createElement("div");
-            flexContainer.classList.add("flex", "w-full", "py-1", "border");
-
-            const rowDayDiv = document.createElement("div");
-            const rowDay = formatDayOfWeek(day, month, year);
-            rowDayDiv.textContent = rowDay;
-            rowDayDiv.classList.add("w-1/12", "text-left");
-
-            const rowDateDiv = document.createElement("div");
-            const rowDate = formatDate(day, month, year);
-            rowDateDiv.textContent = rowDate;
-            rowDateDiv.classList.add("w-1/6", "text-left");
-
-            flexContainer.appendChild(rowDayDiv);
-            flexContainer.appendChild(rowDateDiv);
-
-            if (meta.isKitaOpenNoEd) {
-                flexContainer.classList.add("bg-yellow-200");
-                const invalidDayInput = document.createElement("input");
-                invalidDayInput.type = "text";
-                invalidDayInput.value = calendar[day][3].invalidText || "";
-                invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
-                invalidDayInput.setAttribute("tabindex", "0");
-                invalidDayInput.addEventListener("change", () => {
-                    const newValue = invalidDayInput.value.trim();
-                    calendar[day][3].invalidText = newValue;
-                    renderCalendar();
-                });
-                flexContainer.appendChild(invalidDayInput);
-            } else if (!meta.isValidDay) {
-                flexContainer.classList.add("bg-red-200");
-                const invalidDayInput = document.createElement("input");
-                invalidDayInput.type = "text";
-                invalidDayInput.value = calendar[day][3].invalidText || "";
-                invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
-                invalidDayInput.setAttribute("tabindex", "0");
-                invalidDayInput.addEventListener("change", () => {
-                    const newValue = invalidDayInput.value.trim();
-                    calendar[day][3].invalidText = newValue;
-                    renderCalendar();
-                });
-                flexContainer.appendChild(invalidDayInput);
-            } else {
-                // Erstelle drei Select-Elemente für die drei Elternteile
-                const user1Select = document.createElement("select");
-                user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
-                if (!usersData.find(user => user === parent1)) {
-                    user1Select.classList.add("bg-yellow-200");
-                }
-                const noSelectionUser1 = document.createElement("option");
-                noSelectionUser1.value = "NOT SET";
-                noSelectionUser1.textContent = "NOT SET";
-                if (parent1 === "NOT SET") noSelectionUser1.selected = true;
-                user1Select.appendChild(noSelectionUser1);
-                usersData.forEach((user) => {
-                    const option = document.createElement("option");
-                    option.value = user;
-                    option.textContent = user;
-                    if (user === parent1) option.selected = true;
-                    user1Select.appendChild(option);
-                });
-                user1Select.addEventListener("change", () => {
-                    const isSet = user1Select.value !== "NOT SET";
-                    const naDateArray = formattedUsers.find(fUser => fUser.name === user1Select.value)?.not_available || [];
+            const user2Select = document.createElement("select");
+            user2Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            if (parent2 !== "Team" && !usersData.find(user => user === parent2)) {
+                user2Select.classList.add("bg-yellow-200");
+            }
+            const noSelectionUser2 = document.createElement("option");
+            noSelectionUser2.value = "NOT SET";
+            noSelectionUser2.textContent = "NOT SET";
+            if (parent2 === "NOT SET") noSelectionUser2.selected = true;
+            user2Select.appendChild(noSelectionUser2);
+            usersData.forEach((user) => {
+                const option = document.createElement("option");
+                option.value = user;
+                option.textContent = user;
+                if (user === parent2) option.selected = true;
+                user2Select.appendChild(option);
+            });
+            if (parent2 === "Team") {
+                const teamOption = document.createElement("option");
+                teamOption.value = "Team";
+                teamOption.textContent = "Team";
+                teamOption.selected = true;
+                user2Select.appendChild(teamOption);
+                user2Select.value = "Team";
+                user2Select.disabled = true;
+                user2Select.classList.add("cursor-not-allowed");
+            }
+            if (!user2Select.disabled) {
+                user2Select.addEventListener("change", () => {
+                    const isSet = user2Select.value !== "NOT SET";
+                    const naDateArray = formattedUsers.find(fUser => fUser.name === user2Select.value)?.not_available || [];
                     let continueProcess = true;
                     if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
                         continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
                     }
                     if (continueProcess) {
-                        calendar[day][0] = user1Select.value;
+                        calendar[day][1] = user2Select.value;
                     }
-                    renderCalendar();
+                    renderCalendarThreeCols(month, year);
                 });
-
-                const user2Select = document.createElement("select");
-                user2Select.classList.add("flex-1", "text-left", "cursor-pointer");
-                if (parent2 !== "Team" && !usersData.find(user => user === parent2)) {
-                    user2Select.classList.add("bg-yellow-200");
-                }
-                const noSelectionUser2 = document.createElement("option");
-                noSelectionUser2.value = "NOT SET";
-                noSelectionUser2.textContent = "NOT SET";
-                if (parent2 === "NOT SET") noSelectionUser2.selected = true;
-                user2Select.appendChild(noSelectionUser2);
-                usersData.forEach((user) => {
-                    const option = document.createElement("option");
-                    option.value = user;
-                    option.textContent = user;
-                    if (user === parent2) option.selected = true;
-                    user2Select.appendChild(option);
-                });
-                if (parent2 === "Team") {
-                    const teamOption = document.createElement("option");
-                    teamOption.value = "Team";
-                    teamOption.textContent = "Team";
-                    teamOption.selected = true;
-                    user2Select.appendChild(teamOption);
-                    user2Select.value = "Team";
-                    user2Select.disabled = true;
-                    user2Select.classList.add("cursor-not-allowed");
-                }
-                if (!user2Select.disabled) {
-                    user2Select.addEventListener("change", () => {
-                        const isSet = user2Select.value !== "NOT SET";
-                        const naDateArray = formattedUsers.find(fUser => fUser.name === user2Select.value)?.not_available || [];
-                        let continueProcess = true;
-                        if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
-                            continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
-                        }
-                        if (continueProcess) {
-                            calendar[day][1] = user2Select.value;
-                        }
-                        renderCalendar();
-                    });
-                }
-
-                const user3Select = document.createElement("select");
-                user3Select.classList.add("flex-1", "text-left", "cursor-pointer");
-                if (parent3 !== "Team" && !usersData.find(user => user === parent3)) {
-                    user3Select.classList.add("bg-yellow-200");
-                }
-                const noSelectionUser3 = document.createElement("option");
-                noSelectionUser3.value = "NOT SET";
-                noSelectionUser3.textContent = "NOT SET";
-                if (parent3 === "NOT SET") noSelectionUser3.selected = true;
-                user3Select.appendChild(noSelectionUser3);
-                usersData.forEach((user) => {
-                    const option = document.createElement("option");
-                    option.value = user;
-                    option.textContent = user;
-                    if (user === parent3) option.selected = true;
-                    user3Select.appendChild(option);
-                });
-                if (parent3 === "Team") {
-                    const teamOption = document.createElement("option");
-                    teamOption.value = "Team";
-                    teamOption.textContent = "Team";
-                    teamOption.selected = true;
-                    user3Select.appendChild(teamOption);
-                    user3Select.value = "Team";
-                    user3Select.disabled = true;
-                    user3Select.classList.add("cursor-not-allowed");
-                }
-                if (!user3Select.disabled) {
-                    user3Select.addEventListener("change", () => {
-                        const isSet = user3Select.value !== "NOT SET";
-                        const naDateArray = formattedUsers.find(fUser => fUser.name === user3Select.value)?.not_available || [];
-                        let continueProcess = true;
-                        if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
-                            continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
-                        }
-                        if (continueProcess) {
-                            calendar[day][2] = user3Select.value;
-                        }
-                        renderCalendar();
-                    });
-                }
-
-                flexContainer.appendChild(user1Select);
-                flexContainer.appendChild(user2Select);
-                flexContainer.appendChild(user3Select);
             }
 
-            previewBody.appendChild(flexContainer);
+            const user3Select = document.createElement("select");
+            user3Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            if (parent3 !== "Team" && !usersData.find(user => user === parent3)) {
+                user3Select.classList.add("bg-yellow-200");
+            }
+            const noSelectionUser3 = document.createElement("option");
+            noSelectionUser3.value = "NOT SET";
+            noSelectionUser3.textContent = "NOT SET";
+            if (parent3 === "NOT SET") noSelectionUser3.selected = true;
+            user3Select.appendChild(noSelectionUser3);
+            usersData.forEach((user) => {
+                const option = document.createElement("option");
+                option.value = user;
+                option.textContent = user;
+                if (user === parent3) option.selected = true;
+                user3Select.appendChild(option);
+            });
+            if (parent3 === "Team") {
+                const teamOption = document.createElement("option");
+                teamOption.value = "Team";
+                teamOption.textContent = "Team";
+                teamOption.selected = true;
+                user3Select.appendChild(teamOption);
+                user3Select.value = "Team";
+                user3Select.disabled = true;
+                user3Select.classList.add("cursor-not-allowed");
+            }
+            if (!user3Select.disabled) {
+                user3Select.addEventListener("change", () => {
+                    const isSet = user3Select.value !== "NOT SET";
+                    const naDateArray = formattedUsers.find(fUser => fUser.name === user3Select.value)?.not_available || [];
+                    let continueProcess = true;
+                    if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
+                        continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
+                    }
+                    if (continueProcess) {
+                        calendar[day][2] = user3Select.value;
+                    }
+                    renderCalendarThreeCols(month, year);
+                });
+            }
+
+            flexContainer.appendChild(user1Select);
+            flexContainer.appendChild(user2Select);
+            flexContainer.appendChild(user3Select);
         }
+
+        previewBody.appendChild(flexContainer);
     }
-    renderCalendar();
+}
+
+function renderCalendarTwoCol(month, year) {
+    const previewBody = document.getElementById("calendar-preview-table");
+    const firstRow = previewBody.firstElementChild;
+    previewBody.innerHTML = "";
+    previewBody.appendChild(firstRow);
+
+    // Für 2 Spalten: [parent1, parent2, meta]
+    const calendarEntries = Object.entries(calendar).map(
+        ([day, [parent1, parent2, meta]]) => ({ day, parent1, parent2, meta })
+    );
+
+    const parentCount = {};
+    calendarEntries.forEach(({ parent1, parent2, meta }) => {
+        if (meta.isValidDay && parent1 && parent1 !== "NOT SET")
+            parentCount[parent1] = (parentCount[parent1] || 0) + 1;
+        if (meta.isValidDay && parent2 && parent2 !== "NOT SET")
+            parentCount[parent2] = (parentCount[parent2] || 0) + 1;
+    });
+
+    const summaryDiv = document.getElementById("parent-summary");
+    summaryDiv.innerHTML = "";
+    Object.entries(parentCount)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([parent, count]) => {
+            const summaryItem = document.createElement("div");
+            summaryItem.classList.add("flex", "justify-between", "py-1", "cursor-pointer");
+            summaryItem.innerHTML = `
+                    <span class="font-medium text-gray-800">${parent}</span>
+                    <span class="text-gray-600">(${count})</span>
+                `;
+            summaryItem.addEventListener("click", () => {
+                document.querySelectorAll("#parent-summary > div").forEach((item) => item.classList.remove("bg-green-200"));
+                summaryItem.classList.add("bg-green-200");
+                const selects = document.querySelectorAll("#calendar-preview-table select");
+                selects.forEach((select) => {
+                    if (select.value === parent)
+                        select.classList.add("bg-green-200");
+                    else
+                        select.classList.remove("bg-green-200");
+                });
+            });
+            summaryDiv.appendChild(summaryItem);
+        });
+
+    calendarEntries.forEach((entry) => {
+        const { day, parent1, parent2, meta } = entry;
+        const flexContainer = document.createElement("div");
+        flexContainer.classList.add("flex", "w-full", "py-1", "border");
+
+        const rowDayDiv = document.createElement("div");
+        const rowDay = formatDayOfWeek(day, month, year);
+        rowDayDiv.textContent = rowDay;
+        rowDayDiv.classList.add("w-1/12", "text-left");
+
+        const rowDateDiv = document.createElement("div");
+        const rowDate = formatDate(day, month, year);
+        rowDateDiv.textContent = rowDate;
+        rowDateDiv.classList.add("w-1/6", "text-left");
+
+        flexContainer.appendChild(rowDayDiv);
+        flexContainer.appendChild(rowDateDiv);
+
+        if (meta.isKitaOpenNoEd) {
+            flexContainer.classList.add("bg-yellow-200");
+            const invalidDayInput = document.createElement("input");
+            invalidDayInput.type = "text";
+            invalidDayInput.value = calendar[day][2].invalidText || "";
+            invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
+            invalidDayInput.setAttribute("tabindex", "0");
+            invalidDayInput.addEventListener("change", () => {
+                const newValue = invalidDayInput.value.trim();
+                calendar[day][2].invalidText = newValue;
+                renderCalendarTwoCol(month, year);
+            });
+            flexContainer.appendChild(invalidDayInput);
+        } else if (!meta.isValidDay) {
+            flexContainer.classList.add("bg-red-200");
+            const invalidDayInput = document.createElement("input");
+            invalidDayInput.type = "text";
+            invalidDayInput.value = calendar[day][2].invalidText || "";
+            invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
+            invalidDayInput.setAttribute("tabindex", "0");
+            invalidDayInput.addEventListener("change", () => {
+                const newValue = invalidDayInput.value.trim();
+                calendar[day][2].invalidText = newValue;
+                renderCalendarTwoCol(month, year);
+            });
+            flexContainer.appendChild(invalidDayInput);
+        } else {
+            // Erstelle zwei Select-Elemente für die zwei Elternteile
+            const user1Select = document.createElement("select");
+            user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            if (!usersData.find(user => user === parent1)) {
+                user1Select.classList.add("bg-yellow-200");
+            }
+            const noSelectionUser1 = document.createElement("option");
+            noSelectionUser1.value = "NOT SET";
+            noSelectionUser1.textContent = "NOT SET";
+            if (parent1 === "NOT SET") noSelectionUser1.selected = true;
+            user1Select.appendChild(noSelectionUser1);
+            usersData.forEach((user) => {
+                const option = document.createElement("option");
+                option.value = user;
+                option.textContent = user;
+                if (user === parent1) option.selected = true;
+                user1Select.appendChild(option);
+            });
+            user1Select.addEventListener("change", () => {
+                const isSet = user1Select.value !== "NOT SET";
+                const naDateArray = formattedUsers.find(fUser => fUser.name === user1Select.value)?.not_available || [];
+                let continueProcess = true;
+                if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
+                    continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
+                }
+                if (continueProcess) {
+                    calendar[day][0] = user1Select.value;
+                }
+                renderCalendarTwoCol(month, year);
+            });
+
+            const user2Select = document.createElement("select");
+            user2Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            if (parent2 !== "Team" && !usersData.find(user => user === parent2)) {
+                user2Select.classList.add("bg-yellow-200");
+            }
+            const noSelectionUser2 = document.createElement("option");
+            noSelectionUser2.value = "NOT SET";
+            noSelectionUser2.textContent = "NOT SET";
+            if (parent2 === "NOT SET") noSelectionUser2.selected = true;
+            user2Select.appendChild(noSelectionUser2);
+            usersData.forEach((user) => {
+                const option = document.createElement("option");
+                option.value = user;
+                option.textContent = user;
+                if (user === parent2) option.selected = true;
+                user2Select.appendChild(option);
+            });
+            if (parent2 === "Team") {
+                const teamOption = document.createElement("option");
+                teamOption.value = "Team";
+                teamOption.textContent = "Team";
+                teamOption.selected = true;
+                user2Select.appendChild(teamOption);
+                user2Select.value = "Team";
+                user2Select.disabled = true;
+                user2Select.classList.add("cursor-not-allowed");
+            }
+            if (!user2Select.disabled) {
+                user2Select.addEventListener("change", () => {
+                    const isSet = user2Select.value !== "NOT SET";
+                    const naDateArray = formattedUsers.find(fUser => fUser.name === user2Select.value)?.not_available || [];
+                    let continueProcess = true;
+                    if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
+                        continueProcess = confirm(`User kann an diesem Tag nicht. Trotzdem eintragen?`);
+                    }
+                    if (continueProcess) {
+                        calendar[day][1] = user2Select.value;
+                    }
+                    renderCalendarTwoCol(month, year);
+                });
+            }
+            flexContainer.appendChild(user1Select);
+            flexContainer.appendChild(user2Select);
+        }
+
+        previewBody.appendChild(flexContainer);
+    });
 }
 
 document.getElementById("preview-button").addEventListener("click", () => {
@@ -503,7 +680,14 @@ document.getElementById("generate-pdf-button").addEventListener("click", async (
             displayError("Please Update the preview");
             return;
         }
-        const fileBlob = generatePDF(calendar, month, year, usersData);
+        let fileBlob = null
+
+        const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked').value;
+        if (shiftValue === "3") {
+            fileBlob = generatePDFThreeCols(calendar, month, year, usersData);
+        } else {
+            fileBlob = generatePDFTwoCols(calendar, month, year, usersData);
+        }
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(fileBlob);
         downloadLink.download = `dienstplan_${year}_${month}.pdf`;
