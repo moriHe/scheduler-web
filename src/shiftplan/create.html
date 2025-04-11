@@ -190,7 +190,10 @@
       </div>
     </div>
   </div>
-  <div id="parent-summary" class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 w-80 border border-gray-300"></div>
+  <div id="parent-summary" class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 w-80 border border-gray-300 hidden md:block"></div>
+  <button id="toggle-summary" class="md:hidden fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
+    Verteilung
+  </button>
   <div class="flex justify-center space-x-4 mt-10">
     <div id="error-message" class="bg-red-500 text-white p-4 rounded hidden"></div>
     <button id="generate-pdf-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">Erstelle PDF</button>

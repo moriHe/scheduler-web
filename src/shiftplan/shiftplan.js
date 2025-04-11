@@ -25,7 +25,12 @@ let teamdays = [];
 
 // Laden der Nutzerdaten und Initialisierung der Jahresauswahl
 window.onload = () => {
+    const toggleBtn = document.getElementById('toggle-summary');
+    const parentSummary = document.getElementById('parent-summary');
 
+    toggleBtn.addEventListener('click', () => {
+        parentSummary.classList.toggle('hidden');
+    });
     function configureHeaders(labelArray, registerEventListener) {
         labelArray.forEach((label, index) => {
             const input = document.getElementById(label);
