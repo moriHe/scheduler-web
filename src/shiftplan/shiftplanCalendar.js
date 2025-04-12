@@ -100,11 +100,20 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
 
     // Kopiere und erweitere die Nutzer-Daten
     const _users = [...localUsers].map((user) => {
-        const availableTotal = uniqueServiceDays - user["not_available"].length;
+        const cleanedNotAvailableArray = user["not_available"].filter((date) => {
+            const extractedDay = date.split("-")[2];
+            if (extractedDay === undefined) return false
+            if (isHoliday(extractedDay)) return false
+            if (isKitaOpenNoEd(extractedDay)) return false
+            return isValidWeekday(extractedDay);
+        })
+
+        const availableTotal = uniqueServiceDays - cleanedNotAvailableArray.length;
         const prioOffsetFactor = availableTotal <= uniqueServiceDays / 4 ? 0 :
             availableTotal <= uniqueServiceDays / 2 ? 2 : 1;
         return {
             ...user,
+            "not_available": cleanedNotAvailableArray,
             serviceCount: 0,
             prioOffsetFactor,
             // Der niedrigere Wert = höhere Chance ausgewählt zu werden
@@ -405,11 +414,21 @@ export function assignUsersCalendarTwoCols(month, year, localUsers, options = {}
 
     // Kopiere und erweitere die Nutzer-Daten
     const _users = [...localUsers].map((user) => {
-        const availableTotal = uniqueServiceDays - user["not_available"].length;
+        const cleanedNotAvailableArray = user["not_available"].filter((date) => {
+            const extractedDay = date.split("-")[2];
+            if (extractedDay === undefined) return false
+            if (isHoliday(extractedDay)) return false
+            if (isKitaOpenNoEd(extractedDay)) return false
+            return isValidWeekday(extractedDay);
+        })
+
+        const availableTotal = uniqueServiceDays - cleanedNotAvailableArray.length;
+
         const prioOffsetFactor = availableTotal <= uniqueServiceDays / 4 ? 0 :
             availableTotal <= uniqueServiceDays / 2 ? 2 : 1;
         return {
             ...user,
+            "not_available": cleanedNotAvailableArray,
             serviceCount: 0,
             prioOffsetFactor,
             // Der niedrigere Wert = höhere Chance ausgewählt zu werden
