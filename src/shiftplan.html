@@ -3,34 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dienstplan - Übersicht</title> <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <title>Eltern Calendar - Front Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/dist/date-fns.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
 </head>
 
-<body class="bg-gradient-to-br from-teal-100 to-cyan-100 items-center justify-center flex flex-col min-h-screen h-screen font-sans"> <div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-md text-center space-y-8">
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-md text-center space-y-8">
   <div class="space-y-4">
     <h1 class="text-4xl font-bold text-gray-900 leading-tight">
-      Dienstplan
-    </h1> </div>
+      Dienstplaner
+    </h1>
+  </div>
 
   <div class="grid grid-cols-1 gap-6">
     <a
-            href="dienstplan/plan.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            id="view-calendar-button"
+            href="shiftplan/create.html"
+            class="block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
     >
-      Plan erstellen </a>
+      Plan erstellen
+    </a>
     <a
-            id="add-employee-button" href="dienstplan/adduser.html" class="block bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+            id="add-user-button"
+            href="shiftplan/adduser.html"
+            class="block bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
     >
-      Mitarbeiter hinzufügen </a>
+      Personen hinzufügen
+    </a>
     <a
             id="options-button"
-            href="dienstplan/options.html" class="block bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+            href="shiftplan/options.html"
+            class="block bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
     >
       Optionen
     </a>
     <a
-            href="dienstplan/blockedtime.html" class="block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            id="view-blocked-time"
+            href="shiftplan/blockedtime.html"
+            class="block bg-gray-600 hover:bg-gray-800 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-700"
     >
-      Urlaub/Abwesenheit generieren </a>
+      Sperrzeiten generieren
+    </a>
+    <a
+            id="info-button"
+            href="shiftplan/info.html"
+            class="block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+    >
+      Info / FAQ
+    </a>
+    <a
+            id="back-button"
+            href="index.html"
+            class="block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+    >
+      Zurück
+    </a>
   </div>
 </div>
 

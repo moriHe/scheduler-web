@@ -3,3 +3,4 @@ cypress/downloads/*
 .idea/*
 dist/*
 .parcel-cache/*
+TODOS.txt

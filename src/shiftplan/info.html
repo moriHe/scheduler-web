@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dienstplaner - Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl text-center space-y-10 mt-10 mb-10">
+
+  <header class="space-y-2">
+    <h1 class="text-4xl font-bold text-gray-900">Dienstplaner - Anleitung</h1>
+    <p class="text-gray-600 text-lg max-w-xl mx-auto">
+      Der kostenlose Dienstplaner und Elterndienstplaner hilft Dir dabei, einfache monatsbasierte Dienstpläne zu erstellen – beispielsweise für Vereine oder Kitas. Im Folgenden erfährst Du, wie er funktioniert. Schau Dir unbedingt auch die Tipps ganz unten an, um die Navigation zu verbessern.
+    </p>
+  </header>
+
+  <section class="text-left space-y-10">
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Quickstart</h2>
+      <p class="text-gray-700 mb-4">Fangen wir mit den Grundfunktionen des kostenlosen Dienstplaners an.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">1. Startseite</h2>
+      <p class="text-gray-700 mb-4">Von hier aus gelangst Du zu allen wichtigen Funktionen des Dienstplaners.</p>
+      <img src="../assets/img/mainpage.png" alt="Startseite" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">2. Personen hinzufügen</h2>
+      <p class="text-gray-700 mb-4">Trage unter Personen hinzufügen alle Personen ein, die im Dienstplan berücksichtigt werden sollen.</p>
+      <img src="../assets/img/personen_hinzufügen.png" alt="Personen hinzufügen" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">3a. Plan erstellen</h2>
+      <p class="text-gray-700 mb-4">Navigiere anschließend zu Plan erstellen. Hier kannst Du zunächst den Monat auswählen, Diensttage markieren (Häkchen setzen) und festlegen, ob zwei oder drei Schichten pro Tag geplant werden.</p>
+      <img src="../assets/img/plan_config.png" alt="Plan konfigurieren" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">3b. Sperrtermine definieren</h2>
+      <p class="text-gray-700 mb-4">Danach kannst DU für jede Person im Kalender rot markieren, an welchen Tagen sie NICHT verfügbar ist.</p>
+      <p class="text-gray-700 mb-4">Da der Dienstplaner ohne Login funktioniert, musst Du die Sperrtermine selbst einholen, z. B. per E-Mail. Weiter unten findest Du Tipps zur Vereinfachung.</p>
+      <img src="../assets/img/plan_sperrtermine.png" alt="Sperrtermine" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">3c. Feiertage & Sonderfälle</h2>
+      <p class="text-gray-700 mb-4">Tage, an denen komplett geschlossen ist, definierst Du danach im Kalender "Allgemein geschlossen". Diese Tage erscheinen später im PDF rot.</p>
+      <img src="../assets/img/plan_holiday.png" alt="Feiertage" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">Tage, an denen zwar geöffnet ist, aber keine Schichten benötigt werden, kannst Du im Kalender "Geöffnet, keine Schichten notwendig" festlegen. Diese erscheinen gelb.</p>
+      <img src="../assets/img/plan_noshift.png" alt="Keine Schichten notwendig" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">3d. Spezielle Schichtzuweisungen</h2>
+      <p class="text-gray-700 mb-4">Im letzten Kalender kannst Du bestimmten Personen gezielt Schichten an bestimmten Tagen zuweisen. Im Beispiel übernimmt Meret am 1., 16. und 28. jeweils eine Schicht.</p>
+      <p class="text-gray-700 mb-4">Tipp: Du kannst ins Feld schreiben, was zu Deiner Situation passt – z. B. "Thomas & Manuel" oder "Team".</p>
+      <img src="../assets/img/plan_specialshifts.png" alt="Spezielle Schichten" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">4a. Vorschau</h2>
+      <p class="text-gray-700 mb-4">Hier siehst Du, wie die Personen auf die Tage verteilt wurden. Oben kannst Du die Bezeichnungen der 2 oder 3 Schichten ändern. Diese erscheinen dann auch im PDF.</p>
+      <p class="text-gray-700 mb-4">Du kannst manuelle Änderungen vornehmen oder mit einem Klick den Plan neu generieren lassen.</p>
+      <img src="../assets/img/plan_vorschau.png" alt="Planvorschau" class="rounded-lg shadow-md mx-auto mb-4">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">4b. Verteilung</h2>
+      <p class="text-gray-700 mb-4">Rechts wird angezeigt, wie viele Dienste jede Person erhalten hat. Ein Klick zeigt die zugewiesenen Dienste grün hervorgehoben.</p>
+      <img src="../assets/img/plan_vorschaumarkierung.png" alt="Dienste hervorheben" class="rounded-lg shadow-md mx-auto mb-4">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">4c. Manuelle Anpassungen</h2>
+      <p class="text-gray-700 mb-4">Klicke auf ein Feld, um eine andere Person für die Schicht auszuwählen.</p>
+      <p class="text-gray-700 mb-4">Wenn die neue Person an dem Tag nicht kann, wird eine Warnung angezeigt. Du kannst dann abbrechen oder trotzdem speichern.</p>
+      <img src="../assets/img/vorschau_changeuser.png" alt="Person ändern" class="rounded-lg shadow-md mx-auto mb-4">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">4d. Extra-Infos hinzufügen</h2>
+      <p class="text-gray-700 mb-4">Klicke auf rot oder gelb markierte Felder, um sie mit Notizen zu versehen – z. B. "Betriebsausflug". Diese Infos erscheinen ebenfalls im PDF.</p>
+      <img src="../assets/img/plan_vorschautextinvalidday.png" alt="Zusätzliche Infos" class="rounded-lg shadow-md mx-auto mb-4">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">5. PDF generieren</h2>
+      <p class="text-gray-700 mb-4">Wenn alles passt, klickst Du auf "PDF generieren". Das PDF wird automatisch heruntergeladen. Fertig!</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Tipps & Tricks</h2>
+      <p class="text-gray-700 mb-4">Da der Dienstplaner keine Logins nutzt, müssen Sperrtermine manuell eingeholt werden – z. B. per E-Mail.</p>
+      <p class="text-gray-700 mb-4">Nutze die Funktion "Sperrzeiten generieren". Die Teilnehmenden können ihre Sperrtermine selbst eintragen und auf "Generiere Sperrzeiten" klicken.</p>
+      <p class="text-gray-700 mb-4">Danach kann man die Liste mit "Sperrzeiten kopieren" übernehmen und Dir zusenden.</p>
+      <img src="../assets/img/sperrzeiten.png" alt="Sperrzeit Kalender" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">Du kannst diese Liste dann beim Plan-Erstellen ins Feld "Generierte Sperrzeit einfügen" eintragen und mit einem Klick übernehmen.</p>
+      <img src="../assets/img/sperrzeiten_json.png" alt="Sperrzeiten eintragen" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">Das Listenformat lautet: ["Jahr-Monat-Tag", "Jahr-Monat-Tag", ...]</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Den Überblick behalten</h2>
+      <p class="text-gray-700 mb-4">Wenn Du über mehrere Monate eine gleichmäßige Verteilung möchtest, solltest Du die Dienste selbst tracken.</p>
+      <p class="text-gray-700 mb-4">Wir empfehlen, nach jedem Plan die Dienste zu notieren und zu summieren. Neue Personen sollten nicht bei 0 starten. Addiere deshalb die höchste Dienstzahl zu den Neueintritten hinzu, um die Verteilung fair zu halten.</p>
+      <img src="../assets/img/dienst_tracking.png" alt="Dienst-Tracking" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">Ein einfaches Textdokument reicht dafür aus. In Zukunft soll diese Funktion direkt in die Website integriert werden.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">FAQ</h2>
+      <h3 class="text-l font-semibold text-gray-800 mb-2">Was ist der Unterschied zwischen dem kostenlosen Dienstplaner und dem Elterndienstplaner?</h3>
+      <p class="text-gray-700 mb-4">Kurz gesagt, es gibt keinen wirklichen Unterschied zwischen dem Dienstplaner und dem Elterndienstplaner. Das Projekt ist aus dem Elterndienstplaner entstanden und hat sich dann generalisiert. Der Elterndienstplaner ist quasi dasselbe wie der Dienstplaner mit zwei Schichten.</p>
+    </div>
+  </section>
+
+  <a href="../shiftplan.html" class="block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+    Zurück zur Hauptseite
+  </a>
+</div>
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+    <span>|</span>
+    <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+  </div>
+</footer>
+</body>
+</html>

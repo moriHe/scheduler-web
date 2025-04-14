@@ -17,23 +17,23 @@ describe("Common navigation first time visitor", () => {
   it("Should reset users and verify localStorage is cleared", () => {
     let confirmCounter = 0;
     const confirmPopups = [
-      "Möchten Sie die Benutzer wirklich zurücksetzen?",
+      "Möchten Sie die Personen wirklich zurücksetzen?",
       "User kann an diesem Tag nicht. Trotzdem eintragen?",
       "User kann an diesem Tag nicht. Trotzdem eintragen?",
     ];
     // INFO: Reset localstorage for testing
-    cy.window().then((win) => win.localStorage.setItem("users", "Hello"));
+    cy.window().then((win) => win.localStorage.setItem("shiftplanUsers", "Hello"));
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("shiftplanUsers");
       expect(users).to.equal("Hello");
     });
 
     // INFO: Start testing
-    cy.visit("http://localhost:1234/kitashiftplan.html");
+    cy.visit("http://localhost:1234/shiftplan.html");
 
     // INFO: Alert and Confirm listeners that auto accept the boxes
     cy.once("window:alert", (alertText) => {
-      expect(alertText).to.equal("Benutzer wurden zurückgesetzt."); // Validate alert text
+      expect(alertText).to.equal("Personen wurden zurückgesetzt."); // Validate alert text
     });
     cy.on("window:confirm", (confirmText) => {
       expect(confirmText).to.equal(confirmPopups[confirmCounter++]);
@@ -41,10 +41,11 @@ describe("Common navigation first time visitor", () => {
 
     // INFO: Go to options page and reset users
     cy.get("#options-button").click();
+    cy.get("#reset-users-button").should("be.visible");
     cy.get("#reset-users-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
-      expect(users).to.deep.equal("[]");
+      const users = win.localStorage.getItem("shiftplanUsers");
+      expect(users).to.equal("[]");
     });
 
     // INFO: Go to user page and add users
@@ -53,7 +54,7 @@ describe("Common navigation first time visitor", () => {
     cy.get("#user-name").type("TEST_USER_A");
     cy.get("#save-user-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("shiftplanUsers");
       expect(users).to.deep.equal('["TEST_USER_A"]');
     });
     cy.get("#user-name").type("TEST_USER_B");
@@ -62,7 +63,7 @@ describe("Common navigation first time visitor", () => {
     cy.contains("TEST_USER_B");
     cy.get(".delete-button").first().click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("shiftplanUsers");
       expect(users).to.deep.equal('["TEST_USER_B"]');
     });
     cy.get(".delete-button").first().click();
@@ -87,6 +88,10 @@ describe("Common navigation first time visitor", () => {
     cy.get("#year").select("2034");
     cy.get("#month").should("have.value", "11");
     cy.get("#year").should("have.value", "2034");
+
+    cy.get('input[name="shifts-per-day"][value="2"]').check({ force: true });
+    cy.get('input[name="shifts-per-day"][value="2"]').should("be.checked");
+    cy.get('input[name="shifts-per-day"][value="3"]').should("not.be.checked");
 
     // INFO: Shallow check if the calendar has the right values.
     // Assumption: If weekend values is empty at the end, it should be correct.
@@ -210,6 +215,7 @@ describe("Common navigation first time visitor", () => {
         }
       });
     // INFO: Show calendar preview
+    cy.get('#nameInput').type('TESTUSER');
     cy.get("#show-preview-button").click();
     cy.get("#parent-summary")
       .should("be.visible")
@@ -266,9 +272,9 @@ describe("Common navigation first time visitor", () => {
 
           // Check "Team" is selected exactly once
           const teamCount = allSelectedValues.filter(
-            (value) => value === "Team",
+            (value) => value === "TESTUSER",
           ).length;
-          expect(teamCount).to.equal(1, "Team should appear exactly once");
+          expect(teamCount).to.equal(1, "TESTUSER should appear exactly once");
 
           // Check TEST_USER_B to TEST_USER_P appear between 2 and 3 times
           testUsers.forEach((user) => {
@@ -286,10 +292,10 @@ describe("Common navigation first time visitor", () => {
           .children()
           .each((child, index) => {
             // Skip the first child
-            if (index === 0) return;
+            if (index === 0 || index === 1) return;
 
-            // Extract date and day information for validation
-            const date = new Date(2034, 11, index); // Assuming December 2034
+            // Days start at index 2 but need index - 1 to calculate correct weekday
+            const date = new Date(2034, 11, index - 1); // Assuming December 2034
             const day = date.toLocaleDateString("de-DE", { weekday: "short" }); // "Mo", "Di", etc.
 
             const formattedDate = date
@@ -327,21 +333,21 @@ describe("Common navigation first time visitor", () => {
     // Locate the #calendar-preview-table and select the child at index 11
     cy.get("#calendar-preview-table")
       .children()
-      .eq(11) // Select the child at index 11
+      .eq(12) // Select the child at index 11
       .as("targetRow"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
     cy.get("@targetRow")
       .children()
-      .eq(2) // Third child (index 2)
+      .eq(3) // Third child (index 2)
       .select("TEST_USER_B"); // Change the value to TEST_USER_B
 
     // Verify the change did not persist
-    cy.get("@targetRow").children().eq(2).should("have.value", "TEST_USER_B");
+    cy.get("@targetRow").children().eq(3).should("have.value", "TEST_USER_B");
 
     cy.get("#calendar-preview-table")
       .children()
-      .eq(11) // Select the child at index 11
+      .eq(12) // Select the child at index 11
       .as("targetRow1"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
@@ -355,7 +361,7 @@ describe("Common navigation first time visitor", () => {
 
     cy.get("#calendar-preview-table")
       .children()
-      .eq(5) // Select the child at index 11
+      .eq(6) // Select the child at index 11
       .as("targetRow2"); // Alias for reusability
 
     // Modify the third child (select element) of the target row

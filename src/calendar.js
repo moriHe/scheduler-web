@@ -24,7 +24,6 @@ function updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedU
   if (hasEnoughUsers) {
     _users.forEach((user) => {
       if (user.name === selectedUser.name) {
-        console.log(averageServiceCount)
         const newServiceCount = user.serviceCount + 1
         let newPrio
         if (newServiceCount >= averageServiceCount) {
@@ -320,135 +319,118 @@ export function formatDayOfWeek(day, month, year) {
 
 
 export function generatePDF(calendar, month, year, usersData = []) {
-  const { jsPDF } = window.jspdf; // Access jsPDF from window
-
-  // Create a new jsPDF document
+  const { jsPDF } = window.jspdf; // Zugriff auf jsPDF aus window
   const doc = new jsPDF();
 
-  // Add a title
+  // Titel und Untertitel zentrieren
   doc.setFontSize(16);
   doc.text('Elterndienstplan', doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
-
   doc.setFontSize(12);
-  doc.text(`${window.dateFns.format(new Date(year, month - 1), 'MMMM yyyy', { locale: window.dateFns.locale.de })}`, doc.internal.pageSize.getWidth() / 2, 22, { align: 'center' });
+  doc.text(
+      `${window.dateFns.format(new Date(year, month - 1), 'MMMM yyyy', { locale: window.dateFns.locale.de })}`,
+      doc.internal.pageSize.getWidth() / 2,
+      22,
+      { align: 'center' }
+  );
 
-  const legendStartY = 28; // Position the legend just below the title
-
+  const legendStartY = 28;
   const pageWidth = doc.internal.pageSize.getWidth();
-  const legendLeftMargin = (pageWidth - 150) / 2; // Center-align the legend area assuming 150 is the total width of the legend
+  const legendLeftMargin = (pageWidth - 150) / 2; // Annahme: 150 ist die Gesamtbreite der Legende
+  const boxSize = 6;
 
-  // Draw legend in one row
-  const boxSize = 6; // Smaller box size
-
-  // Draw yellow box and text
+  // Legende: Gelber Kasten
   doc.setFillColor(255, 230, 153);
   doc.rect(legendLeftMargin, legendStartY, boxSize, boxSize, 'F');
   doc.setTextColor(0, 0, 0);
-  doc.setFontSize(10); // Smaller font for legend
+  doc.setFontSize(10);
   doc.text("Kita offen, kein Elterndienst", legendLeftMargin + boxSize + 5, legendStartY + boxSize - 1);
 
-  // Draw red box and text
-  const redBoxX = legendLeftMargin + 90; // Adjust spacing for inline layout
+  // Legende: Roter Kasten
+  const redBoxX = legendLeftMargin + 90;
   doc.setFillColor(255, 204, 204);
   doc.rect(redBoxX, legendStartY, boxSize, boxSize, 'F');
   doc.text("Kita geschlossen", redBoxX + boxSize + 5, legendStartY + boxSize - 1);
 
-  // Start table below the legend
   let startY = legendStartY + 10;
-  // Add some space
-  let continueProcess = true
-  let actionTaken = false
-
-  // Prepare the rows for the table
+  let continueProcess = true;
+  let actionTaken = false;
   const rows = [];
+
+  // Erzeugen der Zeilen-Daten aus dem Kalender
   for (const day in calendar) {
     const [parent1, parent2, meta] = calendar[day];
+    const isUser1InDataSet = usersData.find((user) => user === parent1);
+    const isUser2InDataSet = usersData.find((user) => user === parent2) || parent2 === "Team";
 
-    if (!continueProcess) break
-    const isUser1InDataSet = usersData.find((user) => user === parent1)
-    const isUser2InDataSet = usersData.find((user) => user === parent2) || parent2 == "Team"
-
-    if (!actionTaken && meta.isValidDay && !isUser1InDataSet && !isUser2InDataSet) {
-      const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}. Trotzdem fortfahren?`)
-      continueProcess = confirmedChoice
-      actionTaken = true
+    if (continueProcess && !actionTaken && meta.isValidDay && !isUser1InDataSet && !isUser2InDataSet) {
+      const confirmedChoice = confirm(`User nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}. Trotzdem fortfahren?`);
+      if (!confirmedChoice) {
+        // Abbruch der PDF-Erzeugung, falls der Benutzer ablehnt
+        return;
+      }
+      actionTaken = true;
     }
 
-    const dateParent1 = formatDate(day, month, year);
-    const dayParent1 = formatDayOfWeek(day, month, year);
-    const parent1Content = meta.isValidDay ? parent1 : meta.invalidText || ""
-
-    rows.push({ data: [dayParent1, dateParent1, parent1Content, parent2], meta }); // Only 4 columns now
+    const dateStr = formatDate(day, month, year);
+    const dayStr = formatDayOfWeek(day, month, year);
+    // Bei gültigen Tagen wird der Inhalt aus der ersten Spalte übernommen,
+    // andernfalls später im Mapping ein fixer Text (über die volle Breite der letzten beiden Spalten) gesetzt.
+    const normalShiftText = meta.isValidDay ? parent1 : "";
+    // Wir speichern immer 4 Zellen (Tag, Datum, Elternteil 1 und Elternteil 2)
+    rows.push({ data: [dayStr, dateStr, normalShiftText, parent2], meta });
   }
 
-  if (!continueProcess) return
+  if (!continueProcess) return;
 
-  // Prepare the headers
+  // Neuer Body‑Array, der für spezielle Tage (nicht valide oder KitaOpenNoEd) die letzten beiden Spalten zusammenführt:
+  const tableBody = rows.map(row => {
+    if (!row.meta.isValidDay || row.meta.isKitaOpenNoEd) {
+      let specialText = row.meta.invalidText ?? "";
+      let fillColor;
+      if (row.meta.isKitaOpenNoEd) {
+        fillColor = [255, 230, 153]; // Gelb
+      } else {
+        fillColor = [255, 204, 204]; // Rot
+      }
+      // Hier bleiben die ersten beiden Zellen (Tag und Datum) unverändert,
+      // die letzten beiden Spalten werden in einer Zelle mit colSpan: 2 zusammengeführt.
+      return [
+        row.data[0],
+        row.data[1],
+        {
+          content: specialText,
+          colSpan: 2,
+          styles: { halign: 'center', fillColor: fillColor, textColor: [50, 50, 50] }
+        }
+      ];
+    } else {
+      return row.data;
+    }
+  });
+
+  // Überschrift der Tabelle
   const headers = [['Tag', 'Datum', 'Elternteile 1', 'Elternteile 2']];
 
-  // Set the desired width of the table
-  const wantedTableWidth = 160; // Adjust this width based on your needs
-  const margin = (pageWidth - wantedTableWidth) / 2; // Calculate the left margin
+  // Definierte Gesamttabellenbreite (z. B. 160) und Zentrierung anhand der Seitenbreite
+  const wantedTableWidth = 160;
+  const margin = (pageWidth - wantedTableWidth) / 2;
 
-  // Use jsPDF AutoTable to generate the table
+  // Aufruf von autoTable zur Erzeugung der Tabelle
   doc.autoTable({
     head: headers,
-    body: rows.map(row => row.data),
+    body: tableBody,
     startY: startY,
     theme: 'grid',
     headStyles: { fillColor: [100, 100, 255] },
-    bodyStyles: {
-      halign: 'center', // Horizontally center text in the cells
-    },
+    bodyStyles: { halign: 'center' },
     columnStyles: {
-      0: { cellWidth: 10 }, // Tag (Day)
-      1: { cellWidth: 20 }, // Datum (Date)
-      2: { cellWidth: 70 }, // Elternpaar 1
-      3: { cellWidth: 60 }  // Elternpaar 2
+      0: { cellWidth: 10 }, // Tag
+      1: { cellWidth: 20 }, // Datum
+      2: { cellWidth: 70 }, // Elternteil 1 (bzw. kombiniert, falls colSpan)
+      3: { cellWidth: 60 }  // Elternteil 2 (wird bei speziellen Zeilen zusammengeführt)
     },
-    margin: { left: margin, right: margin }, // Apply margins to center the table
-    didDrawCell: function(data) {
-      const row = rows[data.row.index];
-      if (data.row.section === 'head') {
-        return;
-      }
-      if (row.meta.isKitaOpenNoEd && data.column.index === 2) {
-        // If it's an invalid day, merge cells 3 and 4
-        const mergedWidth = data.cell.width + data.table.columns[3].width;
-
-        doc.setFillColor(255, 230, 153); // Light yellow color
-        doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F'); // Extend cell width
-        doc.setTextColor(50, 50, 50);
-        doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-      } else if (!row.meta.isValidDay && data.column.index === 2) {
-        // If it's an invalid day, merge cells 3 and 4
-        const mergedWidth = data.cell.width + data.table.columns[3].width;
-
-        doc.setFillColor(255, 204, 204); // Light red color
-        doc.rect(data.cell.x, data.cell.y, mergedWidth, data.cell.height, 'F'); // Extend cell width
-        doc.setTextColor(50, 50, 50);
-        doc.text(row.data[2], data.cell.x + mergedWidth / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-      }
-      else if (row.meta.isKitaOpenNoEd) {
-        doc.setFillColor(255, 230, 153); // Light red color
-        doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-        doc.setTextColor(50, 50, 50);
-        doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-      }
-      else if (!row.meta.isValidDay) {
-        doc.setFillColor(255, 204, 204); // Light red color
-        doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-        doc.setTextColor(50, 50, 50);
-        doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-      } else if (row.meta.isValidDay && data.row.index % 2 !== 0) {
-        doc.setFillColor(245, 245, 245)
-        doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
-        doc.setTextColor(0, 0, 0);
-        doc.text(data.cell.text[0], data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center' });
-      }
-
-    }
+    margin: { left: margin, right: margin }
   });
-  // Save the generated PDF to a file
-  return doc.output('blob'); // Return the generated PDF as a Blob
+
+  return doc.output('blob'); // Rückgabe des generierten PDF als Blob
 }

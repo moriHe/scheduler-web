@@ -121,8 +121,12 @@ function renderCalendarPreview() {
     kitaOpenNoEd,
     teamdays, // List of days the team takes a slot
   };
-
-  calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
+  const shiftType = document.querySelector('input[name="shifts-per-day"]:checked')
+  if (shiftType && shiftType.value === "3") {
+    console.log("not implemented for 3 cols")
+  } else {
+    calendar = testAssignUsersToCalendar(month, year, formattedUsers, options);
+  }
 
   function renderCalendar() {
     const previewBody = document.getElementById("calendar-preview-table");
@@ -394,7 +398,7 @@ function populateUserTable(users) {
 
 // Create a button to confirm the pasting
     const confirmButton = document.createElement("button");
-    confirmButton.textContent = "Confirm";
+    confirmButton.textContent = "Bestätigen";
     confirmButton.classList.add("mt-2", "px-4", "py-2", "bg-blue-500", "text-white", "rounded-md", "hover:bg-blue-600", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500");
 
     confirmButton.addEventListener("click", function() {
