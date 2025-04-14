@@ -46,7 +46,7 @@ window.onload = () => {
     updateCalendar();
 
     document.getElementById("back-button").addEventListener("click", () => {
-        window.location.href = "/shiftplan.html";
+        window.location.href = "/kitashiftplan.html";
     });
 
     document.getElementById("month").addEventListener("change", () => updateCalendar());
