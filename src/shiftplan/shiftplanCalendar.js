@@ -264,13 +264,16 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
     const rows = [];
 
     // Erzeugen der Zeilen-Daten aus dem Kalender
+    const specifiPerson = document.getElementById("nameInput")?.value
     for (const day in calendar) {
         let [parent1, parent2, parent3, meta] = calendar[day];
 
         if (!actionTaken) {
-            const areAllUsersKnown = !usersData.find(user => user === parent1) ||
-                !usersData.find(user => user === parent2) || !usersData.find(user => user === parent3)
-            if (meta.isValidDay && areAllUsersKnown) {
+            const isParent1Known  = usersData.find(user => user === parent1) || parent1 === specifiPerson
+            const isParent2Known = usersData.find(user => user === parent2) || parent2 === specifiPerson
+            const isParent3Known = usersData.find(user => user === parent3) || parent3 === specifiPerson
+            const areAllUsersKnown = isParent1Known && isParent2Known && isParent3Known
+            if (meta.isValidDay && !areAllUsersKnown) {
 
                 const confirmedChoice = confirm(`Person(en) nicht im Datenset gefunden an der Stelle: ${parent1}, ${parent2}, ${parent3}. Trotzdem fortfahren?`);
                 if (!confirmedChoice) {
@@ -539,14 +542,16 @@ export function generatePDFTwoCols(calendar, month, year, usersData = []) {
     const rows = [];
 
     // Erzeugen der Zeilen-Daten aus dem Kalender (Format: [parent1, parent2, meta])
+    const specifiPerson = document.getElementById("nameInput")?.value
     for (const day in calendar) {
         let [parent1, parent2, meta] = calendar[day];
 
         if (!actionTaken) {
-            const areAllUsersKnown = !usersData.find(user => user === parent1) ||
-                !usersData.find(user => user === parent2)
+            const isParent1Known  = usersData.find(user => user === parent1) || parent1 === specifiPerson
+            const isParent2Known = usersData.find(user => user === parent2) || parent2 === specifiPerson
+            const areAllUsersKnown = isParent1Known && isParent2Known
 
-            if (meta.isValidDay && areAllUsersKnown) {
+            if (meta.isValidDay && !areAllUsersKnown) {
                 const confirmedChoice = confirm(`Person(en) nicht im Datenset gefunden: ${parent1}, ${parent2}. Trotzdem fortfahren?`);
                 if (!confirmedChoice) {
                     return;
