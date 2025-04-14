@@ -543,7 +543,7 @@ export function generatePDFTwoCols(calendar, month, year, usersData = []) {
         let [parent1, parent2, meta] = calendar[day];
 
         if (!actionTaken) {
-            const areAllUsersKnown = !!usersData.find(user => user === parent1) ||
+            const areAllUsersKnown = !usersData.find(user => user === parent1) ||
                 !usersData.find(user => user === parent2)
 
             if (meta.isValidDay && areAllUsersKnown) {
