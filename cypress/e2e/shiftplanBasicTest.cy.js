@@ -292,11 +292,10 @@ describe("Common navigation first time visitor", () => {
           .children()
           .each((child, index) => {
             // Skip the first child
-            if (index === 0) return;
+            if (index === 0 || index === 1) return;
 
-            // Extract date and day information for validation
-            const dayIndex = index - 1;
-            const date = new Date(2034, 11, 1 + dayIndex); // Assuming December 2034
+            // Days start at index 2 but need index - 1 to calculate correct weekday
+            const date = new Date(2034, 11, index - 1); // Assuming December 2034
             const day = date.toLocaleDateString("de-DE", { weekday: "short" }); // "Mo", "Di", etc.
 
             const formattedDate = date
@@ -334,21 +333,21 @@ describe("Common navigation first time visitor", () => {
     // Locate the #calendar-preview-table and select the child at index 11
     cy.get("#calendar-preview-table")
       .children()
-      .eq(11) // Select the child at index 11
+      .eq(12) // Select the child at index 11
       .as("targetRow"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
     cy.get("@targetRow")
       .children()
-      .eq(2) // Third child (index 2)
+      .eq(3) // Third child (index 2)
       .select("TEST_USER_B"); // Change the value to TEST_USER_B
 
     // Verify the change did not persist
-    cy.get("@targetRow").children().eq(2).should("have.value", "TEST_USER_B");
+    cy.get("@targetRow").children().eq(3).should("have.value", "TEST_USER_B");
 
     cy.get("#calendar-preview-table")
       .children()
-      .eq(11) // Select the child at index 11
+      .eq(12) // Select the child at index 11
       .as("targetRow1"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
@@ -362,7 +361,7 @@ describe("Common navigation first time visitor", () => {
 
     cy.get("#calendar-preview-table")
       .children()
-      .eq(5) // Select the child at index 11
+      .eq(6) // Select the child at index 11
       .as("targetRow2"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
