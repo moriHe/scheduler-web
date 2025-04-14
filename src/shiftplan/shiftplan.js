@@ -592,7 +592,7 @@ function populateUserTable(users) {
         jsonInput.placeholder = "Generierte Sperrzeit einfügen";
         jsonInput.classList.add("w-full", "p-2", "border", "border-gray-300", "rounded-md", "mt-2", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500", "bg-white");
         const confirmButton = document.createElement("button");
-        confirmButton.textContent = "Confirm";
+        confirmButton.textContent = "Bestätigen";
         confirmButton.classList.add("mt-2", "px-4", "py-2", "bg-blue-500", "text-white", "rounded-md", "hover:bg-blue-600", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500");
         confirmButton.addEventListener("click", function() {
             try {
