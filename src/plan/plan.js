@@ -398,7 +398,7 @@ function populateUserTable(users) {
 
 // Create a button to confirm the pasting
     const confirmButton = document.createElement("button");
-    confirmButton.textContent = "Confirm";
+    confirmButton.textContent = "Bestätigen";
     confirmButton.classList.add("mt-2", "px-4", "py-2", "bg-blue-500", "text-white", "rounded-md", "hover:bg-blue-600", "focus:outline-none", "focus:ring-2", "focus:ring-blue-500");
 
     confirmButton.addEventListener("click", function() {
