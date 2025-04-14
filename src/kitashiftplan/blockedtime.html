@@ -30,7 +30,6 @@
     .calendar-day:hover {
       background-color: #e5e7eb;
     }
-
     .calendar-day.selected:hover {
       background-color: #f87171;
     }
@@ -38,14 +37,7 @@
       background-color: #f87171;
       color: white;
     }
-    .weekend {
-      background-color: #d1d5db;
-      color: #9ca3af;
-      cursor: default;
-    }
-    .weekend:hover {
-      background-color: #d1d5db;
-    }
+    /* Removed weekend-specific styles to treat all days equally */
     #json-output {
       white-space: pre-wrap;
       word-wrap: break-word;
@@ -155,25 +147,22 @@
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
       const dateObj = new Date(year, month, day);
-      const weekdayIndex = (dateObj.getDay() + 6) % 7;
       const dateKey = `${year}-${month + 1}-${day}`;
       const dayCell = document.createElement("div");
       dayCell.classList.add("calendar-day");
       dayCell.textContent = day;
 
-      if (weekdayIndex === 5 || weekdayIndex === 6) {
-        dayCell.classList.add("weekend");
-      } else {
-        dayCell.addEventListener("click", () => {
-          if (selectedDates.includes(dateKey)) {
-            selectedDates = selectedDates.filter(date => date !== dateKey);
-            dayCell.classList.remove("selected");
-          } else {
-            selectedDates.push(dateKey);
-            dayCell.classList.add("selected");
-          }
-        });
-      }
+      // Add click event listener for ALL days (including Saturday and Sunday)
+      dayCell.addEventListener("click", () => {
+        if (selectedDates.includes(dateKey)) {
+          selectedDates = selectedDates.filter(date => date !== dateKey);
+          dayCell.classList.remove("selected");
+        } else {
+          selectedDates.push(dateKey);
+          dayCell.classList.add("selected");
+        }
+      });
+
       if (selectedDates.includes(dateKey)) {
         dayCell.classList.add("selected");
       }
