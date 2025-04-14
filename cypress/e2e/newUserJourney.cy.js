@@ -289,8 +289,7 @@ describe("Common navigation first time visitor", () => {
             if (index === 0) return;
 
             // Extract date and day information for validation
-            const dayIndex = index - 1;
-            const date = new Date(2034, 11, 1 + dayIndex); // Assuming December 2034
+            const date = new Date(2034, 11, index); // Assuming December 2034
             const day = date.toLocaleDateString("de-DE", { weekday: "short" }); // "Mo", "Di", etc.
 
             const formattedDate = date
