@@ -187,7 +187,7 @@ function renderCalendarThreeCols(month, year) {
         const rowDateDiv = document.createElement("div");
         const rowDate = formatDate(day, month, year);
         rowDateDiv.textContent = rowDate;
-        rowDateDiv.classList.add("w-1/6", "text-left");
+        rowDateDiv.classList.add("w-full", "md:w-1/6", "text-left");
 
         flexContainer.appendChild(rowDayDiv);
         flexContainer.appendChild(rowDateDiv);
@@ -408,7 +408,7 @@ function renderCalendarTwoCol(month, year) {
         const rowDateDiv = document.createElement("div");
         const rowDate = formatDate(day, month, year);
         rowDateDiv.textContent = rowDate;
-        rowDateDiv.classList.add("w-1/6", "text-left");
+        rowDateDiv.classList.add("w-full", "md:w-1/6", "text-left");
 
         flexContainer.appendChild(rowDayDiv);
         flexContainer.appendChild(rowDateDiv);
