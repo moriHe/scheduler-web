@@ -204,17 +204,17 @@ function renderCalendarThreeCols(month, year) {
     for (const entry of calendarEntries) {
         const { day, parent1, parent2, parent3, meta } = entry;
         const flexContainer = document.createElement("div");
-        flexContainer.classList.add("flex", "w-full", "py-1", "border");
+        flexContainer.classList.add("flex", "flex-col", "md:flex-row", "w-full", "py-1", "border");
 
         const rowDayDiv = document.createElement("div");
         const rowDay = formatDayOfWeek(day, month, year);
         rowDayDiv.textContent = rowDay;
-        rowDayDiv.classList.add("w-1/12", "text-left");
+        rowDayDiv.classList.add("w-full", "md:w-1/12", "text-left");
 
         const rowDateDiv = document.createElement("div");
         const rowDate = formatDate(day, month, year);
         rowDateDiv.textContent = rowDate;
-        rowDateDiv.classList.add("w-1/6", "text-left");
+        rowDateDiv.classList.add("w-full", "md:w-1/6", "text-left");
 
         flexContainer.appendChild(rowDayDiv);
         flexContainer.appendChild(rowDateDiv);
@@ -248,7 +248,7 @@ function renderCalendarThreeCols(month, year) {
         } else {
             // Erstelle drei Select-Elemente für die drei Elternteile
             const user1Select = document.createElement("select");
-            user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            user1Select.classList.add("w-full", "md:flex-1", "text-left", "cursor-pointer");
             if (!usersData.find(user => user === parent1)) {
                 user1Select.classList.add("bg-yellow-200");
             }
@@ -428,17 +428,17 @@ function renderCalendarTwoCol(month, year) {
     calendarEntries.forEach((entry) => {
         const { day, parent1, parent2, meta } = entry;
         const flexContainer = document.createElement("div");
-        flexContainer.classList.add("flex", "w-full", "py-1", "border");
+        flexContainer.classList.add("flex", "flex-col", "md:flex-row", "w-full", "py-1", "border");
 
         const rowDayDiv = document.createElement("div");
         const rowDay = formatDayOfWeek(day, month, year);
         rowDayDiv.textContent = rowDay;
-        rowDayDiv.classList.add("w-1/12", "text-left");
+        rowDayDiv.classList.add("w-full", "md:w-1/12", "text-left");
 
         const rowDateDiv = document.createElement("div");
         const rowDate = formatDate(day, month, year);
         rowDateDiv.textContent = rowDate;
-        rowDateDiv.classList.add("w-1/6", "text-left");
+        rowDateDiv.classList.add("w-full", "md:w-1/6", "text-left");
 
         flexContainer.appendChild(rowDayDiv);
         flexContainer.appendChild(rowDateDiv);
@@ -472,7 +472,7 @@ function renderCalendarTwoCol(month, year) {
         } else {
             // Erstelle zwei Select-Elemente für die zwei Elternteile
             const user1Select = document.createElement("select");
-            user1Select.classList.add("flex-1", "text-left", "cursor-pointer");
+            user1Select.classList.add("w-full", "md:flex-1", "text-left", "cursor-pointer");
             if (!usersData.find(user => user === parent1)) {
                 user1Select.classList.add("bg-yellow-200");
             }
