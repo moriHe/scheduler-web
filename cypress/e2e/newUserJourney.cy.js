@@ -17,14 +17,14 @@ describe("Common navigation first time visitor", () => {
   it("Should reset users and verify localStorage is cleared", () => {
     let confirmCounter = 0;
     const confirmPopups = [
-      "Möchten Sie die Benutzer wirklich zurücksetzen?",
+      "Möchten Sie die Personen wirklich zurücksetzen?",
       "User kann an diesem Tag nicht. Trotzdem eintragen?",
       "User kann an diesem Tag nicht. Trotzdem eintragen?",
     ];
     // INFO: Reset localstorage for testing
-    cy.window().then((win) => win.localStorage.setItem("users", "Hello"));
+    cy.window().then((win) => win.localStorage.setItem("kita", "Hello"));
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("kita");
       expect(users).to.equal("Hello");
     });
 
@@ -43,7 +43,7 @@ describe("Common navigation first time visitor", () => {
     cy.get("#options-button").click();
     cy.get("#reset-users-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("kita");
       expect(users).to.deep.equal("[]");
     });
 
@@ -53,7 +53,7 @@ describe("Common navigation first time visitor", () => {
     cy.get("#user-name").type("TEST_USER_A");
     cy.get("#save-user-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("kita");
       expect(users).to.deep.equal('["TEST_USER_A"]');
     });
     cy.get("#user-name").type("TEST_USER_B");
@@ -62,7 +62,7 @@ describe("Common navigation first time visitor", () => {
     cy.contains("TEST_USER_B");
     cy.get(".delete-button").first().click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("users");
+      const users = win.localStorage.getItem("kita");
       expect(users).to.deep.equal('["TEST_USER_B"]');
     });
     cy.get(".delete-button").first().click();

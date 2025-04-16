@@ -22,9 +22,9 @@ describe("Common navigation first time visitor", () => {
       "User kann an diesem Tag nicht. Trotzdem eintragen?",
     ];
     // INFO: Reset localstorage for testing
-    cy.window().then((win) => win.localStorage.setItem("shiftplanUsers", "Hello"));
+    cy.window().then((win) => win.localStorage.setItem("shiftplan", "Hello"));
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("shiftplanUsers");
+      const users = win.localStorage.getItem("shiftplan");
       expect(users).to.equal("Hello");
     });
 
@@ -44,7 +44,7 @@ describe("Common navigation first time visitor", () => {
     cy.get("#reset-users-button").should("be.visible");
     cy.get("#reset-users-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("shiftplanUsers");
+      const users = win.localStorage.getItem("shiftplan");
       expect(users).to.equal("[]");
     });
 
@@ -54,7 +54,7 @@ describe("Common navigation first time visitor", () => {
     cy.get("#user-name").type("TEST_USER_A");
     cy.get("#save-user-button").click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("shiftplanUsers");
+      const users = win.localStorage.getItem("shiftplan");
       expect(users).to.deep.equal('["TEST_USER_A"]');
     });
     cy.get("#user-name").type("TEST_USER_B");
@@ -63,7 +63,7 @@ describe("Common navigation first time visitor", () => {
     cy.contains("TEST_USER_B");
     cy.get(".delete-button").first().click();
     cy.window().then((win) => {
-      const users = win.localStorage.getItem("shiftplanUsers");
+      const users = win.localStorage.getItem("shiftplan");
       expect(users).to.deep.equal('["TEST_USER_B"]');
     });
     cy.get(".delete-button").first().click();

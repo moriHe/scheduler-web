@@ -1,3 +1,5 @@
+import { getStorageKey } from "../storageKey";
+
 export function initialize(backurl) {
   loadUsers();
   document.getElementById("save-user-button").addEventListener("click", saveUser);
@@ -5,10 +7,6 @@ export function initialize(backurl) {
   document.getElementById("back-button").addEventListener("click", () => {
     window.location.href = backurl;
   });
-}
-
-function getStorageKey() {
-  return document.body.dataset.storagekey
 }
 
 // Function to load users and display them as tiles
@@ -44,6 +42,7 @@ function loadUsers() {
         // Create delete button
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "🗑️"; // Trash icon
+        deleteButton.classList.add("delete-button"); // Kein style. Für Testzwecke vorhanden
         deleteButton.onclick = () => deleteUser(user);
         userTile.appendChild(deleteButton);
 
