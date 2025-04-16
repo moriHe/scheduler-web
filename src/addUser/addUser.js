@@ -1,10 +1,23 @@
+export function initialize(backurl) {
+  loadUsers();
+  document.getElementById("save-user-button").addEventListener("click", saveUser);
+  // Go back to the front page
+  document.getElementById("back-button").addEventListener("click", () => {
+    window.location.href = backurl;
+  });
+}
+
+function getStorageKey() {
+  return document.body.dataset.storagekey
+}
+
 // Function to load users and display them as tiles
-export function loadUsers() {
+function loadUsers() {
   const userList = document.getElementById("user-list");
   userList.innerHTML = ""; // Clear the list first
 
   // Load users from localStorage
-  const usersJson = localStorage.getItem("users"); // Get the users JSON string
+  const usersJson = localStorage.getItem(getStorageKey()); // Get the users JSON string
   let users = [];
 
   // Parse the JSON string into an array
@@ -23,7 +36,6 @@ export function loadUsers() {
       .sort((a, b) => a.localeCompare(b))
       .forEach((user) => {
         const userTile = document.createElement("div");
-        userTile.className = "user-tile";
 
         const userName = document.createElement("span");
         userName.textContent = user; // Display the user's name
@@ -32,7 +44,6 @@ export function loadUsers() {
         // Create delete button
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "🗑️"; // Trash icon
-        deleteButton.className = "delete-button";
         deleteButton.onclick = () => deleteUser(user);
         userTile.appendChild(deleteButton);
 
@@ -46,7 +57,7 @@ export function loadUsers() {
 // Function to delete a user
 function deleteUser(userName) {
   // Load current users from localStorage
-  const usersJson = localStorage.getItem("users");
+  const usersJson = localStorage.getItem(getStorageKey());
   let users = [];
 
   if (usersJson) {
@@ -64,7 +75,7 @@ function deleteUser(userName) {
   users = users.filter((user) => user !== userName);
 
   // Save the updated users back to localStorage
-  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem(getStorageKey(), JSON.stringify(users));
 
   loadUsers(); // Reload the users after deleting
 }
@@ -73,7 +84,7 @@ export function saveUser() {
   const userName = document.getElementById("user-name").value.trim(); // Trim whitespace
   if (userName) {
     // Load current users from localStorage
-    const usersJson = localStorage.getItem("users");
+    const usersJson = localStorage.getItem(getStorageKey());
     let users = [];
 
     if (usersJson) {
@@ -95,7 +106,7 @@ export function saveUser() {
       users.push(userName);
 
       // Save the updated users back to localStorage
-      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem(getStorageKey(), JSON.stringify(users));
 
       document.getElementById("user-name").value = ""; // Clear the input
       loadUsers(); // Reload the users after saving
