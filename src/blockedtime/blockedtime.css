@@ -1,0 +1,48 @@
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem; /* Reduced gap */
+    margin-top: 0.5rem; /* Reduced margin */
+}
+
+.calendar-header {
+    font-weight: 600;
+    padding: 0.4rem; /* Reduced padding */
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    font-size: 0.875rem; /* Reduced font size */
+}
+
+.calendar-day {
+    padding: 0.4rem; /* Reduced padding */
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    background-color: white;
+    font-size: 0.875rem; /* Reduced font size */
+}
+
+.calendar-day:hover {
+    background-color: #e5e7eb;
+}
+
+.calendar-day.selected:hover {
+    background-color: #f87171;
+}
+
+.selected {
+    background-color: #f87171;
+    color: white;
+}
+
+/* Removed weekend-specific styles to treat all days equally */
+#json-output {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#calendar-wrapper {
+    height: auto; /* Changed to auto */
+    overflow-y: visible; /* Changed to visible */
+    padding-bottom: 0.5rem; /* Reduced padding */
+}
