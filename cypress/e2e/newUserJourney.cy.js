@@ -286,83 +286,83 @@ describe("Common navigation first time visitor", () => {
           .children()
           .each((child, index) => {
             // Skip the first child
-            if (index === 0) return;
+            if (index === 0 || index === 1) return;
 
             // Extract date and day information for validation
-            const date = new Date(2034, 11, index); // Assuming December 2034
+            const date = new Date(2034, 11, index - 1); // Assuming December 2034
             const day = date.toLocaleDateString("de-DE", { weekday: "short" }); // "Mo", "Di", etc.
 
             const formattedDate = date
-              .toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })
-              .replace(/\.$/, ""); // "dd.MM" without trailing period
+                .toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })
+                .replace(/\.$/, ""); // "dd.MM" without trailing period
             // Check classes and content based on the schema
             if (day === "Sa" || day === "So" || formattedDate === "01.12") {
               cy.wrap(child)
-                .should("have.class", "bg-red-200") // Sa and Su should have bg-red-200
-                .children()
-                .eq(0)
-                .should("have.text", day) // First child matches day
-                .next()
-                .should("have.text", formattedDate); // Second child matches formatted date
+                  .should("have.class", "bg-red-200") // Sa and Su should have bg-red-200
+                  .children()
+                  .eq(0)
+                  .should("have.text", day) // First child matches day
+                  .next()
+                  .should("have.text", formattedDate); // Second child matches formatted date
             } else if (formattedDate === "04.12") {
               cy.wrap(child)
-                .should("have.class", "bg-yellow-200") // 04.12 should have bg-yellow-200
-                .children()
-                .eq(0)
-                .should("have.text", day) // First child matches day
-                .next()
-                .should("have.text", formattedDate); // Second child matches formatted date
+                  .should("have.class", "bg-yellow-200") // 04.12 should have bg-yellow-200
+                  .children()
+                  .eq(0)
+                  .should("have.text", day) // First child matches day
+                  .next()
+                  .should("have.text", formattedDate); // Second child matches formatted date
             } else {
               cy.wrap(child)
-                .should("not.have.class", "bg-yellow-200") // Non-highlighted days
-                .and("not.have.class", "bg-red-200")
-                .children()
-                .eq(0)
-                .should("have.text", day) // First child matches day
-                .next()
-                .should("have.text", formattedDate); // Second child matches formatted date
+                  .should("not.have.class", "bg-yellow-200") // Non-highlighted days
+                  .and("not.have.class", "bg-red-200")
+                  .children()
+                  .eq(0)
+                  .should("have.text", day) // First child matches day
+                  .next()
+                  .should("have.text", formattedDate); // Second child matches formatted date
             }
           });
       });
     // Locate the #calendar-preview-table and select the child at index 11
     cy.get("#calendar-preview-table")
-      .children()
-      .eq(11) // Select the child at index 11
-      .as("targetRow"); // Alias for reusability
+        .children()
+        .eq(12) // Select the child at index 11
+        .as("targetRow"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
     cy.get("@targetRow")
-      .children()
-      .eq(2) // Third child (index 2)
-      .select("TEST_USER_B"); // Change the value to TEST_USER_B
+        .children()
+        .eq(3) // Third child (index 2)
+        .select("TEST_USER_B"); // Change the value to TEST_USER_B
 
     // Verify the change did not persist
-    cy.get("@targetRow").children().eq(2).should("have.value", "TEST_USER_B");
+    cy.get("@targetRow").children().eq(3).should("have.value", "TEST_USER_B");
 
     cy.get("#calendar-preview-table")
-      .children()
-      .eq(11) // Select the child at index 11
-      .as("targetRow1"); // Alias for reusability
+        .children()
+        .eq(12) // Select the child at index 11
+        .as("targetRow1"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
     cy.get("@targetRow1")
-      .children()
-      .eq(3) // fourth child (index 3)
-      .select("TEST_USER_B"); // Change the value to TEST_USER_B
+        .children()
+        .eq(3) // fourth child (index 3)
+        .select("TEST_USER_B"); // Change the value to TEST_USER_B
 
     // Verify the change did not persist
     cy.get("@targetRow1").children().eq(3).should("have.value", "TEST_USER_B");
 
     cy.get("#calendar-preview-table")
-      .children()
-      .eq(5) // Select the child at index 11
-      .as("targetRow2"); // Alias for reusability
+        .children()
+        .eq(6) // Select the child at index 11
+        .as("targetRow2"); // Alias for reusability
 
     // Modify the third child (select element) of the target row
     cy.get("@targetRow2")
-      .children()
-      .eq(2) // Third child (index 2)
-      .select("TEST_USER_B"); // Change the value to TEST_USER_B
+        .children()
+        .eq(2) // Third child (index 2)
+        .select("TEST_USER_B"); // Change the value to TEST_USER_B
     cy.get("@targetRow2").children().eq(2).should("have.value", "TEST_USER_B");
     // INFO: END
   });
