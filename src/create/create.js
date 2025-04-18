@@ -628,7 +628,7 @@ function populateUserTable(users) {
         for (let day = 1; day <= daysInMonth; day++) {
             const dayButton = document.createElement("div");
             dayButton.classList.add("calendar-day");
-            dayButton.textContent = day;
+            dayButton.textContent = day.toString();
             const dayOfWeek = new Date(year, parseInt(month), day).getDay();
             const dayName = daysOfWeek[dayOfWeek - 1];
             if (!selectedWeekdays.includes(dayName)) {
@@ -695,7 +695,7 @@ function updateGenericCalender(id, subjectArray) {
     for (let day = 1; day <= daysInMonth; day++) {
         const dayButton = document.createElement("div");
         dayButton.classList.add("calendar-day");
-        dayButton.textContent = day;
+        dayButton.textContent = day.toString();
         const dayOfWeek = new Date(year, parseInt(month), day).getDay();
         const dayName = daysOfWeek[dayOfWeek - 1];
         if (!selectedWeekdays.includes(dayName)) {
