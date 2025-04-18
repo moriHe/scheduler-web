@@ -1,4 +1,4 @@
-import { getStorageKey } from "../storageKey";
+import {getStorageKey} from "../storageKey";
 import text from "../localization"
 import {
     assignUsersCalendarThreeCols,
@@ -103,8 +103,8 @@ function populateYearSelect() {
     yearSelect.innerHTML = "";
     for (let i = currentYear; i <= currentYear + 10; i++) {
         const option = document.createElement("option");
-        option.value = i;
-        option.textContent = i;
+        option.value = i.toString();
+        option.textContent = i.toString();
         yearSelect.appendChild(option);
     }
     yearSelect.value = currentYear;
@@ -161,11 +161,11 @@ function renderCalendarThreeCols(month, year) {
 
     const parentCount = {};
     calendarEntries.forEach(({parent1, parent2, parent3, meta}) => {
-        if (meta.isValidDay && parent1 && parent1 !== "NOT SET")
+        if (meta.isValidDay && parent1 && parent1 !== text.create.notSet)
             parentCount[parent1] = (parentCount[parent1] || 0) + 1;
-        if (meta.isValidDay && parent2 && parent2 !== "NOT SET")
+        if (meta.isValidDay && parent2 && parent2 !== text.create.notSet)
             parentCount[parent2] = (parentCount[parent2] || 0) + 1;
-        if (meta.isValidDay && parent3 && parent3 !== "NOT SET")
+        if (meta.isValidDay && parent3 && parent3 !== text.create.notSet)
             parentCount[parent3] = (parentCount[parent3] || 0) + 1;
     });
 
@@ -200,13 +200,11 @@ function renderCalendarThreeCols(month, year) {
         flexContainer.classList.add("flex", "flex-col", "md:flex-row", "w-full", "py-1", "border");
 
         const rowDayDiv = document.createElement("div");
-        const rowDay = formatDayOfWeek(day, month, year);
-        rowDayDiv.textContent = rowDay;
+        rowDayDiv.textContent = formatDayOfWeek(day, month, year);
         rowDayDiv.classList.add("w-full", "md:w-1/12", "text-left");
 
         const rowDateDiv = document.createElement("div");
-        const rowDate = formatDate(day, month, year);
-        rowDateDiv.textContent = rowDate;
+        rowDateDiv.textContent = formatDate(day, month, year);
         rowDateDiv.classList.add("w-full", "md:w-1/6", "text-left");
 
         flexContainer.appendChild(rowDayDiv);
@@ -220,8 +218,7 @@ function renderCalendarThreeCols(month, year) {
             invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
             invalidDayInput.setAttribute("tabindex", "0");
             invalidDayInput.addEventListener("change", () => {
-                const newValue = invalidDayInput.value.trim();
-                calendar[day][3].invalidText = newValue;
+                calendar[day][3].invalidText = invalidDayInput.value.trim();
                 renderCalendarThreeCols(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
@@ -233,8 +230,7 @@ function renderCalendarThreeCols(month, year) {
             invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
             invalidDayInput.setAttribute("tabindex", "0");
             invalidDayInput.addEventListener("change", () => {
-                const newValue = invalidDayInput.value.trim();
-                calendar[day][3].invalidText = newValue;
+                calendar[day][3].invalidText = invalidDayInput.value.trim();
                 renderCalendarThreeCols(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
@@ -246,9 +242,9 @@ function renderCalendarThreeCols(month, year) {
                 user1Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser1 = document.createElement("option");
-            noSelectionUser1.value = "NOT SET";
-            noSelectionUser1.textContent = "NOT SET";
-            if (parent1 === "NOT SET") noSelectionUser1.selected = true;
+            noSelectionUser1.value = text.create.notSet;
+            noSelectionUser1.textContent = text.create.notSet;
+            if (parent1 === text.create.notSet) noSelectionUser1.selected = true;
             user1Select.appendChild(noSelectionUser1);
             usersData.forEach((user) => {
                 const option = document.createElement("option");
@@ -258,7 +254,7 @@ function renderCalendarThreeCols(month, year) {
                 user1Select.appendChild(option);
             });
             user1Select.addEventListener("change", () => {
-                const isSet = user1Select.value !== "NOT SET";
+                const isSet = user1Select.value !== text.create.notSet;
                 const naDateArray = formattedUsers.find(fUser => fUser.name === user1Select.value)?.not_available || [];
                 let continueProcess = true;
                 if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
@@ -278,9 +274,9 @@ function renderCalendarThreeCols(month, year) {
                 user2Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser2 = document.createElement("option");
-            noSelectionUser2.value = "NOT SET";
-            noSelectionUser2.textContent = "NOT SET";
-            if (parent2 === "NOT SET") noSelectionUser2.selected = true;
+            noSelectionUser2.value = text.create.notSet;
+            noSelectionUser2.textContent = text.create.notSet;
+            if (parent2 === text.create.notSet) noSelectionUser2.selected = true;
             user2Select.appendChild(noSelectionUser2);
             usersData.forEach((user) => {
                 const option = document.createElement("option");
@@ -302,11 +298,11 @@ function renderCalendarThreeCols(month, year) {
             }
             if (!user2Select.disabled) {
                 user2Select.addEventListener("change", () => {
-                    const isSet = user2Select.value !== "NOT SET";
+                    const isSet = user2Select.value !== text.create.notSet;
                     const naDateArray = formattedUsers.find(fUser => fUser.name === user2Select.value)?.not_available || [];
                     let continueProcess = true;
                     if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
-                        continueProcess = confirm(text.cre.personNotAvailableAlert);
+                        continueProcess = confirm(text.create.personNotAvailableAlert);
                     }
                     if (continueProcess) {
                         calendar[day][1] = user2Select.value;
@@ -322,9 +318,9 @@ function renderCalendarThreeCols(month, year) {
                 user3Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser3 = document.createElement("option");
-            noSelectionUser3.value = "NOT SET";
-            noSelectionUser3.textContent = "NOT SET";
-            if (parent3 === "NOT SET") noSelectionUser3.selected = true;
+            noSelectionUser3.value = text.create.notSet;
+            noSelectionUser3.textContent = text.create.notSet;
+            if (parent3 === text.create.notSet) noSelectionUser3.selected = true;
             user3Select.appendChild(noSelectionUser3);
             usersData.forEach((user) => {
                 const option = document.createElement("option");
@@ -345,7 +341,7 @@ function renderCalendarThreeCols(month, year) {
             }
             if (!user3Select.disabled) {
                 user3Select.addEventListener("change", () => {
-                    const isSet = user3Select.value !== "NOT SET";
+                    const isSet = user3Select.value !== text.create.notSet;
                     const naDateArray = formattedUsers.find(fUser => fUser.name === user3Select.value)?.not_available || [];
                     let continueProcess = true;
                     if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
@@ -387,9 +383,9 @@ function renderCalendarTwoCol(month, year) {
 
     const parentCount = {};
     calendarEntries.forEach(({parent1, parent2, meta}) => {
-        if (meta.isValidDay && parent1 && parent1 !== "NOT SET")
+        if (meta.isValidDay && parent1 && parent1 !== text.create.notSet)
             parentCount[parent1] = (parentCount[parent1] || 0) + 1;
-        if (meta.isValidDay && parent2 && parent2 !== "NOT SET")
+        if (meta.isValidDay && parent2 && parent2 !== text.create.notSet)
             parentCount[parent2] = (parentCount[parent2] || 0) + 1;
     });
 
@@ -425,13 +421,11 @@ function renderCalendarTwoCol(month, year) {
         flexContainer.classList.add("flex", "flex-col", "md:flex-row", "w-full", "py-1", "border");
 
         const rowDayDiv = document.createElement("div");
-        const rowDay = formatDayOfWeek(day, month, year);
-        rowDayDiv.textContent = rowDay;
+        rowDayDiv.textContent = formatDayOfWeek(day, month, year);
         rowDayDiv.classList.add("w-full", "md:w-1/12", "text-left");
 
         const rowDateDiv = document.createElement("div");
-        const rowDate = formatDate(day, month, year);
-        rowDateDiv.textContent = rowDate;
+        rowDateDiv.textContent = formatDate(day, month, year);
         rowDateDiv.classList.add("w-full", "md:w-1/6", "text-left");
 
         flexContainer.appendChild(rowDayDiv);
@@ -445,8 +439,7 @@ function renderCalendarTwoCol(month, year) {
             invalidDayInput.classList.add("flex-1", "text-center", "bg-yellow-200");
             invalidDayInput.setAttribute("tabindex", "0");
             invalidDayInput.addEventListener("change", () => {
-                const newValue = invalidDayInput.value.trim();
-                calendar[day][2].invalidText = newValue;
+                calendar[day][2].invalidText = invalidDayInput.value.trim();
                 renderCalendarTwoCol(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
@@ -458,8 +451,7 @@ function renderCalendarTwoCol(month, year) {
             invalidDayInput.classList.add("flex-1", "text-center", "bg-red-200");
             invalidDayInput.setAttribute("tabindex", "0");
             invalidDayInput.addEventListener("change", () => {
-                const newValue = invalidDayInput.value.trim();
-                calendar[day][2].invalidText = newValue;
+                calendar[day][2].invalidText = invalidDayInput.value.trim();
                 renderCalendarTwoCol(month, year);
             });
             flexContainer.appendChild(invalidDayInput);
@@ -471,9 +463,9 @@ function renderCalendarTwoCol(month, year) {
                 user1Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser1 = document.createElement("option");
-            noSelectionUser1.value = "NOT SET";
-            noSelectionUser1.textContent = "NOT SET";
-            if (parent1 === "NOT SET") noSelectionUser1.selected = true;
+            noSelectionUser1.value = text.create.notSet;
+            noSelectionUser1.textContent = text.create.notSet;
+            if (parent1 === text.create.notSet) noSelectionUser1.selected = true;
             user1Select.appendChild(noSelectionUser1);
             usersData.forEach((user) => {
                 const option = document.createElement("option");
@@ -483,7 +475,7 @@ function renderCalendarTwoCol(month, year) {
                 user1Select.appendChild(option);
             });
             user1Select.addEventListener("change", () => {
-                const isSet = user1Select.value !== "NOT SET";
+                const isSet = user1Select.value !== text.create.notSet;
                 const naDateArray = formattedUsers.find(fUser => fUser.name === user1Select.value)?.not_available || [];
                 let continueProcess = true;
                 if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
@@ -503,9 +495,9 @@ function renderCalendarTwoCol(month, year) {
                 user2Select.classList.add("bg-yellow-200");
             }
             const noSelectionUser2 = document.createElement("option");
-            noSelectionUser2.value = "NOT SET";
-            noSelectionUser2.textContent = "NOT SET";
-            if (parent2 === "NOT SET") noSelectionUser2.selected = true;
+            noSelectionUser2.value = text.create.notSet;
+            noSelectionUser2.textContent = text.create.notSet;
+            if (parent2 === text.create.notSet) noSelectionUser2.selected = true;
             user2Select.appendChild(noSelectionUser2);
             usersData.forEach((user) => {
                 const option = document.createElement("option");
@@ -526,7 +518,7 @@ function renderCalendarTwoCol(month, year) {
             }
             if (!user2Select.disabled) {
                 user2Select.addEventListener("change", () => {
-                    const isSet = user2Select.value !== "NOT SET";
+                    const isSet = user2Select.value !== text.create.notSet;
                     const naDateArray = formattedUsers.find(fUser => fUser.name === user2Select.value)?.not_available || [];
                     let continueProcess = true;
                     if (isSet && naDateArray.includes(`${year}-${month}-${day}`)) {
@@ -604,6 +596,7 @@ function populateUserTable(users) {
                     alert(text.create.dateStringInvalidList);
                 }
             } catch (error) {
+                console.log(error)
                 alert(text.create.generalError);
             }
         });
@@ -740,7 +733,7 @@ document.getElementById("generate-pdf-button").addEventListener("click", async (
             displayError(text.create.forceUpdatePreview);
             return;
         }
-        let fileBlob = null
+        let fileBlob
 
         const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value;
         let isKita = false
