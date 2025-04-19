@@ -11,7 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/locale/de/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
-  <script defer type="module" src="./shiftplan.js"></script>
+  <script defer type="module" src="../create/registerShiftplanCreate.js"></script>
   <style>
     .lighter-red-background {
       background-color: rgba(255, 0, 0, 0.5);
@@ -62,7 +62,7 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center md:p-6 font-sans">
+<body data-storagekey="shiftplan" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center md:p-6 font-sans">
 <div id="plan-creation-container" class="bg-white shadow-lg rounded-xl md:p-10 w-full md:max-w-3xl space-y-8 flex-1">
   <h1 class="text-3xl font-semibold text-gray-900 md:p-0 p-2">Plan erstellen</h1>
   <div class="flex items-center justify-center space-x-4">
