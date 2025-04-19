@@ -1,14 +1,8 @@
+import { renderMonthYearSelect } from "../utils/render"
 let selectedDates = [];
 
 export function initialize(backurl) {
-    populateYearSelect();
-    const today = new Date();
-    const nextMonth = (today.getMonth() + 1) % 12;
-    const nextYear = today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear();
-
-    document.getElementById("month").value = nextMonth;
-    document.getElementById("year").value = nextYear;
-
+    renderMonthYearSelect();
     renderCalendar();
 
     document.getElementById("month").addEventListener("change", renderCalendar);
@@ -16,18 +10,6 @@ export function initialize(backurl) {
     document.getElementById("back-button").addEventListener("click", () => {
         window.location.href = backurl;
     });
-}
-
-
-function populateYearSelect() {
-    const yearSelect = document.getElementById("year");
-    const currentYear = new Date().getFullYear();
-    for (let i = currentYear; i <= currentYear + 10; i++) {
-        const option = document.createElement("option");
-        option.value = i;
-        option.textContent = i;
-        yearSelect.appendChild(option);
-    }
 }
 
 function renderCalendar() {

@@ -1,4 +1,5 @@
 import {getStorageKey} from "../storageKey";
+import { renderMonthYearSelect } from "../utils/render"
 import text from "../localization"
 import {
     assignUsersCalendarThreeCols,
@@ -38,12 +39,7 @@ export function initialize(backurl) {
     if (jsonUsers) {
         usersData = JSON.parse(jsonUsers);
     }
-    populateYearSelect();
-    const today = new Date();
-    const nextMonth = (today.getMonth() + 1) % 12;
-    const nextYear = today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear();
-    document.getElementById("month").value = nextMonth;
-    document.getElementById("year").value = nextYear;
+    renderMonthYearSelect();
     formatUsersData(usersData);
     updateCalendar();
 
@@ -95,19 +91,6 @@ function formatUsersData(users) {
         name: user,
         not_available: [],
     }));
-}
-
-function populateYearSelect() {
-    const yearSelect = document.getElementById("year");
-    const currentYear = new Date().getFullYear();
-    yearSelect.innerHTML = "";
-    for (let i = currentYear; i <= currentYear + 10; i++) {
-        const option = document.createElement("option");
-        option.value = i.toString();
-        option.textContent = i.toString();
-        yearSelect.appendChild(option);
-    }
-    yearSelect.value = currentYear;
 }
 
 let calendar = null;
