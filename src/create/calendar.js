@@ -126,11 +126,11 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
     for (let day = 1; day <= daysInMonth; day++) {
         // Sonderfälle: Tage, an denen kein Dienst stattfindet
         if (isKitaOpenNoEd(day)) {
-            calendar[day] = ["", "", "", {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false}];
+            calendar[day] = {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false, parents: ["", "", ""]};
             continue;
         }
         if (!isValidWeekday(day) || isHoliday(day)) {
-            calendar[day] = ["", "", "", {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false}];
+            calendar[day] = {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false, parents: ["", "", ""]};
             continue;
         }
 
@@ -161,17 +161,16 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
                 selectedUser1 = {name: text.create.notSet};
                 selectedUser2 = {name: text.create.notSet};
             }
-            calendar[day] = [
-                selectedUser1.name,
-                selectedUser2.name,
-                options.specificPerson ?? 'k.A.',
-                {
+            calendar[day] = {
                     isKitaOpenNoEd: false,
                     isValidDay: true,
                     isAssigned: hasEnoughUsers,
-                    hasSpecificPerson: options.specificPerson !== undefined
+                    specificPerson: options.specificPerson,
+                    parents: [
+                        selectedUser1.name,
+                        selectedUser2.name,
+                    ]
                 }
-            ];
 
             // Aktualisiere die User-Daten für die ausgewählten Nutzer
             if (usersSortedByPrio.length >= 2) {
@@ -205,11 +204,12 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
                 throw new Error("Duplicate users in data set");
             }
 
-            calendar[day] = [...selectedUsers.map(user => user.name), {
+            calendar[day] = {
                 isKitaOpenNoEd: false,
                 isValidDay: true,
-                isAssigned: hasEnoughUsers
-            }];
+                isAssigned: hasEnoughUsers,
+                parents: [...selectedUsers.map(user => user.name)]
+            };
             if (hasEnoughUsers) {
                 updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
                 updateUsersArray(_users, averageServiceCount, true, selectedUsers[1]);
@@ -276,16 +276,24 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
     // Erzeugen der Zeilen-Daten aus dem Kalender
     const specifiPerson = document.getElementById("nameInput")?.value
     for (const day in calendar) {
-        let [parent1, parent2, parent3, meta] = calendar[day];
+        let {
+            parents,
+            isValidDay,
+            isKitaOpenNoEd,
+            isAssigned,
+            invalidText,
+            specificPerson
+
+        } = calendar[day];
 
         if (!actionTaken) {
-            const isParent1Known = usersData.find(user => user === parent1) || parent1 === specifiPerson
-            const isParent2Known = usersData.find(user => user === parent2) || parent2 === specifiPerson
-            const isParent3Known = usersData.find(user => user === parent3) || parent3 === specifiPerson
+            const isParent1Known = usersData.find(user => user === parents[0]) || parents[0] === specifiPerson
+            const isParent2Known = usersData.find(user => user === parents[1]) || parents[1] === specifiPerson
+            const isParent3Known = usersData.find(user => user === parents[2]) || parents[2] === specifiPerson
             const areAllUsersKnown = isParent1Known && isParent2Known && isParent3Known
-            if (meta.isValidDay && !areAllUsersKnown) {
+            if (isValidDay && !areAllUsersKnown) {
 
-                const confirmedChoice = confirm(`${text.create.personNotFoundOne} ${parent1}, ${parent2}, ${parent3}. ${text.create.personNotFoundTwo}`);
+                const confirmedChoice = confirm(`${text.create.personNotFoundOne} ${parents[0]}, ${parents[1]}, ${parents[2]}. ${text.create.personNotFoundTwo}`);
                 if (!confirmedChoice) {
                     return
                 }
@@ -296,17 +304,17 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
         const dayOfWeek = formatDayOfWeek(day, month, year);
         // Bei gültigen Tagen wird der Inhalt aus der ersten Spalte übernommen.
         // Für ungültige Tage (z.B. Feiertage) bzw. "KitaOpenNoEd" nutzen wir später einen fixen Text.
-        if (parent1 === text.create.notSet)
-            parent1 = ""
-        if (parent2 === text.create.notSet)
-            parent2 = ""
-        if (parent3 === text.create.notSet)
-            parent3 = ""
+        if (parents[0] === text.create.notSet)
+            parents[0] = ""
+        if (parents[1] === text.create.notSet)
+            parents[1] = ""
+        if (parents[2] === text.create.notSet)
+            parents[2] = ""
 
-        const normalShiftText = meta.isValidDay ? parent1 : "";
+        const normalShiftText = isValidDay ? parents[0] : "";
 
         // Speichere die Zeile inklusive Meta-Daten
-        rows.push({data: [dayOfWeek, formattedDate, normalShiftText, parent2, parent3], meta});
+        rows.push({data: [dayOfWeek, formattedDate, normalShiftText, parents[1], parents[2]], meta: {isKitaOpenNoEd, isAssigned, isValidDay, invalidText, specificPerson}});
     }
 
     // Neuer Body‑Array, der für spezielle Tage (nicht valide oder KitaOpenNoEd) die Schicht-Spalten zusammenfasst:
@@ -463,11 +471,11 @@ export function assignUsersCalendarTwoCols(month, year, localUsers, options = {}
     for (let day = 1; day <= daysInMonth; day++) {
         // Sonderfälle: Tage, an denen kein Dienst stattfindet
         if (isKitaOpenNoEd(day)) {
-            calendar[day] = ["", "", {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false}];
+            calendar[day] = {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false, parents: ["", ""]};
             continue;
         }
         if (!isValidWeekday(day) || isHoliday(day)) {
-            calendar[day] = ["", "", {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false}];
+            calendar[day] = {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false, parents: ["", ""]};
             continue;
         }
 
@@ -488,12 +496,13 @@ export function assignUsersCalendarTwoCols(month, year, localUsers, options = {}
             // Bei Team-Tagen: Ein Elternteil und eine feste "Team"-Spalte
             const hasEnoughUsers = usersSortedByPrio.length >= 1;
             let selectedUser = hasEnoughUsers ? usersSortedByPrio[0] : {name: text.create.notSet};
-            calendar[day] = [selectedUser.name, options.specificPerson ?? 'k.A.', {
+            calendar[day] = {
                 isKitaOpenNoEd: false,
                 isValidDay: true,
                 isAssigned: hasEnoughUsers,
-                hasSpecificPerson: true
-            }];
+                specificPerson: options.specificPerson,
+                parents: [selectedUser.name]
+            };
             if (hasEnoughUsers) {
                 updateUsersArray(_users, averageServiceCount, true, selectedUser);
             }
@@ -516,11 +525,12 @@ export function assignUsersCalendarTwoCols(month, year, localUsers, options = {}
                 throw new Error("Duplicate users in data set");
             }
 
-            calendar[day] = [...selectedUsers.map(user => user.name), {
+            calendar[day] = {
                 isKitaOpenNoEd: false,
                 isValidDay: true,
-                isAssigned: hasEnoughUsers
-            }];
+                isAssigned: hasEnoughUsers,
+                parents: [...selectedUsers.map(user => user.name)]
+            }
             if (hasEnoughUsers) {
                 updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
                 updateUsersArray(_users, averageServiceCount, true, selectedUsers[1]);
@@ -575,15 +585,23 @@ export function generatePDFTwoCols(calendar, month, year, usersData = [], isKita
     // Erzeugen der Zeilen-Daten aus dem Kalender (Format: [parent1, parent2, meta])
     const specifiPerson = document.getElementById("nameInput")?.value
     for (const day in calendar) {
-        let [parent1, parent2, meta] = calendar[day];
+        let {
+            parents,
+            isValidDay,
+            isKitaOpenNoEd,
+            isAssigned,
+            invalidText,
+            specificPerson
+
+        } = calendar[day];
 
         if (!actionTaken) {
-            const isParent1Known = usersData.find(user => user === parent1) || parent1 === specifiPerson
-            const isParent2Known = usersData.find(user => user === parent2) || parent2 === specifiPerson
+            const isParent1Known = usersData.find(user => user === parents[0]) || parents[0] === specifiPerson
+            const isParent2Known = usersData.find(user => user === parents[1]) || parents[1] === specifiPerson
             const areAllUsersKnown = isParent1Known && isParent2Known
 
-            if (meta.isValidDay && !areAllUsersKnown) {
-                const confirmedChoice = confirm(`${text.create.personNotFoundOne} ${parent1}, ${parent2}. ${text.create.personNotFoundTwo}`);
+            if (isValidDay && !areAllUsersKnown) {
+                const confirmedChoice = confirm(`${text.create.personNotFoundOne} ${parents[0]}, ${parents[1]}. ${text.create.personNotFoundTwo}`);
                 if (!confirmedChoice) {
                     return;
                 }
@@ -593,13 +611,13 @@ export function generatePDFTwoCols(calendar, month, year, usersData = [], isKita
         const formattedDate = formatDate(day, month, year);
         const dayOfWeek = formatDayOfWeek(day, month, year);
 
-        if (parent1 === text.create.notSet)
-            parent1 = ""
-        if (parent2 === text.create.notSet)
-            parent2 = ""
+        if (parents[0] === text.create.notSet)
+            parents[0] = ""
+        if (parents[1] === text.create.notSet)
+            parents[1] = ""
         // Bei gültigen Tagen: Schicht 1 entspricht parent1
-        const normalShiftText = meta.isValidDay ? parent1 : "";
-        rows.push({data: [dayOfWeek, formattedDate, normalShiftText, parent2], meta});
+        const normalShiftText = isValidDay ? parents[0] : "";
+        rows.push({data: [dayOfWeek, formattedDate, normalShiftText, parents[1]], meta: {isKitaOpenNoEd, isAssigned, isValidDay, invalidText, specificPerson}});
     }
 
     // Neuer Body‑Array, der für spezielle Tage (nicht valide oder isKitaOpenNoEd)
