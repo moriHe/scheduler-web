@@ -40,7 +40,7 @@ function updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedU
  * Hier wird pro Tag entweder – bei Team-Tagen – eine Kombination aus einem ausgewählten Elternteil und zwei statischen "Team"
  * oder – bei regulären Tagen – versucht, drei unterschiedliche, verfügbare Eltern aus der sortierten Liste zu entnehmen.
  */
-export function assignUsersCalendarThreeCols(month, year, localUsers, options = {}) {
+export function assignUsersCalendarThreeCols(month, year, localUsers, options = {}, cols) {
     // Helper functions zur Prüfung der Tage
     function isKitaOpenNoEd(date) {
         const formattedDate = `${year}-${month}-${date}`;
@@ -67,13 +67,12 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
     function calcUniqueServiceDays() {
         let total = 0;
         for (let day = 1; day <= daysInMonth; day++) {
-            if (isKitaOpenNoEd(day)) {
+            // Skip days where Kita is open without education,
+            // invalid weekdays, or holidays in one combined check
+            if (isKitaOpenNoEd(day) || !isValidWeekday(day) || isHoliday(day)) {
                 continue;
-            } else if (!isValidWeekday(day) || isHoliday(day)) {
-                continue;
-            } else {
-                total = total + 1;
             }
+            total++;
         }
         return total;
     }
@@ -98,7 +97,9 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
     const daysInMonth = new Date(year, month, 0).getDate();
     const uniqueServiceDays = calcUniqueServiceDays();
     // Anpassen: Berechne den Durchschnitt anhand von 3 Schicht-Spalten (statt 2)
-    const averageServiceCount = Math.floor(uniqueServiceDays * 3 / localUsers.length);
+    // #Duplicate von oben bis hier.
+    // # 3 mit arg ersetzen
+    const averageServiceCount = Math.floor(uniqueServiceDays * cols / localUsers.length);
 
     // Kopiere und erweitere die Nutzer-Daten
     const _users = [...localUsers].map((user) => {
@@ -122,15 +123,16 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
             prio: availableTotal <= uniqueServiceDays / 4 ? -1000 : -10 * prioOffsetFactor
         };
     });
-
+    // #Duplicate
     for (let day = 1; day <= daysInMonth; day++) {
         // Sonderfälle: Tage, an denen kein Dienst stattfindet
+        const parents = Array(cols).fill("")
         if (isKitaOpenNoEd(day)) {
-            calendar[day] = {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false, parents: ["", "", ""]};
+            calendar[day] = {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false, parents};
             continue;
         }
         if (!isValidWeekday(day) || isHoliday(day)) {
-            calendar[day] = {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false, parents: ["", "", ""]};
+            calendar[day] = {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false, parents};
             continue;
         }
 
@@ -147,78 +149,37 @@ export function assignUsersCalendarThreeCols(month, year, localUsers, options = 
             return Math.random() < 0.5 ? -1 : 1;
         });
 
-        if (isTeamDay(day)) {
-            // Bei Team-Tagen: Zwei Elternteile und eine feste "Team"-Spalte
-            const hasEnoughUsers = usersSortedByPrio.length >= 2;
-            let selectedUser1, selectedUser2;
-
-            if (hasEnoughUsers) {
-                [selectedUser1, selectedUser2] = usersSortedByPrio.slice(0, 2);
-            } else if (usersSortedByPrio.length === 1) {
-                selectedUser1 = usersSortedByPrio[0];
-                selectedUser2 = {name: text.create.notSet};
-            } else {
-                selectedUser1 = {name: text.create.notSet};
-                selectedUser2 = {name: text.create.notSet};
+        function pickUsers(usersSortedByPrio, requiredCount) {
+            const picks = usersSortedByPrio.slice(0, requiredCount);
+            while (picks.length < requiredCount) {
+                picks.push({ name: text.create.notSet });
             }
-            calendar[day] = {
-                    isKitaOpenNoEd: false,
-                    isValidDay: true,
-                    isAssigned: hasEnoughUsers,
-                    specificPerson: options.specificPerson,
-                    parents: [
-                        selectedUser1.name,
-                        selectedUser2.name,
-                    ]
-                }
+            return picks;
+        }
 
-            // Aktualisiere die User-Daten für die ausgewählten Nutzer
-            if (usersSortedByPrio.length >= 2) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUser1);
-                updateUsersArray(_users, averageServiceCount, true, selectedUser2);
-            } else if (usersSortedByPrio.length === 1) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUser1);
-            }
-        } else {
-            // Regulärer Tag – wähle drei Eltern aus
-            const hasEnoughUsers = availableUsers.length >= 3;
-            const hasTwoUsers = availableUsers.length === 2;
-            const hasOneUser = availableUsers.length === 1;
-            let selectedUsers;
-            if (hasEnoughUsers) {
-                selectedUsers = usersSortedByPrio.slice(0, 3);
-            } else if (hasTwoUsers) {
-                selectedUsers = [usersSortedByPrio[0], usersSortedByPrio[1], {name: text.create.notSet}];
-            } else if (hasOneUser) {
-                selectedUsers = [usersSortedByPrio[0], {name: text.create.notSet}, {name: text.create.notSet}];
-            } else {
-                selectedUsers = [{name: text.create.notSet}, {name: text.create.notSet}, {name: text.create.notSet}];
-            }
+        const requiredCount = isTeamDay(day) ? cols - 1 : cols;
+        const selected = pickUsers(usersSortedByPrio, requiredCount);
+        const specificPerson = isTeamDay(day) ? options.specificPerson : undefined;
+        calendar[day] = {
+            isKitaOpenNoEd: false,
+            isValidDay: true,
+            specificPerson,
+            isAssigned: usersSortedByPrio.length >= requiredCount,
+            parents: selected.map((parent) => parent.name)
+        }
 
-            // Prüfe auf doppelte Einträge (nur wenn genügend echte Nutzer vorhanden sind)
-            if (hasEnoughUsers &&
-                (selectedUsers[0].name === selectedUsers[1].name ||
-                    selectedUsers[0].name === selectedUsers[2].name ||
-                    selectedUsers[1].name === selectedUsers[2].name)) {
+        selected.forEach(user => {
+            if (user.name !== text.create.notSet) {
+                updateUsersArray(_users, averageServiceCount, true, user);
+            }
+        });
+
+        if (usersSortedByPrio.length >= requiredCount) {
+            const names = selected.map(u => u.name);
+            const dup = names.find((n, i) => names.indexOf(n) !== i);
+            if (dup) {
                 displayError(text.create.shouldNotHappen);
                 throw new Error("Duplicate users in data set");
-            }
-
-            calendar[day] = {
-                isKitaOpenNoEd: false,
-                isValidDay: true,
-                isAssigned: hasEnoughUsers,
-                parents: [...selectedUsers.map(user => user.name)]
-            };
-            if (hasEnoughUsers) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[1]);
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[2]);
-            } else if (hasTwoUsers) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[1]);
-            } else if (hasOneUser) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
             }
         }
     }
@@ -320,7 +281,7 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
     // Neuer Body‑Array, der für spezielle Tage (nicht valide oder KitaOpenNoEd) die Schicht-Spalten zusammenfasst:
     const tableBody = rows.map(row => {
         if (!row.meta.isValidDay || row.meta.isKitaOpenNoEd) {
-            let specialText = "";
+            let specialText;
             let fillColor;
             if (row.meta.isKitaOpenNoEd) {
                 specialText = row.meta.invalidText ?? "";
@@ -377,169 +338,6 @@ export function generatePDFThreeCols(calendar, month, year, usersData = []) {
     });
 
     return doc.output('blob');
-}
-
-/**
- * Testfunktion zur Zuweisung von Eltern zu den Kalender-Tagen (für die Vorschau)
- * Diese Version weist 2 Spalten zu: Bei Team-Tagen wird ein Elternteil und eine feste "Team"-Spalte genutzt,
- * bei regulären Tagen werden 2 Eltern ausgewählt.
- */
-export function assignUsersCalendarTwoCols(month, year, localUsers, options = {}) {
-    // Helper functions zur Prüfung der Tage
-    function isKitaOpenNoEd(date) {
-        const formattedDate = `${year}-${month}-${date}`;
-        return kitaOpenNoEd.includes(formattedDate);
-    }
-
-    function isHoliday(date) {
-        const formattedDate = `${year}-${month}-${date}`;
-        return holidays.includes(formattedDate);
-    }
-
-    function isTeamDay(date) {
-        const formattedDate = `${year}-${month}-${date}`;
-        return teamdays.includes(formattedDate);
-    }
-
-    function isValidWeekday(day) {
-        const date = new Date(year, month - 1, day);
-        const weekday = date.toLocaleDateString('en-US', {weekday: 'long'});
-        return weekdays.includes(weekday);
-    }
-
-    // Berechne die Anzahl der Tage, an denen ein Dienst stattfindet
-    function calcUniqueServiceDays() {
-        let total = 0;
-        for (let day = 1; day <= daysInMonth; day++) {
-            if (isKitaOpenNoEd(day)) {
-                continue;
-            } else if (!isValidWeekday(day) || isHoliday(day)) {
-                continue;
-            } else {
-                total++;
-            }
-        }
-        return total;
-    }
-
-    const calendar = {}; // Kalenderspeicher
-    const {
-        weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        holidays = [],
-        kitaOpenNoEd = [],
-        teamdays = []
-    } = options;
-
-    function isUserAvailable(user, date) {
-        const formattedDate = `${year}-${month}-${date}`;
-        return !user.not_available.includes(formattedDate);
-    }
-
-    function getAvailableUsersForDay(day, localUsers) {
-        return localUsers.filter(user => isUserAvailable(user, day));
-    }
-
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const uniqueServiceDays = calcUniqueServiceDays();
-    // Adjust average calculation for 2 Spalten statt 3
-    const averageServiceCount = Math.floor(uniqueServiceDays * 2 / localUsers.length);
-
-    // Kopiere und erweitere die Nutzer-Daten
-    const _users = [...localUsers].map((user) => {
-        const cleanedNotAvailableArray = user["not_available"].filter((date) => {
-            const extractedDay = date.split("-")[2];
-            if (extractedDay === undefined) return false
-            if (isHoliday(extractedDay)) return false
-            if (isKitaOpenNoEd(extractedDay)) return false
-            return isValidWeekday(extractedDay);
-        })
-
-        const availableTotal = uniqueServiceDays - cleanedNotAvailableArray.length;
-
-        const prioOffsetFactor = availableTotal <= uniqueServiceDays / 4 ? 0 :
-            availableTotal <= uniqueServiceDays / 2 ? 2 : 1;
-        return {
-            ...user,
-            "not_available": cleanedNotAvailableArray,
-            serviceCount: 0,
-            prioOffsetFactor,
-            // Der niedrigere Wert = höhere Chance ausgewählt zu werden
-            prio: availableTotal <= uniqueServiceDays / 4 ? -1000 : -10 * prioOffsetFactor
-        };
-    });
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        // Sonderfälle: Tage, an denen kein Dienst stattfindet
-        if (isKitaOpenNoEd(day)) {
-            calendar[day] = {isKitaOpenNoEd: true, isValidDay: false, isAssigned: false, parents: ["", ""]};
-            continue;
-        }
-        if (!isValidWeekday(day) || isHoliday(day)) {
-            calendar[day] = {isKitaOpenNoEd: false, isValidDay: false, isAssigned: false, parents: ["", ""]};
-            continue;
-        }
-
-        const availableUsers = getAvailableUsersForDay(day, _users);
-        // Sortiere verfügbare Nutzer anhand der Priorität und Service-Zahl (mit etwas Zufall)
-        const usersSortedByPrio = availableUsers.sort((a, b) => {
-            if (a.serviceCount === b.serviceCount && a.prioOffsetFactor === 1 && b.prioOffsetFactor === 1) {
-                return Math.random() < 0.5 ? -1 : 1;
-            }
-            if (a.prio < b.prio) return -1;
-            if (a.prio > b.prio) return 1;
-            if (a.serviceCount < b.serviceCount) return -1;
-            if (a.serviceCount > b.serviceCount) return 1;
-            return Math.random() < 0.5 ? -1 : 1;
-        });
-
-        if (isTeamDay(day)) {
-            // Bei Team-Tagen: Ein Elternteil und eine feste "Team"-Spalte
-            const hasEnoughUsers = usersSortedByPrio.length >= 1;
-            let selectedUser = hasEnoughUsers ? usersSortedByPrio[0] : {name: text.create.notSet};
-            calendar[day] = {
-                isKitaOpenNoEd: false,
-                isValidDay: true,
-                isAssigned: hasEnoughUsers,
-                specificPerson: options.specificPerson,
-                parents: [selectedUser.name]
-            };
-            if (hasEnoughUsers) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUser);
-            }
-        } else {
-            // Regulärer Tag – wähle zwei Eltern aus
-            const hasEnoughUsers = availableUsers.length >= 2;
-            const hasOneUser = availableUsers.length === 1;
-            let selectedUsers;
-            if (hasEnoughUsers) {
-                selectedUsers = usersSortedByPrio.slice(0, 2);
-            } else if (hasOneUser) {
-                selectedUsers = [usersSortedByPrio[0], {name: text.create.notSet}];
-            } else {
-                selectedUsers = [{name: text.create.notSet}, {name: text.create.notSet}];
-            }
-
-            // Prüfe auf doppelte Einträge (nur wenn genügend echte Nutzer vorhanden sind)
-            if (hasEnoughUsers && selectedUsers[0].name === selectedUsers[1].name) {
-                displayError(text.create.shouldNotHappen);
-                throw new Error("Duplicate users in data set");
-            }
-
-            calendar[day] = {
-                isKitaOpenNoEd: false,
-                isValidDay: true,
-                isAssigned: hasEnoughUsers,
-                parents: [...selectedUsers.map(user => user.name)]
-            }
-            if (hasEnoughUsers) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[1]);
-            } else if (hasOneUser) {
-                updateUsersArray(_users, averageServiceCount, true, selectedUsers[0]);
-            }
-        }
-    }
-    return calendar;
 }
 
 export function generatePDFTwoCols(calendar, month, year, usersData = [], isKita) {

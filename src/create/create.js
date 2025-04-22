@@ -3,7 +3,6 @@ import { renderMonthYearSelect } from "../utils/render"
 import text from "../localization"
 import {
     assignUsersCalendarThreeCols,
-    assignUsersCalendarTwoCols,
     displayError,
     formatDate,
     formatDayOfWeek,
@@ -116,12 +115,12 @@ function renderCalendarPreview(subsetFormattedUsers) {
     };
     const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value ?? "2"
     if (shiftValue === "3") {
-        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options);
+        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options, 3);
         renderCalendarThreeCols(month, year);
 
 
     } else {
-        calendar = assignUsersCalendarTwoCols(month, year, usersToAssign, options);
+        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options, 2);
         renderCalendarTwoCol(month, year);
     }
 
@@ -144,6 +143,8 @@ function renderCalendarThreeCols(month, year) {
 
     const parentCount = {};
     calendarEntries.forEach(({parents, meta}) => {
+        if (meta.specificPerson)
+            parentCount[meta.specificPerson] = (parentCount[parent] || 0) + 1
         parents.forEach((parent) => {
             if (meta.isValidDay && parent && parent !== text.create.notSet)
                 parentCount[parent] = (parentCount[parent] || 0) + 1;
@@ -252,7 +253,6 @@ function renderCalendarThreeCols(month, year) {
 
                 flexContainer.appendChild(user3Select)
             })
-            console.log(meta.specificPerson)
             if (meta.specificPerson) {
                 const user3Select = document.createElement("select");
                 user3Select.classList.add("flex-1", "text-left", "cursor-pointer");
