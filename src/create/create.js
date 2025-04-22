@@ -1,13 +1,13 @@
 import {getStorageKey} from "../storageKey";
 import { renderMonthYearSelect } from "../utils/render"
 import text from "../localization"
+import { displayError } from "../utils/render";
+
 import {
-    displayError,
     formatDate,
     formatDayOfWeek,
     generatePDFThreeCols,
-    generatePDFTwoCols,
-} from "./calendar.js";
+} from "./generateShiftplanPdf.js";
 import {assignUsersCalendar} from "./assignUsersCalendar";
 
 let usersData = [];         // Temporäre Speicherung der Nutzerdaten
@@ -113,8 +113,8 @@ function renderCalendarPreview(subsetFormattedUsers) {
         teamdays,
         specificPerson: document.getElementById("nameInput")?.value
     };
-    const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value?.toNumber() ?? 2
-    calendar = assignUsersCalendar(month, year, usersToAssign, options, shiftValue);
+    const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value ?? 2
+    calendar = assignUsersCalendar(month, year, usersToAssign, options, Number(shiftValue));
     renderPdfPreview(month, year);
 }
 
@@ -462,12 +462,12 @@ document.getElementById("generate-pdf-button").addEventListener("click", async (
         const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value;
         let isKita = false
         if (shiftValue === "3") {
-            fileBlob = generatePDFThreeCols(calendar, month, year, usersData);
+            fileBlob = generatePDFThreeCols(calendar, month, year, usersData, false, 3);
         } else if (shiftValue === "2") {
-            fileBlob = generatePDFTwoCols(calendar, month, year, usersData);
+            fileBlob = generatePDFThreeCols(calendar, month, year, usersData, false, 2);
         } else {
             isKita = true
-            fileBlob = generatePDFTwoCols(calendar, month, year, usersData, isKita);
+            fileBlob = generatePDFThreeCols(calendar, month, year, usersData, true, 2);
         }
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(fileBlob);

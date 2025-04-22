@@ -1,5 +1,5 @@
 import text from "../localization";
-import {displayError} from "./calendar";
+import { displayError } from "../utils/render";
 
 // Function to update the selected user's data (service count and prio)
 function updateUsersArray(_users, averageServiceCount, hasEnoughUsers, selectedUser) {

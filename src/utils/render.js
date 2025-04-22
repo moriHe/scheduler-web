@@ -14,3 +14,14 @@ export function renderMonthYearSelect() {
     document.getElementById("month").value = nextMonth;
     yearSelect.value = nextYear;
 }
+
+
+// Function to display error messages
+export function displayError(message) {
+    const errorMessageElement = document.getElementById('error-message');
+    errorMessageElement.textContent = message;
+    errorMessageElement.classList.remove('hidden'); // Show the error message
+    setTimeout(() => {
+        errorMessageElement.classList.add('hidden'); // Hide the error message after 5 seconds
+    }, 5000);
+}
