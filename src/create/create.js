@@ -2,13 +2,13 @@ import {getStorageKey} from "../storageKey";
 import { renderMonthYearSelect } from "../utils/render"
 import text from "../localization"
 import {
-    assignUsersCalendarThreeCols,
     displayError,
     formatDate,
     formatDayOfWeek,
     generatePDFThreeCols,
     generatePDFTwoCols,
 } from "./calendar.js";
+import {assignUsersCalendar} from "./assignUsersCalendar";
 
 let usersData = [];         // Temporäre Speicherung der Nutzerdaten
 let formattedUsers = [];      // Formatierte Nutzerdaten
@@ -115,12 +115,12 @@ function renderCalendarPreview(subsetFormattedUsers) {
     };
     const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value ?? "2"
     if (shiftValue === "3") {
-        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options, 3);
+        calendar = assignUsersCalendar(month, year, usersToAssign, options, 3);
         renderCalendarThreeCols(month, year);
 
 
     } else {
-        calendar = assignUsersCalendarThreeCols(month, year, usersToAssign, options, 2);
+        calendar = assignUsersCalendar(month, year, usersToAssign, options, 2);
         renderCalendarTwoCol(month, year);
     }
 
