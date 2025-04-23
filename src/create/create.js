@@ -6,7 +6,7 @@ import { displayError } from "../utils/render";
 import {
     formatDate,
     formatDayOfWeek,
-    generatePDFThreeCols,
+    generateShiftplanPdf,
 } from "./generateShiftplanPdf.js";
 import {assignUsersCalendar} from "./assignUsersCalendar";
 
@@ -462,12 +462,12 @@ document.getElementById("generate-pdf-button").addEventListener("click", async (
         const shiftValue = document.querySelector('input[name="shifts-per-day"]:checked')?.value;
         let isKita = false
         if (shiftValue === "3") {
-            fileBlob = generatePDFThreeCols(calendar, month, year, usersData, false, 3);
+            fileBlob = generateShiftplanPdf(calendar, month, year, usersData, isKita, 3);
         } else if (shiftValue === "2") {
-            fileBlob = generatePDFThreeCols(calendar, month, year, usersData, false, 2);
+            fileBlob = generateShiftplanPdf(calendar, month, year, usersData, isKita, 2);
         } else {
             isKita = true
-            fileBlob = generatePDFThreeCols(calendar, month, year, usersData, true, 2);
+            fileBlob = generateShiftplanPdf(calendar, month, year, usersData, isKita, 2);
         }
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(fileBlob);

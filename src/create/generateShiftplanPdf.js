@@ -31,7 +31,7 @@ function getHeaders(isKita, cols) {
 /**
  * Erzeugt das PDF des Elterndienstplans. Dabei wird der Kalender (mit 3 Spalten) in eine Tabelle konvertiert.
  */
-export function generatePDFThreeCols(calendar, month, year, usersData = [], isKita, cols) {
+export function generateShiftplanPdf(calendar, month, year, usersData = [], isKita, cols) {
     const {jsPDF} = window.jspdf;
     const doc = new jsPDF();
 
