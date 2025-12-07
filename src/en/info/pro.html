@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shift Planner Pro Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<!-- First show preview (4c). Then link to basics. Then link to Pro version. Then useful links -->
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl text-center space-y-10 mt-10 mb-10">
+
+  <header class="space-y-2">
+    <h1 class="text-4xl font-bold text-gray-900">Schedule Planner Pro</h1>
+    <p class="text-gray-600 text-lg max-w-xl mx-auto">
+      Unlike the Parent Duty Schedule Planner and Basic Schedule Planner, the Pro Schedule Planner allows for more detailed planning.
+    </p>
+    <ul class="list-disc list-inside text-left mx-auto max-w-xl text-gray-700">
+      <li>Specify how many people you need per shift (1, 2 or 3)</li>
+      <li>Blackout times can be defined individually for each shift instead of per day</li>
+      <li>Define for each person whether they can work in 1-person, 2-person and/or 3-person teams</li>
+    </ul>
+  </header>
+  <section class="flex flex-col items-center">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Shift Size</h2>
+      <p class="text-gray-700 mb-4">Specify the team size per shift.</p>
+      <p class="text-gray-700 mb-4">In the schedule shown in the image, on the 1st, 8th, and 9th, two people are needed for shift 1. On the 8th, 3 people are needed for shift 2.</p>
+      <img src="../../assets/img/shifttypes.png" alt="Shift Size" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 my-2">Blackout Dates & Shift Type</h2>
+      <p class="text-gray-700 mb-4">Each shift has its own blackout calendar. You can also check under the name which shift sizes the person is able to work in.</p>
+      <p class="text-gray-700 mb-4">All shift sizes are preselected. This means the person can work in all 3 shift types. If you uncheck the box for 1-person shifts, for example, the person will only work in two- or three-person teams.</p>
+      <img src="../../assets/img/blockedtime_pro.png" alt="Blackout Dates" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 my-2">Create Plan & Save as PDF</h2>
+      <p class="text-gray-700 mb-4">The rest works just like in the Quickstart Guide. Load preview, make manual adjustments if desired, review, and download the free schedule as a PDF.</p>
+      <p class="text-gray-700 mb-4">In the image, on May 1st, three people work in shift 1, two people in shift 2, and two people in shift 3 as well.</p>
+      <img src="../../assets/img/preview_pro.png" alt="Configure Plan" class="rounded-lg shadow-md mx-auto">
+    </div>
+  </section>
+
+  <a href="../info.html" class="block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+    Back to Main Page
+  </a>
+</div>
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="../imprint.html" class="hover:text-gray-700 transition-colors duration-200">Imprint</a>
+    <span>|</span>
+    <a href="../dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Privacy Policy</a>
+  </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="../../analytics.js"></script>
+</body>
+</html>

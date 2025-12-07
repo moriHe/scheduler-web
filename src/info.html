@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dienstplaner - Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+</head>
+<!-- Erstmal Vorschau zeigen (4c). Dann Link zu den Basics. Dann Link zu Pro Version. Dann Nützliches -->
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl text-center space-y-10 mt-10 mb-10">
+
+  <header class="space-y-2">
+    <h1 class="text-4xl font-bold text-gray-900">Dienstplaner - Anleitung</h1>
+    <p class="text-gray-600 text-lg max-w-xl mx-auto">
+      Kostenlose, monatsbasierte Dienstpläne vollautomatisch.
+    </p>
+
+  </header>
+  <ul class="list-disc list-inside text-left mx-auto max-w-xl text-gray-700">
+    <li>Kostenlos und ohne Login</li>
+    <li>Einfache monatsbasierte Dienstplan-Erstellung</li>
+    <li>Unterstützt 2 bis 3 Schichten pro Tag</li>
+    <li>Berücksichtigt individuelle Sperrtage oder Sperrschichten</li>
+    <li>Vorschau, manuelle Anpassungen und PDF-Export</li>
+  </ul>
+
+  <img src="assets/img/plan_vorschaumarkierung.png" alt="Dienste hervorheben" class="rounded-lg shadow-md mx-auto mb-4">
+  <a
+          id="view-quickstart-button"
+          href="info/quickstart.html"
+          class="mx-auto w-64 block bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+  >
+    Quickstart
+  </a>
+
+  <a
+          id="view-pro-button"
+          href="info/pro.html"
+          class="w-64 mx-auto block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  >
+    Dienstplaner Pro
+  </a>
+  <a
+          id="view-tipps-button"
+          href="info/tipps.html"
+          class="w-64 mx-auto block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  >
+    Tipps & Tricks
+  </a>
+
+  <a
+          id="view-faq-button"
+          href="info/faq.html"
+          class="w-64 mx-auto block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  >
+    FAQ
+  </a>
+
+  <a href="shiftplan.html" class="w-64  mx-auto block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+    Zurück zur Hauptseite
+  </a>
+</div>
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+    <span>|</span>
+    <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+  </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="analytics.js"></script>
+</body>
+</html>

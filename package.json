@@ -1,0 +1,33 @@
+{
+  "name": "scheduler-web",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "node scripts/check-env.js && parcel build src/index.html && javascript-obfuscator dist --output dist",
+    "preview": "serve dist",
+    "cypress": "cypress open",
+    "clearCache": "npx parcel cache clean",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "express": "^4.21.1",
+    "jspdf": "^2.5.2",
+    "pdfkit": "^0.15.0",
+    "pdfkit-table": "^0.1.99"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "cypress": "^13.16.1",
+    "eslint": "^9.14.0",
+    "eslint-plugin-cypress": "^4.1.0",
+    "globals": "^15.12.0",
+    "javascript-obfuscator": "^4.1.1",
+    "parcel": "^2.14.4",
+    "serve": "^14.2.4"
+  }
+}

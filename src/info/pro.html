@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dienstplaner - Pro Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+</head>
+<!-- Erstmal Vorschau zeigen (4c). Dann Link zu den Basics. Dann Link zu Pro Version. Dann Nützliches -->
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl text-center space-y-10 mt-10 mb-10">
+
+  <header class="space-y-2">
+    <h1 class="text-4xl font-bold text-gray-900">Dienstplaner Pro</h1>
+    <p class="text-gray-600 text-lg max-w-xl mx-auto">
+      Im Gegensatz zum Elterndienstplaner und Basis-Dienstplaner, kannst Du beim Dienstplaner Pro noch detaillierter arbeiten.
+    </p>
+    <ul class="list-disc list-inside text-left mx-auto max-w-xl text-gray-700">
+      <li>Gebe pro Schicht an, wie viele Personen Du benötigst (1, 2 oder 3)</li>
+      <li>Sperrzeiten lassen sich für jede Schicht einzeln definieren anstelle pro Tag</li>
+      <li>Definiere für jede Person, ob sie in 1er, 2er und/oder 3er Teams arbeiten kann</li>
+    </ul>
+  </header>
+  <section class="flex flex-col items-center">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Schichtgröße</h2>
+      <p class="text-gray-700 mb-4">Gebe die Teamgröße pro Schicht an.</p>
+      <p class="text-gray-700 mb-4">Beim Dienstplan im Bild werden in am 1., 8. und 9. zwei Personen für Schicht 1 benötigt. Am 8. werden 3 Personen für Schicht 2 benötigt.</p>
+      <img src="../assets/img/shifttypes.png" alt="Schichtgröße" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 my-2">Sperrtermine & Schichttyp</h2>
+      <p class="text-gray-700 mb-4">Für jede Schicht gibt es einen eigenen Sperrtermin-Kalender. Außerdem kannst Du unter dem Namen ankreuzen, in welchen Schichtgrößen die Person arbeiten kann.</p>
+      <p class="text-gray-700 mb-4">Vorausgewählt sind alle Schichtgrößen. Damit kann die Person in allen 3 Schittypen arbeiten. Nimmst Du das Häkchen zum Beispiel von der eins, arbeitet die Person immer in zweier oder dreier Teams.</p>
+      <img src="../assets/img/blockedtime_pro.png" alt="Sperrtermine" class="rounded-lg shadow-md mx-auto">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 my-2">Plan erstellen & PDF speichern</h2>
+      <p class="text-gray-700 mb-4">Der Rest läuft wie im Quickstart Guide ab. Vorschau laden, wenn gewünscht manuelle Anpassungen, prüfen und den kostenlosen Dienstplan als PDF herunterladen.</p>
+      <p class="text-gray-700 mb-4">Im Bild arbeiten am 1.5. in Schicht 1 drei Personen, in Schicht 2 zwei Personen und in Schicht 3 ebenfalls zwei Personen.</p>
+      <img src="../assets/img/preview_pro.png" alt="Plan konfigurieren" class="rounded-lg shadow-md mx-auto">
+    </div>
+  </section>
+
+  <a href="../info.html" class="block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+    Zurück zur Hauptseite
+  </a>
+</div>
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+    <span>|</span>
+    <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+  </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="../analytics.js"></script>
+</body>
+</html>

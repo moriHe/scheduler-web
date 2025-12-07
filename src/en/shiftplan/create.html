@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Schedule</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.3/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/locale/de/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+  <script defer type="module" src="../../create/registerShiftplanCreate.js"></script>
+  <style>
+    .lighter-red-background {
+      background-color: rgba(255, 0, 0, 0.5);
+      color: white;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+    .calendar-header {
+      font-weight: 600;
+      padding: 0.4rem;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      font-size: 0.875rem;
+    }
+    .calendar-day {
+      padding: 0.6rem;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .calendar-day:hover {
+      background-color: #e5e7eb;
+    }
+    .weekend, .excluded {
+      background-color: #d1d5db;
+      color: #9ca3af;
+      cursor: default;
+    }
+    .weekend:hover, .excluded:hover {
+      background-color: #d1d5db;
+    }
+    .calendar-day.not-available:hover {
+      background-color: #f87171;
+    }
+    .not-available {
+      background-color: #f87171;
+      color: white;
+    }
+    @media (max-width: 768px) {
+      .calendar-day {
+        padding: 0.3rem;
+      }
+    }
+  </style>
+</head>
+<body data-storagekey="shiftplan" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center md:p-6 font-sans">
+<div id="plan-creation-container" class="bg-white shadow-lg rounded-xl md:p-10 w-full md:max-w-3xl space-y-8 flex-1">
+  <h1 class="text-3xl font-semibold text-gray-900 md:p-0 p-2">Create Schedule</h1>
+  <div class="flex items-center justify-center space-x-4">
+    <label for="month" class="font-medium text-gray-700">Month:</label>
+    <select id="month" class="border rounded-md p-2">
+      <option value="0">January</option>
+      <option value="1">February</option>
+      <option value="2">March</option>
+      <option value="3">April</option>
+      <option value="4">May</option>
+      <option value="5">June</option>
+      <option value="6">July</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">October</option>
+      <option value="10">November</option>
+      <option value="11">December</option>
+    </select>
+    <label for="year" class="font-medium text-gray-700">Year:</label>
+    <select id="year" class="border rounded-md p-2"></select>
+  </div>
+  <div>
+    <div class="flex items-center justify-center space-x-4">
+      <label class="flex items-center space-x-2">
+        <input type="radio" name="shifts-per-day" value="2" class="h-4 w-4">
+        <span class="text-sm font-medium text-gray-700">2 Shifts per Day</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="radio" name="shifts-per-day" value="3" class="h-4 w-4" checked>
+        <span class="text-sm font-medium text-gray-700">3 Shifts per Day</span>
+      </label>
+    </div>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4 md:p-0 p-2">Days</h2>
+    <div id="weekdays-container" class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 md:p-0 p-2">
+      <label><input type="checkbox" class="weekday-checkbox" value="Mo" checked /> Monday</label>
+      <label><input type="checkbox" class="weekday-checkbox" value="Di" checked /> Tuesday</label>
+      <label><input type="checkbox" class="weekday-checkbox" value="Mi" checked /> Wednesday</label>
+      <label><input type="checkbox" class="weekday-checkbox" value="Do" checked /> Thursday</label>
+      <label><input type="checkbox" class="weekday-checkbox" value="Fr" checked /> Friday</label>
+      <label><input type="checkbox" class="weekday-checkbox" value="Sa" /> Saturday</label>
+      <label><input type="checkbox" class="weekday-checkbox" value="So" /> Sunday</label>
+    </div>
+  </div>
+  <div>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Person Blackout Times</h2>
+    <table class="min-w-full bg-white border border-gray-300 rounded-md">
+      <thead>
+      <tr>
+        <th class="border-b-2 border-gray-300 p-3 text-left">Person</th>
+        <th class="border-b-2 border-gray-300 p-3 text-left">Calendar</th>
+      </tr>
+      </thead>
+      <tbody id="user-table-body"></tbody>
+    </table>
+  </div>
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold text-gray-900">Closed (e.g. Holidays)</h2>
+    <div id="holidays-calendar" class="calendar"></div>
+    <h2 class="text-xl font-semibold text-gray-900">Open, No Shifts Required</h2>
+    <div id="kitaOpenNoEd-calendar" class="calendar"></div>
+    <h2 class="text-xl font-semibold text-gray-900">This Person Takes Selected Shifts</h2>
+    <input type="text" id="nameInput" placeholder="Enter person" class="bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500" />
+    <div id="team-calendar" class="calendar"></div>
+  </div>
+  <div class="flex justify-center space-x-4 mt-6">
+    <button id="show-preview-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">Show Preview</button>
+    <button id="back-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300">Back</button>
+  </div>
+</div>
+
+<!-- Preview Section -->
+<div id="calendar-preview-container" class="overflow-auto md:overflow-visible bg-white shadow-lg rounded-xl md:p-10 w-full md:max-w-4xl space-y-8 hidden flex-1">
+  <div class="flex justify-center gap-10 mb-6 my-20">
+    <h1 class="text-3xl font-semibold text-gray-900">Preview</h1>
+    <button id="preview-button" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
+      <ion-icon name="refresh" class="mr-2"></ion-icon>
+    </button>
+  </div>
+  <div id="calendar-preview-table" class="w-full md:max-w-4xl">
+    <div id="tableheadersTwoCols" class="flex w-full text-gray-800 font-semibold bg-gray-200 py-2 hidden">
+      <div class="w-1/12 text-left">Day</div>
+      <div class="w-1/6 text-left">Date</div>
+      <div class="flex-1 text-left"><input id="twocol-label-1" type="text" value="Shift 1" class="w-full bg-transparent border-b border-gray-300"></div>
+      <div class="flex-1 text-left"><input id="twocol-label-2" type="text" value="Shift 2" class="w-full bg-transparent border-b border-gray-300"></div>
+    </div>
+    <div id="tableheadersThreeCols" class="flex w-full text-gray-800 font-semibold bg-gray-200 py-2 hidden">
+      <div class="w-1/12 text-left">Day</div>
+      <div class="w-1/6 text-left">Date</div>
+      <div class="flex-1 text-left"><input id="threecol-label-1" type="text" value="Shift 1" class="w-full bg-transparent border-b border-gray-300"></div>
+      <div class="flex-1 text-left"><input id="threecol-label-2" type="text" value="Shift 2" class="w-full bg-transparent border-b border-gray-300"></div>
+      <div class="flex-1 text-left"><input id="threecol-label-3" type="text" value="Shift 3" class="w-full bg-transparent border-b border-gray-300"></div>
+    </div>
+  </div>
+  <div id="parent-summary" class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 w-80 border border-gray-300 hidden md:block"></div>
+  <button id="toggle-summary" class="md:hidden fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg">Distribution</button>
+  <div class="flex justify-center space-x-4 mt-10">
+    <div id="error-message" class="bg-red-500 text-white p-4 rounded hidden"></div>
+    <button id="generate-pdf-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg">Generate PDF</button>
+    <button id="back-creation-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg">Back</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="customModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg text-center">
+    <h3 class="text-xl font-semibold text-gray-900 mb-4">Confirm Shift Assignment</h3>
+    <p id="modalText" class="text-gray-700 mb-6 leading-relaxed">
+      Max Mustermann is assigned selected shifts and has an additional blackout calendar.<br>
+      Press "Only Selected" if the person should only receive the selected shifts.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <button id="onlySelected" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg">Ok</button>
+      <button id="cancel" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-lg">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="../imprint.html" class="hover:text-gray-700 transition-colors duration-200">Imprint</a>
+    <span>|</span>
+    <a href="../dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Privacy Policy</a>
+  </div>
+</footer>
+<script type="module" src="../../analytics.js"></script>
+</body>
+</html>

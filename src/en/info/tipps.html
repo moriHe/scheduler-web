@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tipps</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<!-- First show preview (4c). Then link to basics. Then link to Pro version. Then useful links -->
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl text-center space-y-10 mt-10 mb-10">
+
+  <header class="space-y-2">
+    <h1 class="text-4xl font-bold text-gray-900">Tips & Tricks</h1>
+    <p class="text-gray-600 text-lg max-w-xl mx-auto">
+      Useful tips to make using the schedule planners easier for you.
+    </p>
+  </header>
+  <section class="flex flex-col items-center">
+    <div>
+      <p class="text-gray-700 mb-4">Since the schedule planner doesn't use logins, blackout dates must be collected manually – for example, via email.</p>
+      <p class="text-gray-700 mb-4">Use the "Generate Blackout Times" function. Participants can enter their own blackout dates and click "Generate Blackout Times".</p>
+      <p class="text-gray-700 mb-4">Afterwards, the list can be copied using "Copy Blackout Times" and sent to you.</p>
+      <img src="../../assets/img/sperrzeiten.png" alt="Blackout Calendar" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">You can then paste this list into the "Paste Generated Blackout Time" field when creating the plan and apply it with one click.</p>
+      <img src="../../assets/img/sperrzeiten_json.png" alt="Enter Blackout Times" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">The list format for the Parent Duty Schedule Planner and the Basic Schedule Planner is:</p>
+      <img src="../../assets/img/format_sperrzeiten_basis.png" alt="Blackout Format Basic" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">The list format for the Pro Schedule Planner is:</p>
+      <img src="../../assets/img/format_sperrzeiten_multi.png" alt="Blackout Format Pro" class="rounded-lg shadow-md mx-auto mb-4">
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Stay Organized</h2>
+      <p class="text-gray-700 mb-4">If you want an even distribution over several months, you should track the shifts yourself.</p>
+      <p class="text-gray-700 mb-4">We recommend writing down and summing the shifts after each plan. New people shouldn't start at 0. Therefore, add the highest shift count to new entries to keep the distribution fair.</p>
+      <img src="../../assets/img/dienst_tracking.png" alt="Shift Tracking" class="rounded-lg shadow-md mx-auto mb-4">
+      <p class="text-gray-700 mb-4">A simple text document is enough for this. In the future, this feature will be integrated directly into the website.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Save and Upload People Locally</h2>
+      <p class="text-gray-700 mb-4">You can quickly upload or reset all people. To do so, go to Options and select the appropriate field.</p>
+      <p class="text-gray-700 mb-4">People can be uploaded as a simple .txt text file in the format ["Person A", "Person B", "Person C"]. Quotation marks are important.</p>
+      <img src="../../assets/img/optionen.png" alt="Shift Tracking" class="rounded-lg shadow-md mx-auto mb-4">
+    </div>
+  </section>
+
+  <a href="../info.html" class="block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+    Back to Main Page
+  </a>
+</div>
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="../imprint.html" class="hover:text-gray-700 transition-colors duration-200">Imprint</a>
+    <span>|</span>
+    <a href="../dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Privacy Policy</a>
+  </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="../../analytics.js"></script>
+</body>
+</html>

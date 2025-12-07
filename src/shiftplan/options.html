@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Optionen</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+            rel="stylesheet"
+    />
+
+</head>
+<script defer type="module" src="../options/registerShiftplanOptions.js"></script>
+<body data-storagekey="shiftplan" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center justify-center font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-md text-center space-y-8 flex-1">
+    <h1 class="text-3xl font-semibold text-gray-900">Optionen</h1>
+
+    <div class="border border-gray-300 rounded-md p-6 space-y-4">
+        <input
+                type="file"
+                id="file-input"
+                accept=".json"
+                class="w-full border border-gray-300 rounded-md p-3"
+        />
+
+        <button
+                id="upload-users-button"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+            Personen hochladen
+        </button>
+    </div>
+
+    <button
+            id="reset-users-button"
+            class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+    >
+        Personen zurücksetzen
+    </button>
+
+    <button
+            id="back-button"
+            class="mt-6 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+    >
+        Zurück
+    </button>
+</div>
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+    <div class="flex justify-center space-x-4">
+        <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+        <span>|</span>
+        <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+    </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="../analytics.js"></script>
+</body>
+</html>

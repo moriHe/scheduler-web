@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<!-- First show preview (4c). Then link to basics. Then link to Pro version. Then useful info -->
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">
+<div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl text-center space-y-10 mt-10 mb-10">
+
+  <header class="space-y-2">
+    <h1 class="text-4xl font-bold text-gray-900">Shift Planner - Guide</h1>
+    <p class="text-gray-600 text-lg max-w-xl mx-auto">
+      Free, monthly-based shift schedules – fully automated.
+    </p>
+  </header>
+
+  <ul class="list-disc list-inside text-left mx-auto max-w-xl text-gray-700">
+    <li>Free and without login</li>
+    <li>Simple monthly-based shift scheduling</li>
+    <li>Supports 2 to 3 shifts per day</li>
+    <li>Considers individual blackout days or blocked shifts</li>
+    <li>Preview, manual adjustments, and PDF export</li>
+  </ul>
+
+  <img src="../assets/img/plan_vorschaumarkierung.png" alt="Highlight shifts" class="rounded-lg shadow-md mx-auto mb-4">
+
+  <a
+          id="view-quickstart-button"
+          href="info/quickstart.html"
+          class="mx-auto w-64 block bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+  >
+    Quickstart
+  </a>
+
+  <a
+          id="view-pro-button"
+          href="info/pro.html"
+          class="w-64 mx-auto block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  >
+    Shift Planner Pro
+  </a>
+  <a
+          id="view-tipps-button"
+          href="info/tipps.html"
+          class="w-64 mx-auto block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  >
+    Tips & Tricks
+  </a>
+
+  <a
+          id="view-faq-button"
+          href="info/faq.html"
+          class="w-64 mx-auto block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  >
+    FAQ
+  </a>
+
+  <a href="shiftplan.html" class="w-64 mx-auto block bg-gray-300 hover:bg-gray-600 text-white font-semibold py-4 px-8 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+    Back to Home Page
+  </a>
+</div>
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="./imprint.html" class="hover:text-gray-700 transition-colors duration-200">Imprint</a>
+    <span>|</span>
+    <a href="./dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Privacy Policy</a>
+  </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="../analytics.js"></script>
+</body>
+</html>

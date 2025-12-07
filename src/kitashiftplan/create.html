@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elterndienstplan erstellen</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.3/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@4.1.0/locale/de/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+  <script defer type="module" src="../create/registerKitaCreate.js"></script>
+
+  <style>
+    .lighter-red-background {
+      background-color: rgba(255, 0, 0, 0.5);
+      color: white;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+    .calendar-header {
+      font-weight: 600;
+      padding: 0.4rem;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      font-size: 0.875rem;
+    }
+    .calendar-day {
+      padding: 0.6rem;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .calendar-day:hover {
+      background-color: #e5e7eb;
+    }
+    .weekend, .excluded {
+      background-color: #d1d5db;
+      color: #9ca3af;
+      cursor: default;
+    }
+    .weekend:hover, .excluded:hover {
+      background-color: #d1d5db;
+    }
+    .calendar-day.not-available:hover {
+      background-color: #f87171;
+    }
+    .not-available {
+      background-color: #f87171;
+      color: white;
+    }
+    @media (max-width: 768px) {
+      .calendar-day {
+        padding: 0.3rem;
+      }
+    }
+  </style>
+</head>
+<body data-storagekey="kita" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center md:p-6 font-sans">
+<div id="plan-creation-container" class="bg-white shadow-lg rounded-xl md:p-10 w-full w-full md:max-w-3xl space-y-8 flex-1">
+  <h1 class="text-3xl font-semibold text-gray-900 md:p-0 p-2">Elterndienstplan erstellen</h1>
+  <div class="flex items-center justify-center space-x-4">
+    <label for="month" class="font-medium text-gray-700">Monat:</label>
+    <select id="month" class="border rounded-md p-2">
+      <option value="0">Januar</option>
+      <option value="1">Februar</option>
+      <option value="2">März</option>
+      <option value="3">April</option>
+      <option value="4">Mai</option>
+      <option value="5">Juni</option>
+      <option value="6">Juli</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">Oktober</option>
+      <option value="10">November</option>
+      <option value="11">Dezember</option>
+    </select>
+    <label for="year" class="font-medium text-gray-700">Jahr:</label>
+    <select id="year" class="border rounded-md p-2"></select>
+  </div>
+  <div>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4 md:p-0 p-2">Tage</h2>
+    <div id="weekdays-container" class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 md:p-0 p-2">
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="Mo" checked />
+        <span class="text-sm font-medium text-gray-700">Montag</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="Di" checked />
+        <span class="text-sm font-medium text-gray-700">Dienstag</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="Mi" checked />
+        <span class="text-sm font-medium text-gray-700">Mittwoch</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="Do" checked />
+        <span class="text-sm font-medium text-gray-700">Donnerstag</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="Fr" checked />
+        <span class="text-sm font-medium text-gray-700">Freitag</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="Sa" />
+        <span class="text-sm font-medium text-gray-700">Samstag</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" class="weekday-checkbox rounded border-gray-300 focus:ring-indigo-500 h-4 w-4" value="So" />
+        <span class="text-sm font-medium text-gray-700">Sonntag</span>
+      </label>
+    </div>
+  </div>
+  <div>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Sperrtermine Familien</h2>
+    <table class="min-w-full bg-white border border-gray-300 rounded-md">
+      <thead>
+      <tr>
+        <th class="border-b-2 border-gray-300 p-3 text-left">Familien</th>
+        <th class="border-b-2 border-gray-300 p-3 text-left">Kalender</th>
+      </tr>
+      </thead>
+      <tbody id="user-table-body"></tbody>
+    </table>
+  </div>
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold text-gray-900">Kita geschlossen (zB Feiertage)</h2>
+    <div id="holidays-calendar" class="calendar"></div>
+    <h2 class="text-xl font-semibold text-gray-900">Geöffnet, kein Elterndienst notwendig</h2>
+    <div id="kitaOpenNoEd-calendar" class="calendar"></div>
+    <h2 class="text-xl font-semibold text-gray-900">Team übernimmt eine Schicht</h2>
+    <input
+            type="text"
+            id="nameInput"
+            placeholder="Person eingeben"
+            value="Team"
+            disabled
+            class="bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500"
+    />
+    <div id="team-calendar" class="calendar"></div>
+  </div>
+  <div class="flex justify-center space-x-4 mt-6">
+    <button id="show-preview-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">Zeige Vorschau</button>
+    <button id="back-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300">Zurück</button>
+  </div>
+</div>
+<div id="calendar-preview-container" class="overflow-auto md:overflow-visible bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl space-y-8 hidden flex-1">
+  <div class="flex justify-center gap-10 mb-6 my-20">
+    <h1 class="text-3xl font-semibold text-gray-900">Vorschau</h1>
+    <button id="preview-button" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
+      <ion-icon name="refresh" class="mr-2"></ion-icon>
+    </button>
+  </div>
+  <div id="calendar-preview-table" class="w-3xl max-w-3xl">
+    <div id="tableheadersTwoCols" class="flex w-full text-gray-800 font-semibold bg-gray-200 py-2 hidden">
+      <div class="w-1/12 text-left">Tag</div>
+      <div class="w-1/6 text-left">Datum</div>
+      <div class="flex-1 text-left">
+        <input id="twocol-label-1" type="text" value="Familie 1" class="w-full bg-transparent border-b border-gray-300 focus:outline-none focus:border-indigo-500" disabled>
+      </div>
+      <div class="flex-1 text-left">
+        <input id="twocol-label-2" type="text" value="Famile 2" class="w-full bg-transparent border-b border-gray-300 focus:outline-none focus:border-indigo-500" disabled>
+      </div>
+    </div>
+    <div id="tableheadersThreeCols"></div>
+  </div>
+  <div id="parent-summary" class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 w-80 border border-gray-300 hidden md:block"></div>
+  <button id="toggle-summary" class="md:hidden fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
+    Verteilung
+  </button>
+  <div class="flex justify-center space-x-4 mt-10">
+    <div id="error-message" class="bg-red-500 text-white p-4 rounded hidden"></div>
+    <button id="generate-pdf-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300">Erstelle PDF</button>
+    <button id="back-creation-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-300">Zurück</button>
+  </div>
+</div>
+<!-- Modal Background -->
+<div id="customModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+  <!-- Modal Content -->
+  <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg text-center">
+    <h3 class="text-xl font-semibold text-gray-900 mb-4">Schichtzuweisung bestätigen</h3>
+    <p id="modalText" class="text-gray-700 mb-6 leading-relaxed">
+      Max Mustermann erhält ausgewählte Schichten und hat zusätzlich einen Sperrtermin-Kalender.<br>
+      Drücken Sie „Nur ausgewählte“, wenn die Person ausschließlich die gewählten Schichten erhalten soll.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <button id="onlySelected" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
+        Ok
+      </button>
+      <button id="cancel" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-300">
+        Abbrechen
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<footer class="w-full py-4 text-sm text-center text-gray-500 mt-8">
+  <div class="flex justify-center space-x-4">
+    <a href="/src/imprint.html" class="hover:text-gray-700 transition-colors duration-200">Impressum</a>
+    <span>|</span>
+    <a href="/src/dataprotection.html" class="hover:text-gray-700 transition-colors duration-200">Datenschutzerklärung</a>
+  </div>
+</footer>
+<!-- 100% privacy-first analytics -->
+<script type="module" src="../analytics.js"></script>
+</body>
+</html>
