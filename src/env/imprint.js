@@ -1,17 +1,16 @@
-const env = (typeof process !== "undefined" && process.env) || {};
 const cfg = (typeof window !== "undefined" && window.__IMPRINT) || {};
 
-const nameLine = String(env.IMPRINT_NAME || cfg.IMPRINT_NAME || "").trim();
-const addressLines = String(env.IMPRINT_ADDRESS || cfg.IMPRINT_ADDRESS || "")
+const nameLine = String(process.env.IMPRINT_NAME || cfg.IMPRINT_NAME || "").trim();
+const addressLines = String(process.env.IMPRINT_ADDRESS || cfg.IMPRINT_ADDRESS || "")
   .replace(/\\n/g, "\n")
   .split(/\r?\n/)
   .map((l) => l.trim())
   .filter(Boolean);
-const noteLine = String(env.IMPRINT_NOTE || cfg.IMPRINT_NOTE || "")
+const noteLine = String(process.env.IMPRINT_NOTE || cfg.IMPRINT_NOTE || "")
   .replace(/\\n/g, "\n")
   .trim();
-const emailLine = String(env.IMPRINT_EMAIL || cfg.IMPRINT_EMAIL || "").trim();
-const phoneLine = String(env.IMPRINT_PHONE || cfg.IMPRINT_PHONE || "").trim();
+const emailLine = String(process.env.IMPRINT_EMAIL || cfg.IMPRINT_EMAIL || "").trim();
+const phoneLine = String(process.env.IMPRINT_PHONE || cfg.IMPRINT_PHONE || "").trim();
 
 function setLines(id, lines) {
   const el = document.getElementById(id);
