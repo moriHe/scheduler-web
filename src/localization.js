@@ -112,11 +112,8 @@ const text_en = {
     }
 };
 
-let language = null;
+const language = 'de';
 function getText(key) {
-    if (language === null)
-        language = navigator.languages.some(lang => lang.startsWith('de')) ? 'de' : 'en';
-
     const translations = { de: text, en: text_en };
     const obj = translations[language] || {};
 
