@@ -1,5 +1,4 @@
 # Scheduler Web
-Website: https://shiftfix.net/
 
 ## Private project
 Started as a parent duty scheduler, then expanded to three shifts per day with one to three people per shift.
