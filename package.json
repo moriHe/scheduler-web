@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "parcel \"src/**/*.html\"",
-    "build": "rm -rf docs .parcel-tmp && parcel build \"src/**/*.html\" --public-url ./ --dist-dir .parcel-tmp && rsync -a --exclude='*.js' .parcel-tmp/ docs/ && find .parcel-tmp -type f -name '*.js' -print | while read -r f; do out=\"docs/${f#.parcel-tmp/}\"; mkdir -p \"$(dirname \"$out\")\"; javascript-obfuscator \"$f\" --output \"$out\"; done && rm -rf .parcel-tmp",
+    "build": "rm -rf docs .parcel-tmp && parcel build \"src/**/*.html\" --public-url /scheduler-web/ --dist-dir .parcel-tmp && rsync -a --exclude='*.js' .parcel-tmp/ docs/ && find .parcel-tmp -type f -name '*.js' -print | while read -r f; do out=\"docs/${f#.parcel-tmp/}\"; mkdir -p \"$(dirname \"$out\")\"; javascript-obfuscator \"$f\" --output \"$out\"; done && rm -rf .parcel-tmp",
     "preview": "serve docs",
     "cypress": "cypress open",
     "clearCache": "npx parcel cache clean",
