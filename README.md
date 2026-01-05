@@ -11,7 +11,7 @@ Started as a parent duty scheduler, then expanded to three shifts per day with o
 
 ## Development
 - If Parcel errors, clear its cache: `npx parcel cache clean`
-- Build: `npm run build` (bundles all HTML entries with `--public-url ./`, obfuscates JS, final output goes to `docs/`)
+- Build: `npm run build` (bundles all HTML with `--public-url ./`, copies non-JS to `docs/`, obfuscates each JS into matching subfolders in `docs/`)
 - Preview: `npm run preview` (serves the built `docs/` folder)
 
 ## Scheduler Web Setup (private project)
