@@ -6,6 +6,29 @@
   <title>Dienstplaner - Info</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
+<script>
+(function () {
+  const KEY = "shiftfix_private_pw";
+  const REQUIRED = "kita";
+  try {
+    if (localStorage.getItem(KEY) === REQUIRED) return;
+    while (true) {
+      const input = window.prompt("Passwort erforderlich");
+      if (input === null) {
+        window.location.replace("about:blank");
+        return;
+      }
+      if (input === REQUIRED) {
+        localStorage.setItem(KEY, REQUIRED);
+        return;
+      }
+      alert("Falsches Passwort");
+    }
+  } catch (err) {
+    window.location.replace("about:blank");
+  }
+})();
+</script>
 </head>
 <!-- Erstmal Vorschau zeigen (4c). Dann Link zu den Basics. Dann Link zu Pro Version. Dann Nützliches -->
 <body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen font-sans">

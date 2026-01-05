@@ -9,6 +9,29 @@
             rel="stylesheet"
     />
 
+<script>
+(function () {
+  const KEY = "shiftfix_private_pw";
+  const REQUIRED = "kita";
+  try {
+    if (localStorage.getItem(KEY) === REQUIRED) return;
+    while (true) {
+      const input = window.prompt("Passwort erforderlich");
+      if (input === null) {
+        window.location.replace("about:blank");
+        return;
+      }
+      if (input === REQUIRED) {
+        localStorage.setItem(KEY, REQUIRED);
+        return;
+      }
+      alert("Falsches Passwort");
+    }
+  } catch (err) {
+    window.location.replace("about:blank");
+  }
+})();
+</script>
 </head>
 <script defer type="module" src="../options/registerShiftplanOptions.js"></script>
 <body data-storagekey="shiftplan" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center justify-center font-sans">

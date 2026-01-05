@@ -7,6 +7,29 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
     <script defer type="module" src="../../blockedtime/registerShiftplanBlockedtime.js"></script>
     <link rel="stylesheet" href="../../blockedtime/blockedtime.css" />
+<script>
+(function () {
+  const KEY = "shiftfix_private_pw";
+  const REQUIRED = "kita";
+  try {
+    if (localStorage.getItem(KEY) === REQUIRED) return;
+    while (true) {
+      const input = window.prompt("Passwort erforderlich");
+      if (input === null) {
+        window.location.replace("about:blank");
+        return;
+      }
+      if (input === REQUIRED) {
+        localStorage.setItem(KEY, REQUIRED);
+        return;
+      }
+      alert("Falsches Passwort");
+    }
+  } catch (err) {
+    window.location.replace("about:blank");
+  }
+})();
+</script>
 </head>
 <body data-storagekey="shiftplan" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex flex-col items-center justify-center font-sans">
 <div id="plan-creation-container" class="bg-white shadow-lg rounded-xl p-10 w-full max-w-3xl flex-1 space-y-8">

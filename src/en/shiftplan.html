@@ -8,6 +8,29 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/dist/date-fns.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/locale/de/index.js"></script>
+<script>
+(function () {
+  const KEY = "shiftfix_private_pw";
+  const REQUIRED = "kita";
+  try {
+    if (localStorage.getItem(KEY) === REQUIRED) return;
+    while (true) {
+      const input = window.prompt("Passwort erforderlich");
+      if (input === null) {
+        window.location.replace("about:blank");
+        return;
+      }
+      if (input === REQUIRED) {
+        localStorage.setItem(KEY, REQUIRED);
+        return;
+      }
+      alert("Falsches Passwort");
+    }
+  } catch (err) {
+    window.location.replace("about:blank");
+  }
+})();
+</script>
 </head>
 
 <body class="bg-gradient-to-br from-blue-100 to-purple-100 items-center justify-center flex flex-col min-h-screen h-screen font-sans">
