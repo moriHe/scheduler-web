@@ -11,6 +11,22 @@
 
 <script>
 (function () {
+  const REPO_BASE = "/scheduler-web/";
+  const base = window.location.pathname.startsWith(REPO_BASE) ? REPO_BASE : "/";
+  const withBase = (path) => `${base}${path}`;
+  const updateLink = (id, path) => {
+    const el = document.getElementById(id);
+    if (el) el.href = withBase(path);
+  };
+  updateLink("view-shiftplan-button", "shiftplan.html");
+  updateLink("view-multishift-button", "pro.html");
+  updateLink("view-kitashiftplan-button", "kitashiftplan.html");
+  updateLink("info-button", "info.html");
+})();
+</script>
+
+<script>
+(function () {
   const KEY = "shiftfix_private_pw";
   const REQUIRED = "kita";
   try {
