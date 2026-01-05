@@ -3,6 +3,7 @@ import { initialize } from "./blockedtime";
 
 
 window.addEventListener("load", () => {
-    initialize("/shiftplan.html");
+    const BASE = window.location.pathname.includes("/scheduler-web/") ? "/scheduler-web" : "";
+    initialize(`${BASE}/shiftplan.html`);
     
 })

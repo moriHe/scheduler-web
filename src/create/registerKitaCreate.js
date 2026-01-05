@@ -2,6 +2,7 @@ import { initialize } from "./create"
 
 
 window.addEventListener("load", () => {
-    initialize("/kitashiftplan.html")
+    const BASE = window.location.pathname.includes("/scheduler-web/") ? "/scheduler-web" : "";
+    initialize(`${BASE}/kitashiftplan.html`)
     
 })

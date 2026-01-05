@@ -3,5 +3,6 @@ import { initialize } from "./options"
 
 window.addEventListener("load", () => {
     
-    initialize("/pro.html")
+    const BASE = window.location.pathname.includes("/scheduler-web/") ? "/scheduler-web" : "";
+    initialize(`${BASE}/pro.html`)
 })

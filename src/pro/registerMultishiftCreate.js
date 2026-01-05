@@ -16,7 +16,8 @@ function configureHeaders(labelArray, registerEventListener) {
 
 window.addEventListener("load", () => {
     
-    initialize("/pro.html")
+    const BASE = window.location.pathname.includes("/scheduler-web/") ? "/scheduler-web" : "";
+    initialize(`${BASE}/pro.html`)
     configureHeaders(['twocol-label-1', 'twocol-label-2'], true)
     configureHeaders(['threecol-label-1', 'threecol-label-2', 'threecol-label-3'], true)
 

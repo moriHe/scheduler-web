@@ -3,6 +3,7 @@ import { initialize } from "./addUser"
 
 // Call loadUsers when the page is loaded
 window.addEventListener("load", () => {
-  initialize("/pro.html");
+  const BASE = window.location.pathname.includes("/scheduler-web/") ? "/scheduler-web" : "";
+  initialize(`${BASE}/pro.html`);
   
 })
