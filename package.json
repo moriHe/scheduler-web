@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "start": "parcel \"src/**/*.html\"",
-    "build": "parcel build \"src/**/*.html\" && javascript-obfuscator dist --output docs",
-    "preview": "serve dist",
+    "build": "rm -rf docs .parcel-tmp && parcel build \"src/**/*.html\" --dist-dir .parcel-tmp && javascript-obfuscator .parcel-tmp --output docs && rsync -a --exclude='*.js' .parcel-tmp/ docs/ && rm -rf .parcel-tmp",
+    "preview": "serve docs",
     "cypress": "cypress open",
     "clearCache": "npx parcel cache clean",
     "test": "echo \"Error: no test specified\" && exit 1"

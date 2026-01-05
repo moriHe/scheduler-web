@@ -11,8 +11,8 @@ Started as a parent duty scheduler, then expanded to three shifts per day with o
 
 ## Development
 - If Parcel errors, clear its cache: `npx parcel cache clean`
-- Build: `npm run build` (bundles all HTML entries and obfuscates JS)
-- Preview dist: `npm run preview` (serves the built `dist/` folder)
+- Build: `npm run build` (bundles all HTML entries, obfuscates JS, final output goes to `docs/`)
+- Preview: `npm run preview` (serves the built `docs/` folder)
 
 ## Scheduler Web Setup (private project)
 - Prereqs: Node 20+ and npm; no backend needed (static Parcel app).
