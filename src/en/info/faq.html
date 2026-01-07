@@ -8,16 +8,18 @@
 <script>
 (function () {
   const KEY = "shiftfix_private_pw";
-  const REQUIRED = "kita";
+  const REQUIRED = "KITA";
   try {
-    if (localStorage.getItem(KEY) === REQUIRED) return;
+    const stored = (localStorage.getItem(KEY) || "").toUpperCase();
+    if (stored === REQUIRED) return;
     while (true) {
       const input = window.prompt("Passwort erforderlich");
       if (input === null) {
         window.location.replace("about:blank");
         return;
       }
-      if (input === REQUIRED) {
+      const normalized = (input || "").trim().toUpperCase();
+      if (normalized === REQUIRED) {
         localStorage.setItem(KEY, REQUIRED);
         return;
       }
