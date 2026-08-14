@@ -1,30 +1,30 @@
 # Scheduler Web — Knowledge Document
 
-## Überblick
+## Overview
 
-Scheduler Web ist eine browserbasierte Anwendung zur Erstellung von Dienst- bzw. Schichtplänen.
+Scheduler Web is a browser-based application for creating duty and shift schedules.
 
-Das Projekt begann als Planer für Elterndienste und wurde auf mehrere Schichten pro Tag sowie mehrere Personen pro Schicht erweitert.
+The project originally started as a scheduler for parent duties and was later extended to support multiple shifts per day and multiple people per shift.
 
-## Funktionen
+## Features
 
-- Auswahl zwischen zwei oder drei Schichten pro Tag
-- normaler Schichtplan mit einer Person bzw. einem frei definierbaren Wert pro Schicht
-- Pro-Schichtplan mit ein bis drei Personen pro Schicht und Tag
-- Berücksichtigung von Nichtverfügbarkeiten
-- automatische Warnung, wenn eine Person für eine Schicht als nicht verfügbar markiert wurde
-- Funktionen zum Hinzufügen von Personen
-- Definieren blockierter Zeiten
-- Erstellen von Plänen
-- lokalisierte bzw. englischsprachige Bereiche
+- Selection between two or three shifts per day
+- Standard shift plan with one person or a freely defined value per shift
+- Advanced shift plan with one to three people per shift and day
+- Consideration of individual unavailability
+- Automatic warning when a person is assigned to a shift during a period in which they are marked as unavailable
+- Functions for adding people
+- Definition of blocked times
+- Schedule creation
+- Localized and English-language areas
 
-## Architektur
+## Architecture
 
-Scheduler Web ist bewusst eine statische Client-Anwendung und benötigt kein Backend.
+Scheduler Web is intentionally implemented as a static client-side application and does not require a backend.
 
-Die Anwendung wird mit Parcel gebaut.
+The application is built using Parcel.
 
-Der Source-Bereich ist funktional gegliedert, beispielsweise in:
+The source code is organized by functionality into areas such as:
 
 - `addUser`
 - `blockedtime`
@@ -34,80 +34,80 @@ Der Source-Bereich ist funktional gegliedert, beispielsweise in:
 - `pro`
 - `kitashiftplan`
 - `utils`
-- Testdaten
+- Test data
 
-Die statische Architektur macht das Projekt zu einem Beispiel für eine Anwendung, deren Fachlogik vollständig im Browser umgesetzt wird.
+The static architecture makes this project an example of an application where the domain logic is implemented entirely in the browser.
 
-## Build und Deployment
+## Build and Deployment
 
-Parcel übernimmt Development Server und Bundling.
+Parcel provides the development server and application bundling.
 
-Der Produktions-Build schreibt die Anwendung in den `docs`-Ordner und verwendet einen passenden Public Path für das Hosting.
+The production build writes the application into the `docs` directory and uses an appropriate public path for hosting.
 
-Im Build-Prozess wird JavaScript zusätzlich für die erzeugten Unterverzeichnisse verarbeitet bzw. obfuskiert.
+During the build process, JavaScript is additionally processed or obfuscated for generated subdirectories.
 
-## Tests und Qualität
+## Testing and Quality
 
-Das Repository besitzt:
+The repository contains:
 
-- einen eigenen `cypress`-Bereich
-- eine Cypress-Konfiguration
-- ESLint-Konfiguration
+- A dedicated `cypress` area
+- Cypress configuration
+- ESLint configuration
 
-Damit enthält das Projekt sowohl End-to-End-Testinfrastruktur als auch statische Codequalitätswerkzeuge.
+The project therefore includes both end-to-end testing infrastructure and static code-quality tooling.
 
-## Technisch interessante Aspekte
+## Technically Interesting Aspects
 
-### Fachlogik ohne Backend
+### Business Logic Without a Backend
 
-Die Planungslogik wird vollständig im Client modelliert.
+The scheduling logic is modeled entirely on the client side.
 
-Dazu gehören:
+This includes:
 
-- Personen
-- Schichten
-- Verfügbarkeiten
-- Konflikte
+- People
+- Shifts
+- Availability
+- Conflicts
 
-### Validierung von Verfügbarkeiten
+### Availability Validation
 
-Ein wichtiger fachlicher Aspekt ist das Erkennen einer Konfliktsituation:
+An important domain requirement is detecting conflicts.
 
-Eine Person soll einer Schicht zugewiesen werden, obwohl sie diese Zeit als nicht verfügbar markiert hat.
+For example, the application must detect when a person is assigned to a shift even though that person has marked the corresponding time as unavailable.
 
-### Unterschiedliche Planungsmodi
+### Different Scheduling Modes
 
-Die Anwendung unterstützt unterschiedliche Regeln für normale und erweiterte Schichtpläne.
+The application supports different rules for standard and advanced shift plans.
 
-Dadurch muss die UI mit variabler Anzahl von Schichten und Teilnehmern umgehen können.
+The UI therefore needs to support a variable number of shifts and participants.
 
-## Demonstrierte Kenntnisse
+## Demonstrated Skills
 
-- JavaScript-basierte Frontend-Entwicklung
-- clientseitige Geschäftslogik
-- UI- und Zustandsmodellierung
-- Validierung und Konflikterkennung
-- Parcel und Frontend-Build-Prozesse
-- Cypress / End-to-End-Tests
+- JavaScript-based frontend development
+- Client-side business logic
+- UI and state modeling
+- Validation and conflict detection
+- Parcel and frontend build processes
+- Cypress / end-to-end testing
 - ESLint
-- statisches Web-Deployment
-- Internationalisierung / Lokalisierungsstruktur
+- Static web deployment
+- Internationalization / localization structure
 
-## Einordnung
+## Project Classification
 
-Scheduler Web ist ein gutes Beispiel für pragmatische Frontend-Entwicklung ohne unnötiges Backend.
+Scheduler Web is a good example of pragmatic frontend development without an unnecessary backend.
 
-Das Projekt zeigt, dass Architektur an die Problemgröße angepasst wurde: Die Anwendung benötigt keine Serverkomponente, um ihren Kernzweck zu erfüllen.
+The project demonstrates that architecture was adapted to the size and requirements of the problem: the application does not require a server component to fulfill its core purpose.
 
-## Gute Retrieval-Fragen
+## Useful Retrieval Questions
 
-- Welche Erfahrung gibt es mit Frontend-Entwicklung?
-- Wurde schon eine Anwendung ohne Backend gebaut?
-- Gibt es Erfahrung mit Cypress?
-- Wie wurde Konflikterkennung oder Validierung umgesetzt?
-- Welche Projekte enthalten Planungs- oder Scheduling-Logik?
-- Gibt es Erfahrung mit Parcel und statischem Deployment?
+- What frontend development experience does the developer have?
+- Has the developer built an application without a backend?
+- Does the developer have experience with Cypress?
+- How was conflict detection or validation implemented?
+- Which projects contain planning or scheduling logic?
+- Does the developer have experience with Parcel and static deployment?
 
-## Quelle
+## Source
 
 GitHub Repository: moriHe/scheduler-web
